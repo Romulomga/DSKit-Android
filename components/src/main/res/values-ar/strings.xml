@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dskit_clear">مسح</string>
+    <string name="dskit_continue">متابعة</string>
+    <string name="dskit_done">تم</string>
+    <string name="dskit_enter_valid_number">أدخل رقمًا صالحًا</string>
+    <string name="dskit_no_items">لا توجد عناصر</string>
+    <string name="dskit_one_item_per_line">عنصر واحد في كل سطر</string>
+    <string name="dskit_paste">لصق</string>
+    <string name="dskit_try_again">حاول مجددًا</string>
+    <plurals name="dskit_items_count">
+        <item quantity="one">عنصر %d</item>
+        <item quantity="other">%d عناصر</item>
+    </plurals>
+    <plurals name="dskit_duplicates_count">
+        <item quantity="one">%d مكرر</item>
+        <item quantity="other">%d مكررات</item>
+    </plurals>
+    <string name="dskit_hide_password">إخفاء كلمة المرور</string>
+    <string name="dskit_show_password">إظهار كلمة المرور</string>
+    <string name="dskit_not_selected">غير محدد</string>
+</resources>

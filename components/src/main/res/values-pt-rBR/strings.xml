@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dskit_clear">Limpar</string>
+    <string name="dskit_continue">Continuar</string>
+    <string name="dskit_done">Concluído</string>
+    <string name="dskit_enter_valid_number">Digite um número válido</string>
+    <string name="dskit_hide_password">Ocultar senha</string>
+    <string name="dskit_no_items">Nenhum item</string>
+    <string name="dskit_not_selected">Não selecionado</string>
+    <string name="dskit_one_item_per_line">Um item por linha</string>
+    <string name="dskit_paste">Colar</string>
+    <string name="dskit_show_password">Mostrar senha</string>
+    <string name="dskit_try_again">Tentar de novo</string>
+    <plurals name="dskit_items_count">
+        <item quantity="zero">Nenhum item</item>
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d itens</item>
+    </plurals>
+    <plurals name="dskit_duplicates_count">
+        <item quantity="one">%d duplicata</item>
+        <item quantity="other">%d duplicatas</item>
+    </plurals>
+</resources>
