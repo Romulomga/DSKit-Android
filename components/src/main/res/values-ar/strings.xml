@@ -9,14 +9,25 @@
     <string name="dskit_paste">لصق</string>
     <string name="dskit_try_again">حاول مجددًا</string>
     <plurals name="dskit_items_count">
+        <item quantity="zero">لا توجد عناصر</item>
         <item quantity="one">عنصر %d</item>
-        <item quantity="other">%d عناصر</item>
+        <item quantity="two">عنصران (%d)</item>
+        <item quantity="few">%d عناصر</item>
+        <item quantity="many">%d عنصرًا</item>
+        <item quantity="other">%d عنصر</item>
     </plurals>
     <plurals name="dskit_duplicates_count">
-        <item quantity="one">%d مكرر</item>
-        <item quantity="other">%d مكررات</item>
+        <item quantity="zero">لا توجد تكرارات</item>
+        <item quantity="one">تكرار %d</item>
+        <item quantity="two">تكراران (%d)</item>
+        <item quantity="few">%d تكرارات</item>
+        <item quantity="many">%d تكرارًا</item>
+        <item quantity="other">%d تكرار</item>
     </plurals>
     <string name="dskit_hide_password">إخفاء كلمة المرور</string>
     <string name="dskit_show_password">إظهار كلمة المرور</string>
     <string name="dskit_not_selected">غير محدد</string>
+    <string name="dskit_locked">مقفل</string>
+    <string name="dskit_minimum">الحد الأدنى</string>
+    <string name="dskit_maximum">الحد الأقصى</string>
 </resources>

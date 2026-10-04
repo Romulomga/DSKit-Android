@@ -10,13 +10,18 @@
     <string name="dskit_try_again">Reintentar</string>
     <plurals name="dskit_items_count">
         <item quantity="one">%d elemento</item>
+        <item quantity="many">%d elementos</item>
         <item quantity="other">%d elementos</item>
     </plurals>
     <plurals name="dskit_duplicates_count">
         <item quantity="one">%d duplicado</item>
+        <item quantity="many">%d duplicados</item>
         <item quantity="other">%d duplicados</item>
     </plurals>
     <string name="dskit_hide_password">Ocultar contraseña</string>
     <string name="dskit_show_password">Mostrar contraseña</string>
     <string name="dskit_not_selected">No seleccionado</string>
+    <string name="dskit_locked">Bloqueado</string>
+    <string name="dskit_minimum">Mínimo</string>
+    <string name="dskit_maximum">Máximo</string>
 </resources>

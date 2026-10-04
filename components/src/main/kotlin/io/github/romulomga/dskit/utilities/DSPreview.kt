@@ -23,12 +23,12 @@ public fun DSPreviewContainer(
     title: String,
     modifier: Modifier = Modifier,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     DSTheme(darkTheme = darkTheme) {
         Column(
             modifier = modifier.background(DSTheme.colors.background).padding(DSSpacing.lg),
-            verticalArrangement = Arrangement.spacedBy(DSSpacing.md),
+            verticalArrangement = Arrangement.spacedBy(DSSpacing.md)
         ) {
             Text(title, style = DSTypography.footnote, color = DSTheme.colors.onSurfaceMedium)
             content()

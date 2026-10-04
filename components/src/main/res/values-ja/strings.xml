@@ -17,4 +17,7 @@
     <string name="dskit_hide_password">パスワードを非表示</string>
     <string name="dskit_show_password">パスワードを表示</string>
     <string name="dskit_not_selected">未選択</string>
+    <string name="dskit_locked">ロック中</string>
+    <string name="dskit_minimum">最小</string>
+    <string name="dskit_maximum">最大</string>
 </resources>

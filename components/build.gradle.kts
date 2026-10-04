@@ -48,7 +48,7 @@ dependencies {
     debugImplementation(Dependencies.Compose.uiTooling)
 
     // As regras de lint do DSKit viajam com o AAR e valem para quem usa a lib.
-    lintPublish(project(Dependencies.General.lint))
+    lintPublish(project(Dependencies.General.lint)) { isTransitive = false }
 
     testImplementation(Dependencies.Test.junit)
     testImplementation(Dependencies.Test.robolectric)

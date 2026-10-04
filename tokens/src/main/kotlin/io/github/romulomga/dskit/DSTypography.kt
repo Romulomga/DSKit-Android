@@ -33,7 +33,7 @@ public data class DSTextStyles(
     /** Destaque do `DSResultCard`. */
     val resultPrimary: TextStyle,
     val resultSecondary: TextStyle,
-    val fontFamily: FontFamily,
+    val fontFamily: FontFamily
 ) {
     public companion object {
         /**
@@ -47,7 +47,7 @@ public data class DSTextStyles(
                 fontFamily = family,
                 fontWeight = weight,
                 fontSize = size.sp,
-                lineHeight = lineHeight.sp,
+                lineHeight = lineHeight.sp
             )
 
             return DSTextStyles(
@@ -64,7 +64,7 @@ public data class DSTextStyles(
                 caption2 = style(11, 13),
                 resultPrimary = style(34, 41, FontWeight.Bold),
                 resultSecondary = style(22, 28, FontWeight.SemiBold),
-                fontFamily = family,
+                fontFamily = family
             )
         }
     }
@@ -72,19 +72,45 @@ public data class DSTextStyles(
 
 /** Acesso aos papéis tipográficos do tema atual: `DSTypography.headline`, `DSTypography.body`… */
 public object DSTypography {
-    public val largeTitle: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.largeTitle
-    public val title: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.title
-    public val title2: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.title2
-    public val title3: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.title3
-    public val headline: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.headline
-    public val body: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.body
-    public val callout: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.callout
-    public val subheadline: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.subheadline
-    public val footnote: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.footnote
-    public val caption: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.caption
-    public val caption2: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.caption2
-    public val resultPrimary: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.resultPrimary
-    public val resultSecondary: TextStyle @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current.resultSecondary
+    public val largeTitle: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.largeTitle
+    public val title: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.title
+    public val title2: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.title2
+    public val title3: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.title3
+    public val headline: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.headline
+    public val body: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.body
+    public val callout: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.callout
+    public val subheadline: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.subheadline
+    public val footnote: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.footnote
+    public val caption: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.caption
+    public val caption2: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.caption2
+    public val resultPrimary: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.resultPrimary
+    public val resultSecondary: TextStyle
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current.resultSecondary
 
     /**
      * Texto de exibição gigante (afirmação, resposta de uma palavra) em tamanho **fixo**: não escala com
@@ -99,7 +125,7 @@ public object DSTypography {
             fontFamily = LocalDSTextStyles.current.fontFamily,
             fontWeight = weight,
             fontSize = fixed,
-            lineHeight = fixed * 1.2f,
+            lineHeight = fixed * 1.2f
         )
     }
 }

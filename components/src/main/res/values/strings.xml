@@ -20,4 +20,7 @@
         <item quantity="one">%d duplicate</item>
         <item quantity="other">%d duplicates</item>
     </plurals>
+    <string name="dskit_locked">Locked</string>
+    <string name="dskit_minimum">Minimum</string>
+    <string name="dskit_maximum">Maximum</string>
 </resources>

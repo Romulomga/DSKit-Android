@@ -19,7 +19,7 @@ public fun Modifier.dsPressScale(interactionSource: InteractionSource): Modifier
     val scale by animateFloatAsState(
         targetValue = if (pressed && !reduceMotion) 0.97f else 1f,
         animationSpec = DSMotion.snappy(),
-        label = "dsPressScale",
+        label = "dsPressScale"
     )
     return graphicsLayer {
         scaleX = scale

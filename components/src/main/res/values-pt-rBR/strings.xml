@@ -12,12 +12,16 @@
     <string name="dskit_show_password">Mostrar senha</string>
     <string name="dskit_try_again">Tentar de novo</string>
     <plurals name="dskit_items_count">
-        <item quantity="zero">Nenhum item</item>
         <item quantity="one">%d item</item>
+        <item quantity="many">%d itens</item>
         <item quantity="other">%d itens</item>
     </plurals>
     <plurals name="dskit_duplicates_count">
         <item quantity="one">%d duplicata</item>
+        <item quantity="many">%d duplicatas</item>
         <item quantity="other">%d duplicatas</item>
     </plurals>
+    <string name="dskit_locked">Bloqueado</string>
+    <string name="dskit_minimum">Mínimo</string>
+    <string name="dskit_maximum">Máximo</string>
 </resources>

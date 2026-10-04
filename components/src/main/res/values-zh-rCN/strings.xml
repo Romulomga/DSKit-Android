@@ -17,4 +17,7 @@
     <string name="dskit_hide_password">隐藏密码</string>
     <string name="dskit_show_password">显示密码</string>
     <string name="dskit_not_selected">未选择</string>
+    <string name="dskit_locked">已锁定</string>
+    <string name="dskit_minimum">最小值</string>
+    <string name="dskit_maximum">最大值</string>
 </resources>

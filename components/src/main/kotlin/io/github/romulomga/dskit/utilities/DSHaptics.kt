@@ -18,8 +18,15 @@ public class DSHaptics internal constructor(private val view: View, private val 
 
     public fun medium(): Unit = perform(HapticFeedbackConstants.VIRTUAL_KEY)
 
-    public fun success(): Unit =
-        perform(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM else HapticFeedbackConstants.VIRTUAL_KEY)
+    public fun success(): Unit = perform(
+        if (Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.R
+        ) {
+            HapticFeedbackConstants.CONFIRM
+        } else {
+            HapticFeedbackConstants.VIRTUAL_KEY
+        }
+    )
 
     public fun warning(): Unit = perform(HapticFeedbackConstants.LONG_PRESS)
 

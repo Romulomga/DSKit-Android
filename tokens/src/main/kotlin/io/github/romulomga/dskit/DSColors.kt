@@ -42,7 +42,7 @@ public data class DSColors(
     val errorLight: Color,
     val errorHigh: Color,
     val disabled: Color,
-    val onDisabled: Color,
+    val onDisabled: Color
 ) {
     /**
      * Superfície para um nível de aninhamento (`LocalDSSurfaceLevel`): o nível 0 está no canvas e usa
@@ -62,7 +62,7 @@ public data class DSBrand(
     val accentSecondary: Color,
     val accentSecondaryDark: Color = accentSecondary,
     val onAccent: Color = Color(0xFFFFFFFF),
-    val onAccentDark: Color = onAccent,
+    val onAccentDark: Color = onAccent
 ) {
     public companion object {
         /** As cores padrão do DSKit (indigo e rosa do sistema da Apple). */
@@ -72,7 +72,7 @@ public data class DSBrand(
             accentSecondary = DSColorTokens.Light.accentSecondary,
             accentSecondaryDark = DSColorTokens.Dark.accentSecondary,
             onAccent = DSColorTokens.Light.onAccent,
-            onAccentDark = DSColorTokens.Dark.onAccent,
+            onAccentDark = DSColorTokens.Dark.onAccent
         )
     }
 }
@@ -80,5 +80,5 @@ public data class DSBrand(
 internal fun DSColors.withBrand(brand: DSBrand, dark: Boolean): DSColors = copy(
     accent = if (dark) brand.accentDark else brand.accent,
     accentSecondary = if (dark) brand.accentSecondaryDark else brand.accentSecondary,
-    onAccent = if (dark) brand.onAccentDark else brand.onAccent,
+    onAccent = if (dark) brand.onAccentDark else brand.onAccent
 )

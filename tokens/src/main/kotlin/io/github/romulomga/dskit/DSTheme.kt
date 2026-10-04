@@ -28,7 +28,7 @@ public data class DSThemeValues(
     /** Cor das ações primárias (`DSPrimaryButton`, seleção). Padrão: o `accent` da marca. */
     val primary: Color,
     val secondary: Color,
-    val accent: Color,
+    val accent: Color
 )
 
 /** Estilo de rótulo e erro dos campos, como o `dsFieldLabelStyle` do DSKit iOS. */
@@ -37,7 +37,7 @@ public enum class DSFieldLabelStyle {
     Compact,
 
     /** Rótulo em subheadline negrito na cor primária; erro em itálico. */
-    Prominent,
+    Prominent
 }
 
 public val LocalDSColors: androidx.compose.runtime.ProvidableCompositionLocal<DSColors> =
@@ -52,7 +52,7 @@ public val LocalDSThemeValues: androidx.compose.runtime.ProvidableCompositionLoc
             appName = "MicroTool",
             primary = DSColorTokens.Light.accent,
             secondary = DSColorTokens.Light.accent,
-            accent = DSColorTokens.Light.accent,
+            accent = DSColorTokens.Light.accent
         )
     }
 
@@ -96,7 +96,7 @@ public fun DSTheme(
     secondary: Color? = null,
     hapticsEnabled: Boolean = true,
     fieldLabelStyle: DSFieldLabelStyle = DSFieldLabelStyle.Compact,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     val colors = remember(brand, darkTheme) {
         (if (darkTheme) DSColorTokens.Dark else DSColorTokens.Light).withBrand(brand, darkTheme)
@@ -106,7 +106,7 @@ public fun DSTheme(
         appName = appName,
         primary = primary ?: colors.accent,
         secondary = secondary ?: colors.accent,
-        accent = colors.accent,
+        accent = colors.accent
     )
 
     CompositionLocalProvider(
@@ -115,27 +115,45 @@ public fun DSTheme(
         LocalDSThemeValues provides values,
         LocalDSHapticsEnabled provides hapticsEnabled,
         LocalDSReduceMotion provides rememberReduceMotion(),
-        LocalDSFieldLabelStyle provides fieldLabelStyle,
+        LocalDSFieldLabelStyle provides fieldLabelStyle
     ) {
         MaterialTheme(
             colorScheme = colors.toColorScheme(darkTheme, values.primary),
             typography = textStyles.toMaterialTypography(),
-            content = content,
+            content = content
         )
     }
 }
 
 /** Acesso ao tema atual, como `MaterialTheme.colorScheme`: `DSTheme.colors.surface`, `DSTheme.primary`. */
 public object DSTheme {
-    public val colors: DSColors @Composable @ReadOnlyComposable get() = LocalDSColors.current
-    public val typography: DSTextStyles @Composable @ReadOnlyComposable get() = LocalDSTextStyles.current
-    public val values: DSThemeValues @Composable @ReadOnlyComposable get() = LocalDSThemeValues.current
-    public val appName: String @Composable @ReadOnlyComposable get() = LocalDSThemeValues.current.appName
-    public val primary: Color @Composable @ReadOnlyComposable get() = LocalDSThemeValues.current.primary
-    public val secondary: Color @Composable @ReadOnlyComposable get() = LocalDSThemeValues.current.secondary
-    public val surfaceLevel: Int @Composable @ReadOnlyComposable get() = LocalDSSurfaceLevel.current
-    public val reduceMotion: Boolean @Composable @ReadOnlyComposable get() = LocalDSReduceMotion.current
-    public val hapticsEnabled: Boolean @Composable @ReadOnlyComposable get() = LocalDSHapticsEnabled.current
+    public val colors: DSColors
+        @Composable @ReadOnlyComposable
+        get() = LocalDSColors.current
+    public val typography: DSTextStyles
+        @Composable @ReadOnlyComposable
+        get() = LocalDSTextStyles.current
+    public val values: DSThemeValues
+        @Composable @ReadOnlyComposable
+        get() = LocalDSThemeValues.current
+    public val appName: String
+        @Composable @ReadOnlyComposable
+        get() = LocalDSThemeValues.current.appName
+    public val primary: Color
+        @Composable @ReadOnlyComposable
+        get() = LocalDSThemeValues.current.primary
+    public val secondary: Color
+        @Composable @ReadOnlyComposable
+        get() = LocalDSThemeValues.current.secondary
+    public val surfaceLevel: Int
+        @Composable @ReadOnlyComposable
+        get() = LocalDSSurfaceLevel.current
+    public val reduceMotion: Boolean
+        @Composable @ReadOnlyComposable
+        get() = LocalDSReduceMotion.current
+    public val hapticsEnabled: Boolean
+        @Composable @ReadOnlyComposable
+        get() = LocalDSHapticsEnabled.current
 }
 
 /** Marca o conteúdo como dentro de uma superfície: os filhos leem um nível de aninhamento a mais. */
@@ -187,7 +205,7 @@ private fun DSColors.toColorScheme(dark: Boolean, primary: Color): ColorScheme {
         outlineVariant = hairline,
         error = errorHigh,
         onError = Color.White,
-        errorContainer = errorLight,
+        errorContainer = errorLight
     )
 }
 
@@ -206,5 +224,5 @@ private fun DSTextStyles.toMaterialTypography(): Typography = Typography(
     bodySmall = footnote,
     labelLarge = subheadline,
     labelMedium = caption,
-    labelSmall = caption2,
+    labelSmall = caption2
 )

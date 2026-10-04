@@ -28,7 +28,7 @@ public object DSColorTokens {
         errorLight = Color(0xFFFFB2A3),
         errorHigh = Color(0xFFFF4425),
         disabled = Color(0xFFDCDBDC),
-        onDisabled = Color(0xFFBCBCBC),
+        onDisabled = Color(0xFFBCBCBC)
     )
 
     public val Dark: DSColors = DSColors(
@@ -54,6 +54,6 @@ public object DSColorTokens {
         errorLight = Color(0xFFFFB2A3),
         errorHigh = Color(0xFFFF4425),
         disabled = Color(0xFFA4A4A4),
-        onDisabled = Color(0xFF707070),
+        onDisabled = Color(0xFF707070)
     )
 }

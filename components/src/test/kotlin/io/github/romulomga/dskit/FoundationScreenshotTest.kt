@@ -2,9 +2,9 @@ package io.github.romulomga.dskit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.foundation.layout.Row
 import org.junit.Test
 
 class FoundationScreenshotTest : ScreenshotTestBase() {
@@ -25,7 +25,7 @@ class FoundationScreenshotTest : ScreenshotTestBase() {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             listOf(
                 DSIcons.Check, DSIcons.Close, DSIcons.ChevronRight, DSIcons.ChevronDown, DSIcons.Eye, DSIcons.EyeSlash,
-                DSIcons.ExclamationCircle, DSIcons.InfoCircle, DSIcons.CheckCircle, DSIcons.XCircle, DSIcons.Lock,
+                DSIcons.ExclamationCircle, DSIcons.InfoCircle, DSIcons.CheckCircle, DSIcons.XCircle, DSIcons.Lock
             ).forEach { Icon(it, contentDescription = null, tint = DSTheme.colors.onSurfaceHigh) }
         }
     }

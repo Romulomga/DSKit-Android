@@ -23,7 +23,7 @@ class DSTokensTest {
         val styles = DSTextStyles.create()
         val sizes = listOf(
             styles.largeTitle, styles.title, styles.title2, styles.title3, styles.body,
-            styles.callout, styles.subheadline, styles.footnote, styles.caption, styles.caption2,
+            styles.callout, styles.subheadline, styles.footnote, styles.caption, styles.caption2
         ).map { it.fontSize.value }
         assertEquals(listOf(34f, 28f, 22f, 20f, 17f, 16f, 15f, 13f, 12f, 11f), sizes)
     }
@@ -41,7 +41,7 @@ class DSTokensTest {
         val brand = DSBrand(
             accent = androidx.compose.ui.graphics.Color(0xFFD0212E),
             accentDark = androidx.compose.ui.graphics.Color(0xFFEA4652),
-            accentSecondary = androidx.compose.ui.graphics.Color(0xFF111111),
+            accentSecondary = androidx.compose.ui.graphics.Color(0xFF111111)
         )
         val dark = DSColorTokens.Dark.withBrand(brand, dark = true)
         assertEquals(brand.accentDark, dark.accent)

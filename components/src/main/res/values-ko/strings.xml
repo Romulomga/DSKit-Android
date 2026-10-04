@@ -17,4 +17,7 @@
     <string name="dskit_hide_password">비밀번호 숨기기</string>
     <string name="dskit_show_password">비밀번호 표시</string>
     <string name="dskit_not_selected">선택 안 됨</string>
+    <string name="dskit_locked">잠김</string>
+    <string name="dskit_minimum">최소</string>
+    <string name="dskit_maximum">최대</string>
 </resources>
