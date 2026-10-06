@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import io.github.romulomga.dskit.components.R
-import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 /** Qual alça de um `DSRangeSlider` o usuário moveu. */
@@ -57,8 +56,9 @@ public enum class DSRangeSliderThumb {
  * (uma tabela de preços, de áreas) e mostra isso em `valueText`.
  *
  * Durante o arraste a alça segue o dedo e vibra a cada passo que cruza; ao soltar, encaixa no passo mais
- * próximo. As alças nunca se sobrepõem: a que se move para a uma alça de distância da outra (e nunca a menos
- * de `minimumDistance` passos). Para o TalkBack cada alça é um controle ajustável (deslize para cima ou
+ * próximo. As alças nunca se sobrepõem e o intervalo ainda desce a `minimumDistance` passos: cada alça anda
+ * na própria pista, deslocadas de uma largura de alça (a da esquerda em `0..largura - alça`, a da direita em
+ * `alça..largura`), então no mesmo passo elas ficam lado a lado. Para o TalkBack cada alça é um controle ajustável (deslize para cima ou
  * para baixo).
  *
  * O `RangeSlider` do Material não serve aqui: não impõe distância mínima entre as alças nem tem o visual do
@@ -169,19 +169,23 @@ private fun RangeTrack(
     ) {
         val width = constraints.maxWidth.toFloat()
 
-        fun position(index: Int): Float = width * index.coerceIn(0, stepCount) / stepCount
+        // Comprimento da pista de cada alça: o trilho menos a largura de alça que as mantém separadas.
+        val lane = (width - thumbPx).coerceAtLeast(0f)
 
-        fun index(atX: Float): Int = if (width <= 0f) 0 else (atX / width * stepCount).roundToInt()
+        // Onde a alça fica num passo: a pista da direita começa uma alça para dentro.
+        fun position(index: Int, which: DSRangeSliderThumb): Float {
+            val start = if (which == DSRangeSliderThumb.Upper) thumbPx else 0f
+            return lane * index.coerceIn(0, stepCount) / stepCount + start
+        }
 
-        // Passos que as alças mantêm entre si para nunca se sobreporem nesta largura.
-        fun gapSteps(): Int {
-            if (width <= 0f) return minimumDistance
-            val stepWidth = width / stepCount
-            return maxOf(minimumDistance, ceil(thumbPx / stepWidth).toInt())
+        fun index(atX: Float, which: DSRangeSliderThumb): Int {
+            if (lane <= 0f) return if (which == DSRangeSliderThumb.Lower) 0 else stepCount
+            val laneX = atX - if (which == DSRangeSliderThumb.Upper) thumbPx else 0f
+            return (laneX / lane * stepCount).roundToInt()
         }
 
         fun set(which: DSRangeSliderThumb, target: Int): Boolean {
-            val gap = gapSteps()
+            val gap = minimumDistance
             return when (which) {
                 DSRangeSliderThumb.Lower -> {
                     val value = target.coerceAtMost((upper - gap).coerceAtLeast(0)).coerceAtLeast(0)
@@ -197,15 +201,18 @@ private fun RangeTrack(
             }
         }
 
-        // A alça arrastada segue o dedo, presa ao trilho e à outra alça.
+        // A alça arrastada segue o dedo, presa à própria pista e ao passo mais distante que a outra alça permite.
         fun thumbX(which: DSRangeSliderThumb): Float {
             val finger = dragX
             if (activeThumb != which || finger == null) {
-                return position(if (which == DSRangeSliderThumb.Lower) lowerIndex else upperIndex)
+                return position(if (which == DSRangeSliderThumb.Lower) lowerIndex else upperIndex, which)
             }
             return when (which) {
-                DSRangeSliderThumb.Lower -> finger.coerceIn(0f, (position(upperIndex) - thumbPx).coerceAtLeast(0f))
-                DSRangeSliderThumb.Upper -> finger.coerceIn((position(lowerIndex) + thumbPx).coerceAtMost(width), width)
+                DSRangeSliderThumb.Lower ->
+                    finger.coerceIn(0f, position((upperIndex - minimumDistance).coerceAtLeast(0), DSRangeSliderThumb.Lower))
+
+                DSRangeSliderThumb.Upper ->
+                    finger.coerceIn(position((lowerIndex + minimumDistance).coerceAtMost(stepCount), DSRangeSliderThumb.Upper), width)
             }
         }
 
@@ -279,7 +286,7 @@ private fun RangeTrack(
                                 change.consume()
                                 val finger = (dragX ?: x()) + delta
                                 dragX = finger
-                                val target = index(finger)
+                                val target = index(finger, which)
                                 val current = if (which == DSRangeSliderThumb.Lower) lower else upper
                                 if (target != current && set(which, target)) haptics.light()
                             }

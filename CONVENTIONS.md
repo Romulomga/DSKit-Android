@@ -1,6 +1,6 @@
 # Convenções do DSKit Android
 
-O DSKit Android é o irmão do DSKit iOS (`~/DSKit`, tag 1.0.37). Cada componente é o porte do arquivo Swift de
+O DSKit Android é o irmão do DSKit iOS (`~/DSKit`, tag 1.0.38). Cada componente é o porte do arquivo Swift de
 mesmo nome: mesmo nome, mesmos parâmetros traduzidos, mesmo visual, mesmos estados.
 
 ## Onde fica

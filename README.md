@@ -1,7 +1,7 @@
 # DSKit Android
 
 Design system em Jetpack Compose, irmão do [DSKit iOS](https://github.com/Romulomga/DSKit) (paridade com a tag
-`1.0.37`): os mesmos tokens, com os mesmos valores, e os mesmos componentes, com os mesmos nomes. É agnóstico:
+`1.0.38`): os mesmos tokens, com os mesmos valores, e os mesmos componentes, com os mesmos nomes. É agnóstico:
 nenhum app tem código aqui; cada app passa a própria marca e a própria fonte pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3.
@@ -88,6 +88,6 @@ Escolhas de plataforma, não lacunas:
 - **Fonte de sistema é a Roboto** quando o app não passa família (no iOS, a San Francisco).
 - `DSErrorState`/`DSEmptyState` juntam ícone e texto num elemento do TalkBack, mas o botão continua tocável à parte.
 - `DSResultCard` reduz o texto até 50 % antes de quebrar (`TextAutoSize`), como o `minimumScaleFactor`.
-- `DSRangeSlider` tem trilho próprio (o `RangeSlider` do Material não garante distância mínima) e não anima o número.
+- `DSRangeSlider` tem trilho próprio (o `RangeSlider` do Material sobrepõe as alças e não garante distância mínima em passos): cada alça anda numa pista deslocada de uma largura de alça, então o intervalo desce a 1 passo sem sobrepor; não anima o número.
 - `DSNumberField` não apaga o campo quando se digita um caractere inválido depois de um número (o iOS apaga; parece bug
   do iOS, não reproduzido aqui).

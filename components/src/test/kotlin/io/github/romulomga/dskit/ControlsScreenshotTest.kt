@@ -112,6 +112,23 @@ class ControlsScreenshotTest : ScreenshotTestBase() {
             )
             DSRangeSlider(lowerIndex = 0, upperIndex = 11, onLowerIndexChange = {}, onUpperIndexChange = {}, stepCount = 11)
             DSRangeSlider(
+                lowerIndex = 60,
+                upperIndex = 61,
+                onLowerIndexChange = {},
+                onUpperIndexChange = {},
+                stepCount = 116,
+                valueText = "Um passo"
+            )
+            DSRangeSlider(
+                lowerIndex = 116,
+                upperIndex = 116,
+                onLowerIndexChange = {},
+                onUpperIndexChange = {},
+                stepCount = 116,
+                minimumDistance = 0,
+                valueText = "Mesmo passo, no fim"
+            )
+            DSRangeSlider(
                 lowerIndex = 5,
                 upperIndex = 6,
                 onLowerIndexChange = {},
