@@ -82,11 +82,6 @@ class DSTokenDetector :
     private fun isMaterial(method: PsiMethod): Boolean =
         method.containingClass?.qualifiedName?.startsWith("androidx.compose.material") == true
 
-    private fun isExempt(node: UElement): Boolean {
-        val pkg = node.getContainingUFile()?.packageName.orEmpty()
-        return pkg.startsWith("io.github.romulomga.dskit") || pkg.split('.').any { it == "designsystem" }
-    }
-
     private fun report(context: JavaContext, issue: Issue, node: UElement, message: String) {
         context.report(issue, node, context.getLocation(node), message)
     }
@@ -157,4 +152,10 @@ class DSTokenDetector :
             MATERIAL_ICON_LITERAL
         )
     }
+}
+
+/** Código do próprio DSKit ou de um pacote `designsystem` do app: é lá que tokens e Material viram componentes. */
+internal fun isExempt(node: UElement): Boolean {
+    val pkg = node.getContainingUFile()?.packageName.orEmpty()
+    return pkg.startsWith("io.github.romulomga.dskit") || pkg.split('.').any { it == "designsystem" }
 }

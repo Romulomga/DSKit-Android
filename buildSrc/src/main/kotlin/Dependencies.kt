@@ -27,6 +27,7 @@ object Dependencies {
         const val roborazzi = "io.github.takahirom.roborazzi:roborazzi:${Versions.roborazzi}"
         const val roborazziCompose = "io.github.takahirom.roborazzi:roborazzi-compose:${Versions.roborazzi}"
         const val roborazziRule = "io.github.takahirom.roborazzi:roborazzi-junit-rule:${Versions.roborazzi}"
+        const val roborazziAccessibility = "io.github.takahirom.roborazzi:roborazzi-accessibility-check:${Versions.roborazzi}"
     }
 
     object Ktlint {

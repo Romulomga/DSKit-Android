@@ -55,6 +55,7 @@ dependencies {
     testImplementation(Dependencies.Test.roborazzi)
     testImplementation(Dependencies.Test.roborazziCompose)
     testImplementation(Dependencies.Test.roborazziRule)
+    testImplementation(Dependencies.Test.roborazziAccessibility)
     testImplementation(Dependencies.Compose.uiTestJunit4)
     debugImplementation(Dependencies.Compose.uiTestManifest)
 }

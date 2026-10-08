@@ -56,5 +56,8 @@ mesmo nome: mesmo nome, mesmos parâmetros traduzidos, mesmo visual, mesmos esta
 - Cada grupo tem um teste de screenshot em `components/src/test/kotlin/io/github/romulomga/dskit/<Grupo>ScreenshotTest.kt`
   que estende `ScreenshotTestBase` e chama `snapshot("<grupo>_<componente>") { … }` para cada componente
   e estado relevante.
+- O `snapshot` também roda o Accessibility Test Framework do Google no claro e no escuro (alvo de toque, contraste,
+  rótulo legível pelo TalkBack) e falha em erro, como o Now in Android. Exceção real vai em
+  `accessibilitySuppressions`, com o motivo ao lado; o `stillSnapshot` (animação infinita) confere também.
 - KDoc em português nas declarações públicas, dizendo para que serve e quando usar (o iOS tem o texto em inglês;
   traduza o sentido).

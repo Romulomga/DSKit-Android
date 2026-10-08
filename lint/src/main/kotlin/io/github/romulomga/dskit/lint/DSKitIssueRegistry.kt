@@ -10,7 +10,7 @@ import com.android.tools.lint.detector.api.Issue
  * layout fora do design system do app use só tokens e componentes.
  */
 class DSKitIssueRegistry : IssueRegistry() {
-    override val issues: List<Issue> = DSTokenDetector.ISSUES
+    override val issues: List<Issue> = DSTokenDetector.ISSUES + DSComponentDetector.ISSUE
 
     override val api: Int = CURRENT_API
 

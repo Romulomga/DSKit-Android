@@ -62,11 +62,16 @@ Fora do próprio DSKit e de pacotes `…designsystem…` do app, avisam: `DSRawC
 (`CircularProgressIndicator()` solto), `DSFontLiteral` (`fontSize = 14.sp`) e `DSMaterialIcon` (`Icons.Default.*`).
 São as `ds_*` do SwiftLint do app iOS.
 
+`DSComponent` é **erro**: componente do Material 3 chamado onde o DSKit tem o seu (`Button` → `DSPrimaryButton`,
+`TextField` → `DSTextField`, `Switch` → `DSToggleRow`, `MaterialTheme` → `DSTheme`…; o mapa está em
+`DSComponentDetector.REPLACEMENTS`). Material sem equivalente (`Scaffold`, `ModalBottomSheet`…) segue livre.
+Veio do `DesignSystemDetector` do Now in Android. Se o DSKit não cobre o caso, evolua o DSKit em vez de suprimir.
+
 ## Desenvolvimento
 
 ```sh
 ./gradlew ktlint lint test :sample:assembleDebug   # tudo o que o CI vai rodar
-./gradlew :components:recordRoborazziDebug         # grava as screenshots (claro, escuro, fonte 200 %)
+./gradlew :components:recordRoborazziDebug         # grava as screenshots (claro, escuro, fonte 200 %) e roda o ATF
 ./gradlew :components:verifyRoborazziDebug         # compara com as gravadas
 scripts/sync-tokens.py                             # regenera as cores a partir dos colorsets do DSKit iOS
 scripts/sync-tokens.py --check                     # só confere (CI)
