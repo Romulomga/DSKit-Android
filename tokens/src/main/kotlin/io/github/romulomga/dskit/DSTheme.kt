@@ -1,7 +1,11 @@
 package io.github.romulomga.dskit
 
 import android.app.UiModeManager
+import android.content.ContentResolver
+import android.database.ContentObserver
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -18,6 +22,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -31,8 +36,8 @@ public val LocalDSHapticsEnabled: ProvidableCompositionLocal<Boolean> = composit
 
 /**
  * `true` quando o usuário ligou "Remover animações" (escala de animação 0). As animações do Compose já
- * respeitam a escala; isto é para o que o componente decide sozinho, como um pulso infinito. Lido quando o
- * tema entra na tela.
+ * respeitam a escala; isto é para o que o componente decide sozinho, como um pulso infinito. Muda junto com
+ * a opção do sistema.
  */
 public val LocalDSReduceMotion: ProvidableCompositionLocal<Boolean> = compositionLocalOf { false }
 
@@ -57,17 +62,19 @@ public fun DSTheme(
     dynamicColor: Boolean = false,
     contrast: DSContrast = rememberSystemContrast(),
     fontFamily: FontFamily? = null,
-    shapes: Shapes = Shapes(),
+    shapes: Shapes = DefaultShapes,
     hapticsEnabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
 
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    val colorScheme = remember(context, brand, darkTheme, dynamicColor, contrast) {
+        when {
+            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
 
-        else -> brand.colorScheme(darkTheme, contrast)
+            else -> brand.colorScheme(darkTheme, contrast)
+        }
     }
 
     val typography = remember(fontFamily) { DSTypography.create(fontFamily) }
@@ -144,7 +151,24 @@ public fun rememberSystemContrast(): DSContrast {
 @Composable
 private fun rememberReduceMotion(): Boolean {
     val context = LocalContext.current
-    return remember(context) {
-        Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+    val resolver = context.contentResolver
+    var reduce by remember(resolver) { mutableStateOf(readReduceMotion(resolver)) }
+
+    DisposableEffect(resolver) {
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                reduce = readReduceMotion(resolver)
+            }
+        }
+        resolver.registerContentObserver(Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE), false, observer)
+        onDispose { resolver.unregisterContentObserver(observer) }
     }
+
+    return reduce
 }
+
+private fun readReduceMotion(resolver: ContentResolver): Boolean =
+    Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+
+/** Uma instância só para o padrão do [DSTheme], em vez de uma por recomposição. */
+private val DefaultShapes = Shapes()

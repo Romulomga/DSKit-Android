@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.plugin.compose")
+    `maven-publish`
 }
 
 apply {
@@ -14,6 +15,13 @@ android {
     defaultConfig {
         minSdk = Configs.Common.minSdk
         buildConfigField("String", "DSKIT_VERSION", "\"${project.property("VERSION_NAME")}\"")
+    }
+
+    // O que sai no Maven: só o release, com o código-fonte (a IDE mostra o KDoc de quem usa).
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 
     compileOptions {
@@ -57,4 +65,19 @@ dependencies {
     debugImplementation(Dependencies.Compose.uiTooling)
 
     testImplementation(Dependencies.Test.junit)
+}
+
+// `com.github.Romulomga.DSKit-Android:tokens:<versão>` pelo JitPack, ou `./gradlew publishToMavenLocal` para testar.
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = project.property("GROUP").toString()
+            artifactId = "tokens"
+            version = project.property("VERSION_NAME").toString()
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }

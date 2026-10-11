@@ -1,10 +1,6 @@
 package io.github.romulomga.dskit
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,16 +14,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Esqueleto de carregamento: enquanto [isLoading], o elemento vira um bloco na forma [shape] que pulsa
@@ -43,21 +45,6 @@ import androidx.compose.ui.unit.dp
 public fun Modifier.dsSkeleton(isLoading: Boolean, shape: Shape = DSTheme.shapes.extraSmall): Modifier {
     if (!isLoading) return this
 
-    val color = skeletonColor()
-    val reduceMotion = DSTheme.reduceMotion
-    val pulse = if (reduceMotion) {
-        1f
-    } else {
-        val transition = rememberInfiniteTransition(label = "dsSkeleton")
-        val alpha by transition.animateFloat(
-            initialValue = 1f,
-            targetValue = PulseMinAlpha,
-            animationSpec = infiniteRepeatable(tween(PulseMillis), RepeatMode.Reverse),
-            label = "dsSkeletonPulse"
-        )
-        alpha
-    }
-
     return this
         .clearAndSetSemantics {}
         .pointerInput(Unit) {
@@ -65,9 +52,80 @@ public fun Modifier.dsSkeleton(isLoading: Boolean, shape: Shape = DSTheme.shapes
                 awaitPointerEvent().changes.forEach { it.consume() }
             }
         }
-        .drawWithContent {
-            drawOutline(shape.createOutline(size, layoutDirection, this), color = color, alpha = pulse)
+        .then(SkeletonElement(skeletonColor(), shape, pulse = !DSTheme.reduceMotion))
+}
+
+/**
+ * O bloco do esqueleto, desenhado por um `Modifier.Node`: o pulso só invalida o desenho, nunca a composição
+ * de quem usa. A opacidade sai do relógio de quadros, então todos os blocos da tela pulsam juntos sem uma
+ * animação por elemento.
+ */
+private data class SkeletonElement(val color: Color, val shape: Shape, val pulse: Boolean) : ModifierNodeElement<SkeletonNode>() {
+    override fun create(): SkeletonNode = SkeletonNode(color, shape, pulse)
+
+    override fun update(node: SkeletonNode) {
+        node.color = color
+        node.shape = shape
+        node.updatePulse(pulse)
+        node.invalidateDraw()
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        name = "dsSkeleton"
+        properties["shape"] = shape
+    }
+}
+
+private class SkeletonNode(var color: Color, var shape: Shape, private var pulse: Boolean) :
+    Modifier.Node(),
+    DrawModifierNode {
+    private var alpha = 1f
+    private var job: Job? = null
+
+    override fun onAttach() {
+        if (pulse) start()
+    }
+
+    override fun onDetach() {
+        job = null
+    }
+
+    fun updatePulse(pulse: Boolean) {
+        if (this.pulse == pulse) return
+
+        this.pulse = pulse
+        if (pulse && isAttached) {
+            start()
+        } else {
+            job?.cancel()
+            job = null
+            alpha = 1f
         }
+    }
+
+    private fun start() {
+        job?.cancel()
+        job = coroutineScope.launch {
+            while (true) {
+                withFrameMillis { frameMillis ->
+                    alpha = pulseAlpha(frameMillis)
+                    invalidateDraw()
+                }
+            }
+        }
+    }
+
+    override fun ContentDrawScope.draw() {
+        drawOutline(shape.createOutline(size, layoutDirection, this), color = color, alpha = alpha)
+    }
+}
+
+/** Vai de 1 a [PulseMinAlpha] e volta em `2 × PulseMillis`, com a curva padrão do Material nos dois sentidos. */
+private fun pulseAlpha(frameMillis: Long): Float {
+    val position = (frameMillis % (PulseMillis * 2)).toFloat() / PulseMillis
+    val fraction = if (position <= 1f) position else 2f - position
+
+    return 1f - (1f - PulseMinAlpha) * FastOutSlowInEasing.transform(fraction)
 }
 
 /**

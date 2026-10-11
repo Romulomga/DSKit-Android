@@ -6,6 +6,10 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.0] - 2026-10-11
+
+Primeira versão publicada.
+
 ### Mudou
 
 - Reescrita sobre o Material 3 nativo ([ADR 0001](docs/adr/0001-material-3-nativo.md)). Os componentes de
@@ -31,4 +35,15 @@ quebra vem descrita aqui com o código de migração.
 - `DSAutocompleteField`, `DSTextLink`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSTooltip`, `DSDivider`, `DSVerticalDivider`.
 - `DSIconButton` mostra a dica do Material com o `contentDescription` ao segurar.
 - Lint: `DSSpacingLiteral` e `DSAnimationLiteral` dizem o token e trocam sozinhos quando o valor está na escala.
+- `DSTextField(contentType = …)` para o autofill do sistema.
+- `DSTextLink(allowedSchemes, onOpenFailure)`: só abre `https`, `mailto` e `tel` por padrão e não derruba o app
+  quando nenhum app abre o endereço.
+- Publicação pelo JitPack, com o código-fonte junto.
+
+### Corrigido
+
+- `DSTextField(password = true)` com `keyboardOptions` próprio perdia o teclado de senha (o teclado sugeria e
+  aprendia a senha). Agora o teclado de senha, sem correção, vale sempre, e o autofill sabe que é senha.
+- `Modifier.dsSkeleton` recompunha quem o usava a cada quadro; agora o pulso só redesenha.
+- "Remover animações" passa a valer na hora, sem reabrir a tela.
 - Screenshots da direita para a esquerda e em alto contraste.

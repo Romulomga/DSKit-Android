@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.plugin.compose")
+    `maven-publish`
     id("io.github.takahirom.roborazzi")
 }
 
@@ -15,6 +16,13 @@ android {
     defaultConfig {
         minSdk = Configs.Common.minSdk
         consumerProguardFiles("consumer-rules.pro")
+    }
+
+    // O que sai no Maven: só o release, com o código-fonte (a IDE mostra o KDoc de quem usa).
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 
     compileOptions {
@@ -71,4 +79,19 @@ dependencies {
     testImplementation(Dependencies.Test.roborazziAccessibility)
     testImplementation(Dependencies.Compose.uiTestJunit4)
     debugImplementation(Dependencies.Compose.uiTestManifest)
+}
+
+// `com.github.Romulomga.DSKit-Android:components:<versão>` pelo JitPack, ou `./gradlew publishToMavenLocal` para testar.
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = project.property("GROUP").toString()
+            artifactId = "components"
+            version = project.property("VERSION_NAME").toString()
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }

@@ -8,7 +8,28 @@ pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
 - Sem dependência além de AndroidX/Compose.
-- Ainda **não publicado**; o histórico de mudanças fica em [`CHANGELOG.md`](CHANGELOG.md).
+- Publicado pelo [JitPack](https://jitpack.io/#Romulomga/DSKit-Android); mudanças de cada versão em
+  [`CHANGELOG.md`](CHANGELOG.md).
+
+## Instalação
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io") { content { includeGroup("com.github.Romulomga.DSKit-Android") } }
+    }
+}
+
+// build.gradle.kts do app
+dependencies {
+    implementation("com.github.Romulomga.DSKit-Android:components:0.1.0") // traz o tokens e as regras de lint
+}
+```
+
+O `content { includeGroup(…) }` faz o Gradle buscar só o DSKit no JitPack, e nada mais.
 
 ## Uso
 
@@ -107,6 +128,10 @@ Espaçamento e duração dizem o token certo e, quando o valor está na escala, 
 ./gradlew :components:verifyRoborazziDebug   # compara com as gravadas
 ./gradlew assembleRelease -Pdskit.composeReports=true   # relatório de estabilidade do Compose em build/compose_compiler
 ```
+
+Para lançar uma versão: mova o "Não lançado" do `CHANGELOG.md` para `## [x.y.z] - data`, ponha `VERSION_NAME=x.y.z`
+em `gradle.properties`, faça o commit e envie a tag (`git tag x.y.z && git push origin x.y.z`). O workflow
+`release.yml` confere a versão, roda as checagens, cria a release no GitHub e pede a compilação ao JitPack.
 
 Decisões de arquitetura em [`docs/adr/`](docs/adr/); convenções em
 [`CONVENTIONS.md`](CONVENTIONS.md).

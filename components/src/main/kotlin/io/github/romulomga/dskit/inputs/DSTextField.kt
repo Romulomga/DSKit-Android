@@ -15,8 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,9 +35,13 @@ import io.github.romulomga.dskit.components.R
  * @param supportingText linha de apoio ("Mínimo 6 caracteres").
  * @param errorText mensagem de erro; não nula, o campo fica em estado de erro.
  * @param leadingIcon ícone decorativo à esquerda (busca, e-mail).
- * @param password esconde o texto e mostra o olho para alternar.
+ * @param password esconde o texto e mostra o olho para alternar. Força o teclado de senha (sem sugestão nem
+ * aprendizado, mesmo com [keyboardOptions] próprio) e avisa o autofill que o campo é senha.
  * @param clearable mostra o botão de limpar enquanto há texto.
  * @param singleLine `false` para textos longos, que crescem até [maxLines].
+ * @param contentType o que o campo guarda, para o autofill do sistema e os gerenciadores de senha
+ * (`ContentType.EmailAddress`, `ContentType.Username`, `ContentType.NewPassword`…). Com [password] e sem
+ * este, é `ContentType.Password`.
  */
 @Composable
 public fun DSTextField(
@@ -54,17 +60,20 @@ public fun DSTextField(
     singleLine: Boolean = true,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    contentType: ContentType? = null
 ) {
     var revealed by rememberSaveable { mutableStateOf(false) }
     val isError = errorText != null
+    val autofillType = contentType ?: if (password) ContentType.Password else null
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
-            .then(if (errorText != null) Modifier.semantics { error(errorText) } else Modifier),
+            .then(if (errorText != null) Modifier.semantics { error(errorText) } else Modifier)
+            .then(if (autofillType != null) Modifier.semantics { this.contentType = autofillType } else Modifier),
         enabled = enabled,
         readOnly = readOnly,
         label = { Text(label) },
@@ -97,8 +106,8 @@ public fun DSTextField(
         supportingText = (errorText ?: supportingText)?.let { { Text(it) } },
         isError = isError,
         visualTransformation = if (password && !revealed) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = if (password && keyboardOptions == KeyboardOptions.Default) {
-            KeyboardOptions(keyboardType = KeyboardType.Password)
+        keyboardOptions = if (password) {
+            keyboardOptions.copy(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)
         } else {
             keyboardOptions
         },
