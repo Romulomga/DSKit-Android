@@ -39,6 +39,8 @@ Requisitos do app, porque tudo vira um build só:
 - **o mesmo Android Gradle Plugin do DSKit** (hoje 9.4.1): o AGP não aceita duas versões no mesmo build;
 - Kotlin 2.4 com o plugin do Compose, JDK 21 e `compileSdk` 37 ou maior;
 - o Android SDK achado pelo `local.properties` do app ou por `ANDROID_HOME` (o DSKit copia o `sdk.dir` do app).
+- memória para o Gradle compilar o DSKit junto: `org.gradle.jvmargs=-Xmx4096m` no `gradle.properties` do app (com
+  o padrão de 512 MB, a compilação para por falta de memória).
 
 Quem não puder acompanhar o AGP do DSKit pode usar o binário pelo [JitPack](https://jitpack.io/#Romulomga/DSKit-Android)
 (`maven("https://jitpack.io")` e as mesmas coordenadas; aí as regras de lint já vêm no AAR).
