@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dskit_clear">مسح</string>
-    <string name="dskit_continue">متابعة</string>
-    <string name="dskit_done">تم</string>
     <string name="dskit_enter_valid_number">أدخل رقمًا صالحًا</string>
-    <string name="dskit_no_items">لا توجد عناصر</string>
-    <string name="dskit_one_item_per_line">عنصر واحد في كل سطر</string>
-    <string name="dskit_paste">لصق</string>
     <string name="dskit_try_again">حاول مجددًا</string>
-    <plurals name="dskit_items_count">
-        <item quantity="zero">لا توجد عناصر</item>
-        <item quantity="one">عنصر %d</item>
-        <item quantity="two">عنصران (%d)</item>
-        <item quantity="few">%d عناصر</item>
-        <item quantity="many">%d عنصرًا</item>
-        <item quantity="other">%d عنصر</item>
-    </plurals>
-    <plurals name="dskit_duplicates_count">
-        <item quantity="zero">لا توجد تكرارات</item>
-        <item quantity="one">تكرار %d</item>
-        <item quantity="two">تكراران (%d)</item>
-        <item quantity="few">%d تكرارات</item>
-        <item quantity="many">%d تكرارًا</item>
-        <item quantity="other">%d تكرار</item>
-    </plurals>
     <string name="dskit_hide_password">إخفاء كلمة المرور</string>
     <string name="dskit_show_password">إظهار كلمة المرور</string>
-    <string name="dskit_not_selected">غير محدد</string>
-    <string name="dskit_locked">مقفل</string>
-    <string name="dskit_minimum">الحد الأدنى</string>
-    <string name="dskit_maximum">الحد الأقصى</string>
+    <string name="dskit_back">رجوع</string>
+    <string name="dskit_loading">جارٍ التحميل…</string>
+    <string name="dskit_remove_item">إزالة %1$s</string>
+    <string name="dskit_dismiss">تجاهل</string>
 </resources>

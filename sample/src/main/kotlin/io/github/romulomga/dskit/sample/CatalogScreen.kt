@@ -1,223 +1,379 @@
 package io.github.romulomga.dskit.sample
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.romulomga.dskit.DSAdaptiveGrid
+import io.github.romulomga.dskit.DSAlertDialog
+import io.github.romulomga.dskit.DSAssistChip
+import io.github.romulomga.dskit.DSAutocompleteField
+import io.github.romulomga.dskit.DSBadgedBox
+import io.github.romulomga.dskit.DSBanner
+import io.github.romulomga.dskit.DSBannerStyle
+import io.github.romulomga.dskit.DSBottomSheet
+import io.github.romulomga.dskit.DSButton
 import io.github.romulomga.dskit.DSCard
 import io.github.romulomga.dskit.DSCardVariant
-import io.github.romulomga.dskit.DSChip
-import io.github.romulomga.dskit.DSDestructiveButton
+import io.github.romulomga.dskit.DSCheckbox
+import io.github.romulomga.dskit.DSCheckboxListItem
+import io.github.romulomga.dskit.DSDivider
+import io.github.romulomga.dskit.DSDropdownField
 import io.github.romulomga.dskit.DSEmptyState
 import io.github.romulomga.dskit.DSErrorState
-import io.github.romulomga.dskit.DSFeatureCard
+import io.github.romulomga.dskit.DSExtendedFab
+import io.github.romulomga.dskit.DSFilterChip
 import io.github.romulomga.dskit.DSIconButton
+import io.github.romulomga.dskit.DSIconButtonStyle
 import io.github.romulomga.dskit.DSIcons
-import io.github.romulomga.dskit.DSListInput
-import io.github.romulomga.dskit.DSLoadingState
+import io.github.romulomga.dskit.DSInputChip
+import io.github.romulomga.dskit.DSKit
+import io.github.romulomga.dskit.DSLinearProgress
+import io.github.romulomga.dskit.DSLink
+import io.github.romulomga.dskit.DSListItem
+import io.github.romulomga.dskit.DSListSectionHeader
+import io.github.romulomga.dskit.DSLoadingOverlay
+import io.github.romulomga.dskit.DSNavigationItem
+import io.github.romulomga.dskit.DSNavigationScaffold
 import io.github.romulomga.dskit.DSNumberField
-import io.github.romulomga.dskit.DSOptionChip
-import io.github.romulomga.dskit.DSPagedTabs
-import io.github.romulomga.dskit.DSPickerField
-import io.github.romulomga.dskit.DSPickerOption
-import io.github.romulomga.dskit.DSPillButton
-import io.github.romulomga.dskit.DSPillButtonVariant
-import io.github.romulomga.dskit.DSPrimaryButton
-import io.github.romulomga.dskit.DSProgressBar
+import io.github.romulomga.dskit.DSOption
+import io.github.romulomga.dskit.DSOutlinedButton
+import io.github.romulomga.dskit.DSRadioListItem
 import io.github.romulomga.dskit.DSRangeSlider
-import io.github.romulomga.dskit.DSResultCard
 import io.github.romulomga.dskit.DSScreen
-import io.github.romulomga.dskit.DSSecondaryButton
-import io.github.romulomga.dskit.DSSection
-import io.github.romulomga.dskit.DSSegmentedOption
-import io.github.romulomga.dskit.DSSegmentedPicker
-import io.github.romulomga.dskit.DSSegmentedStyle
-import io.github.romulomga.dskit.DSSettingsRow
-import io.github.romulomga.dskit.DSSettingsSection
+import io.github.romulomga.dskit.DSScreenColumn
+import io.github.romulomga.dskit.DSScreenDefaults
+import io.github.romulomga.dskit.DSSegmentedButton
+import io.github.romulomga.dskit.DSSheetAction
+import io.github.romulomga.dskit.DSSkeletonRow
+import io.github.romulomga.dskit.DSSnackbarStyle
 import io.github.romulomga.dskit.DSSpacing
+import io.github.romulomga.dskit.DSSwitchListItem
+import io.github.romulomga.dskit.DSTabs
+import io.github.romulomga.dskit.DSTextButton
 import io.github.romulomga.dskit.DSTextField
+import io.github.romulomga.dskit.DSTextLink
 import io.github.romulomga.dskit.DSTheme
-import io.github.romulomga.dskit.DSToastMessage
-import io.github.romulomga.dskit.DSToastStyle
-import io.github.romulomga.dskit.DSToggleRow
-import io.github.romulomga.dskit.DSTypography
+import io.github.romulomga.dskit.DSTonalButton
+import io.github.romulomga.dskit.DSTooltip
+import io.github.romulomga.dskit.DSTopAppBarStyle
+import io.github.romulomga.dskit.dsSkeleton
+import io.github.romulomga.dskit.showDSSnackbar
+import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-private enum class Tab(val label: String) { Buttons("Botões"), Fields("Campos"), Controls("Controles"), Feedback("Feedback") }
+private enum class Tab(val label: String) { Actions("Ações"), Inputs("Entrada"), Feedback("Feedback"), Settings("Ajustes") }
 
 @Composable
-internal fun CatalogScreen(
-    dark: Boolean,
-    onDarkChange: (Boolean) -> Unit,
-    prominentLabels: Boolean,
-    onProminentLabelsChange: (Boolean) -> Unit,
-    onToast: (DSToastMessage) -> Unit
-) {
-    var loading by remember { mutableStateOf(false) }
+internal fun CatalogApp(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynamicColor: Boolean, onDynamicColorChange: (Boolean) -> Unit) {
+    var tab by rememberSaveable { mutableStateOf(Tab.Actions) }
+
+    DSNavigationScaffold(
+        items = listOf(
+            DSNavigationItem(Tab.Actions, Tab.Actions.label, DSIcons.Home),
+            DSNavigationItem(Tab.Inputs, Tab.Inputs.label, DSIcons.Edit),
+            DSNavigationItem(Tab.Feedback, Tab.Feedback.label, DSIcons.Inbox, badgeCount = 2),
+            DSNavigationItem(Tab.Settings, Tab.Settings.label, DSIcons.Person)
+        ),
+        selection = tab,
+        onSelectionChange = { tab = it }
+    ) {
+        when (tab) {
+            Tab.Actions -> ActionsScreen()
+            Tab.Inputs -> InputsScreen()
+            Tab.Feedback -> FeedbackScreen()
+            Tab.Settings -> SettingsScreen(dark, onDarkChange, dynamicColor, onDynamicColorChange)
+        }
+    }
+}
+
+@Composable
+private fun ActionsScreen() {
+    var parking by remember { mutableStateOf(true) }
+    var pets by remember { mutableStateOf(false) }
 
     DSScreen(
-        title = "DSKit",
-        subtitle = "Android ${io.github.romulomga.dskit.DSKit.VERSION}",
-        bottomAction = {
-            DSPrimaryButton(
-                title = "Mostrar toast",
-                onClick = { onToast(DSToastMessage("Salvo com sucesso", DSIcons.CheckCircle, DSToastStyle.Success)) },
-                isLoading = loading
-            )
-        }
-    ) {
-        DSSettingsSection(title = "Aparência") {
-            DSSettingsRow(title = "Modo escuro", trailing = {
-                androidx.compose.material3.Switch(checked = dark, onCheckedChange = onDarkChange)
-            })
+        title = "DSKit ${DSKit.VERSION}",
+        topBarStyle = DSTopAppBarStyle.Large,
+        actions = { DSIconButton(DSIcons.Search, "Buscar", onClick = {}) },
+        floatingActionButton = { DSExtendedFab("Nova publicação", DSIcons.Add, onClick = {}) }
+    ) { padding ->
+        DSScreenColumn(padding) {
+            DSButton("Publicar", onClick = {}, icon = DSIcons.Add)
 
-            DSSettingsRow(title = "Rótulos em destaque", showsDivider = false, trailing = {
-                androidx.compose.material3.Switch(checked = prominentLabels, onCheckedChange = onProminentLabelsChange)
-            })
-        }
+            DSTonalButton("Salvar rascunho", onClick = {})
 
-        var tab by remember { mutableStateOf(Tab.Buttons) }
+            DSOutlinedButton("Cancelar", onClick = {})
 
-        DSPagedTabs(
-            sections = Tab.entries,
-            selection = tab,
-            onSelectionChange = { tab = it },
-            label = { it.label },
-            modifier = Modifier.height(720.dp)
-        ) { page ->
-            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)) {
-                when (page) {
-                    Tab.Buttons -> ButtonsPage(loading = loading, onLoadingChange = { loading = it })
-                    Tab.Fields -> FieldsPage()
-                    Tab.Controls -> ControlsPage()
-                    Tab.Feedback -> FeedbackPage(onToast)
+            DSTextButton("Esqueci a senha", onClick = {})
+
+            DSButton("Excluir conta", onClick = {}, destructive = true)
+
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+                DSIconButton(DSIcons.Share, "Compartilhar", onClick = {})
+                DSIconButton(DSIcons.Add, "Adicionar", onClick = {}, style = DSIconButtonStyle.Filled)
+                DSIconButton(DSIcons.Edit, "Editar", onClick = {}, style = DSIconButtonStyle.Tonal)
+                DSIconButton(DSIcons.Delete, "Excluir", onClick = {}, style = DSIconButtonStyle.Outlined)
+            }
+
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+                DSFilterChip("Com vaga", selected = parking, onSelectedChange = { parking = it })
+                DSFilterChip("Aceita pet", selected = pets, onSelectedChange = { pets = it })
+                DSInputChip("Ipanema", onRemove = {})
+                DSAssistChip("Ligar", onClick = {}, icon = DSIcons.Share)
+            }
+
+            DSCard {
+                Text("Apartamento em Ipanema", style = DSTheme.typography.titleMedium)
+                Text("3 quartos · 2 vagas · 120 m²", style = DSTheme.typography.bodyMedium)
+            }
+
+            DSCard(variant = DSCardVariant.Outlined, onClick = {}) { Text("Card com contorno, tocável") }
+
+            DSDivider()
+
+            Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.xl), verticalAlignment = Alignment.CenterVertically) {
+                DSBadgedBox(count = 3, badgeDescription = "3 mensagens não lidas") { Icon(DSIcons.Inbox, contentDescription = "Mensagens") }
+
+                DSTooltip(text = "Imóveis fixados ficam no topo do feed.", title = "Fixar") {
+                    Icon(DSIcons.Info, contentDescription = "Sobre fixar")
                 }
             }
+
+            DSTextLink(
+                text = "Ao publicar, você aceita os Termos de uso e a Política de privacidade.",
+                links = listOf(DSLink.Url("Termos de uso", "https://example.com/termos"), DSLink.Action("Política de privacidade") {})
+            )
         }
     }
 }
 
 @Composable
-private fun ButtonsPage(loading: Boolean, onLoadingChange: (Boolean) -> Unit) {
-    DSSection(title = "Botões") {
-        DSPrimaryButton(title = "Publicar", onClick = {}, icon = DSIcons.Plus)
-        DSSecondaryButton(title = "Continuar depois", onClick = {})
-        DSDestructiveButton(title = "Excluir", onClick = {})
-        DSToggleRow(title = "Botão principal carregando", checked = loading, onCheckedChange = onLoadingChange)
-
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm), verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
-            DSPillButton(title = "Primário", onClick = {})
-            DSPillButton(title = "Secundário", onClick = {}, variant = DSPillButtonVariant.Secondary)
-            DSPillButton(title = "Contorno", onClick = {}, variant = DSPillButtonVariant.Outlined)
-            DSIconButton(icon = DSIcons.Star, contentDescription = "Favoritar", onClick = {})
-        }
-    }
-
-    DSSection(title = "Cards") {
-        DSCard { Text("Card padrão", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
-        DSCard(variant = DSCardVariant.Elevated) { Text("Card elevado", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
-        DSFeatureCard(title = "Relatórios", description = "Resumo mensal das parcerias", icon = DSIcons.InfoCircle, onClick = {
-        }, badge = "Novo")
-        DSResultCard(title = "Resultado", primaryResult = "42")
-        DSAdaptiveGrid(minItemWidth = 120.dp) {
-            repeat(4) { DSCard { Text("Item ${it + 1}", style = DSTypography.subheadline, color = DSTheme.colors.onSurfaceHigh) } }
-        }
-    }
-}
-
-@Composable
-private fun FieldsPage() {
+private fun InputsScreen() {
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("corretor@") }
-    var quantity by remember { mutableStateOf<Int?>(3) }
+    var rooms by remember { mutableStateOf<Int?>(3) }
     var state by remember { mutableStateOf<String?>(null) }
-    var list by remember { mutableStateOf("Ipanema\nLeblon\nIpanema") }
+    var neighborhood by remember { mutableStateOf("") }
+    var deal by remember { mutableStateOf("sale") }
+    var price by remember { mutableStateOf(2f..6f) }
+    var kind by remember { mutableStateOf("Apartamento") }
+    var pool by remember { mutableStateOf(true) }
+    var terms by remember { mutableStateOf(false) }
 
-    DSSection(title = "Campos") {
-        DSTextField(value = name, onValueChange = { name = it }, title = "Nome", placeholder = "Seu nome", showsClearButton = true)
-        DSTextField(value = password, onValueChange = {
-            password = it
-        }, title = "Senha", placeholder = "Mínimo 6 caracteres", isSecure = true)
-        DSTextField(value = email, onValueChange = { email = it }, title = "E-mail", errorMessage = "E-mail inválido")
-        DSNumberField(value = quantity, onValueChange = { quantity = it }, title = "Quartos")
-        DSPickerField(
-            placeholder = "Escolha",
-            selection = state,
-            onSelectionChange = { state = it },
-            options = listOf("RJ", "SP", "MG").map { DSPickerOption(it, it) },
-            title = "Estado"
-        )
-        DSListInput(value = list, onValueChange = { list = it }, title = "Bairros")
+    DSScreen(title = "Entrada") { padding ->
+        DSScreenColumn(padding) {
+            DSTextField(value = name, onValueChange = {
+                name = it
+            }, label = "Nome", supportingText = "Como aparece no perfil", clearable = true)
+
+            DSTextField(value = password, onValueChange = { password = it }, label = "Senha", password = true)
+
+            DSTextField(value = email, onValueChange = { email = it }, label = "E-mail", errorText = "E-mail inválido")
+
+            DSNumberField(value = rooms, onValueChange = { rooms = it }, label = "Quartos")
+
+            DSAutocompleteField(
+                query = neighborhood,
+                onQueryChange = { neighborhood = it },
+                suggestions = Neighborhoods
+                    .filter { neighborhood.isNotBlank() && it.contains(neighborhood, ignoreCase = true) }
+                    .map { DSOption(it, it) },
+                onSuggestionSelect = { neighborhood = it.label },
+                label = "Bairro",
+                leadingIcon = DSIcons.Search
+            )
+
+            DSDropdownField(
+                selection = state,
+                onSelectionChange = { state = it },
+                options = listOf("RJ", "SP", "MG").map { DSOption(it, it) },
+                label = "Estado"
+            )
+
+            DSSegmentedButton(
+                selection = deal,
+                onSelectionChange = { deal = it },
+                options = listOf(DSOption("sale", "Venda"), DSOption("rent", "Aluguel"))
+            )
+
+            DSRangeSlider(
+                value = price,
+                onValueChange = { price = it },
+                label = "Preço (R$ mil)",
+                valueRange = 0f..10f,
+                steps = 9,
+                minimumDistance = 1f,
+                valueText = "${price.start.roundToInt() * 100} – ${price.endInclusive.roundToInt() * 100}"
+            )
+
+            Column(Modifier.selectableGroup()) {
+                listOf("Apartamento", "Casa").forEach { option ->
+                    DSRadioListItem(option, selected = kind == option, onClick = { kind = option })
+                }
+            }
+
+            DSCheckboxListItem("Piscina", checked = pool, onCheckedChange = { pool = it })
+
+            DSCheckbox("Li e aceito os termos", checked = terms, onCheckedChange = { terms = it })
+        }
     }
 }
 
 @Composable
-private fun ControlsPage() {
-    var chip by remember { mutableStateOf(true) }
-    var option by remember { mutableStateOf(false) }
-    var segment by remember { mutableStateOf("venda") }
-    var lower by remember { mutableIntStateOf(2) }
-    var upper by remember { mutableIntStateOf(6) }
+private fun FeedbackScreen() {
+    val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var section by remember { mutableIntStateOf(0) }
+    var refreshing by remember { mutableStateOf(false) }
+    var alert by remember { mutableStateOf(false) }
+    var sheet by remember { mutableStateOf(false) }
+    var overlay by remember { mutableStateOf(false) }
     var progress by remember { mutableFloatStateOf(0.4f) }
+    var offlineBanner by remember { mutableStateOf(true) }
 
-    DSSection(title = "Controles") {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
-            DSChip(title = "Apartamento", selected = chip, onClick = { chip = !chip }, emoji = "🏢")
-            DSOptionChip(title = "Com vaga", selected = option, onSelectedChange = { option = it })
+    LaunchedEffect(refreshing) {
+        if (refreshing) {
+            delay(1_500)
+            refreshing = false
+        }
+    }
+
+    LaunchedEffect(overlay) {
+        if (overlay) {
+            delay(2_000)
+            overlay = false
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        DSScreen(
+            title = "Feedback",
+            snackbarHostState = snackbar,
+            isRefreshing = refreshing,
+            onRefresh = { refreshing = true }
+        ) { padding ->
+            LazyColumn(
+                contentPadding = DSScreenDefaults.contentPadding(padding),
+                verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)
+            ) {
+                item { DSTabs(tabs = listOf("Estados", "Sobreposições"), selectedIndex = section, onSelect = { section = it }) }
+
+                if (section == 0) {
+                    if (offlineBanner) {
+                        item {
+                            DSBanner(
+                                message = "Sem conexão. Mostrando os dados salvos.",
+                                style = DSBannerStyle.Warning,
+                                onDismiss = { offlineBanner = false }
+                            )
+                        }
+                    }
+                    item { DSSkeletonRow() }
+                    item { Text("Carregando título", style = DSTheme.typography.titleMedium, modifier = Modifier.dsSkeleton(true)) }
+                    item { DSLinearProgress(progress = progress) }
+                    item { DSTonalButton("Avançar progresso", onClick = { progress = (progress + 0.2f) % 1.2f }) }
+                    item {
+                        DSEmptyState(
+                            icon = DSIcons.Inbox,
+                            title = "Nada por aqui",
+                            message = "Publique um imóvel para começar.",
+                            actionText = "Publicar",
+                            onAction = {}
+                        )
+                    }
+                    item { DSErrorState(title = "Não carregou", message = "Confira a conexão e tente de novo.", onRetry = {}) }
+                } else {
+                    item {
+                        DSButton("Snackbar de sucesso", onClick = {
+                            scope.launch { snackbar.showDSSnackbar("Imóvel publicado", DSSnackbarStyle.Success, actionLabel = "Ver") }
+                        })
+                    }
+                    item {
+                        DSOutlinedButton("Snackbar de erro", onClick = {
+                            scope.launch { snackbar.showDSSnackbar("Sem conexão", DSSnackbarStyle.Error) }
+                        })
+                    }
+                    item { DSOutlinedButton("Diálogo", onClick = { alert = true }) }
+                    item { DSOutlinedButton("Painel de ações", onClick = { sheet = true }) }
+                    item { DSOutlinedButton("Carregamento bloqueante", onClick = { overlay = true }) }
+                }
+            }
         }
 
-        val options = listOf(DSSegmentedOption("venda", "Tenho"), DSSegmentedOption("compra", "Preciso"))
-        DSSegmentedPicker(selection = segment, onSelectionChange = { segment = it }, options = options, title = "Sistema")
-        DSSegmentedPicker(
-            selection = segment,
-            onSelectionChange = { segment = it },
-            options = options,
-            title = "Preenchido",
-            style = DSSegmentedStyle.Filled
-        )
+        DSLoadingOverlay(visible = overlay, message = "Publicando…")
+    }
 
-        DSRangeSlider(
-            lowerIndex = lower,
-            upperIndex = upper,
-            onLowerIndexChange = { lower = it },
-            onUpperIndexChange = { upper = it },
-            stepCount = 10,
-            title = "Quartos",
-            valueText = "$lower a $upper"
+    if (alert) {
+        DSAlertDialog(
+            title = "Excluir publicação?",
+            message = "Ela sai do feed e os parceiros deixam de vê-la.",
+            confirmText = "Excluir",
+            dismissText = "Cancelar",
+            destructive = true,
+            onConfirm = { alert = false },
+            onDismissRequest = { alert = false }
         )
+    }
 
-        DSProgressBar(value = progress)
-        DSSecondaryButton(title = "Avançar progresso", onClick = { progress = (progress + 0.2f) % 1.2f })
+    DSBottomSheet(visible = sheet, onDismissRequest = { sheet = false }, title = "Publicação") {
+        DSSheetAction("Editar", onClick = { sheet = false }, icon = DSIcons.Edit)
+
+        DSSheetAction("Compartilhar", onClick = { sheet = false }, icon = DSIcons.Share)
+
+        DSSheetAction("Excluir", onClick = { sheet = false }, icon = DSIcons.Delete, destructive = true)
     }
 }
 
+private val Neighborhoods = listOf("Botafogo", "Copacabana", "Gávea", "Ipanema", "Jardim Botânico", "Lagoa", "Laranjeiras", "Leblon")
+
 @Composable
-private fun FeedbackPage(onToast: (DSToastMessage) -> Unit) {
-    DSSection(title = "Feedback") {
-        val offline = DSToastMessage("Sem conexão com a internet.", DSIcons.ExclamationCircle, DSToastStyle.Error)
-        DSSecondaryButton(title = "Toast de erro", onClick = { onToast(offline) })
+private fun SettingsScreen(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynamicColor: Boolean, onDynamicColorChange: (Boolean) -> Unit) {
+    var notifications by remember { mutableStateOf(true) }
 
-        DSLoadingState(message = "Carregando…")
+    DSScreen(title = "Ajustes", topBarStyle = DSTopAppBarStyle.Large) { padding ->
+        LazyColumn(contentPadding = DSScreenDefaults.contentPadding(padding, horizontalMargin = 0.dp)) {
+            item { DSListSectionHeader("Aparência") }
 
-        DSEmptyState(
-            icon = DSIcons.Tray,
-            title = "Nada por aqui",
-            message = "Publique um imóvel para começar.",
-            actionTitle = "Publicar",
-            onAction = {}
-        )
+            item { DSSwitchListItem("Tema escuro", checked = dark, onCheckedChange = onDarkChange) }
 
-        DSErrorState(title = "Não carregou", message = "Confira a conexão e tente de novo.", onRetry = {})
+            item {
+                DSSwitchListItem(
+                    "Cores do papel de parede",
+                    supporting = "Material You, no Android 12 ou mais novo",
+                    checked = dynamicColor,
+                    onCheckedChange = onDynamicColorChange
+                )
+            }
+
+            item { DSListSectionHeader("Conta") }
+
+            item { DSListItem("Perfil", supporting = "Nome, foto e CRECI", leadingIcon = DSIcons.Person, onClick = {}) }
+
+            item { DSSwitchListItem("Notificações", checked = notifications, onCheckedChange = { notifications = it }) }
+
+            item { DSListItem("Sair", leadingIcon = DSIcons.Lock, onClick = {}) }
+        }
     }
 }

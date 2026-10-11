@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dskit_clear">Borrar</string>
-    <string name="dskit_continue">Continuar</string>
-    <string name="dskit_done">Listo</string>
     <string name="dskit_enter_valid_number">Introduce un número válido</string>
-    <string name="dskit_no_items">Sin elementos</string>
-    <string name="dskit_one_item_per_line">Un elemento por línea</string>
-    <string name="dskit_paste">Pegar</string>
     <string name="dskit_try_again">Reintentar</string>
-    <plurals name="dskit_items_count">
-        <item quantity="one">%d elemento</item>
-        <item quantity="many">%d elementos</item>
-        <item quantity="other">%d elementos</item>
-    </plurals>
-    <plurals name="dskit_duplicates_count">
-        <item quantity="one">%d duplicado</item>
-        <item quantity="many">%d duplicados</item>
-        <item quantity="other">%d duplicados</item>
-    </plurals>
     <string name="dskit_hide_password">Ocultar contraseña</string>
     <string name="dskit_show_password">Mostrar contraseña</string>
-    <string name="dskit_not_selected">No seleccionado</string>
-    <string name="dskit_locked">Bloqueado</string>
-    <string name="dskit_minimum">Mínimo</string>
-    <string name="dskit_maximum">Máximo</string>
+    <string name="dskit_back">Atrás</string>
+    <string name="dskit_loading">Cargando…</string>
+    <string name="dskit_remove_item">Quitar %1$s</string>
+    <string name="dskit_dismiss">Descartar</string>
 </resources>

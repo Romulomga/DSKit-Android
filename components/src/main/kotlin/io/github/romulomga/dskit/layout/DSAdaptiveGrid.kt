@@ -11,11 +11,11 @@ import kotlin.math.max
 
 /**
  * Grade com número de colunas adaptativo, derivado da largura mínima do item: em tablet ou paisagem cabem
- * mais colunas sem calcular breakpoints. Equivale ao `LazyVGrid` com `GridItem(.adaptive)` do iOS.
+ * mais colunas sem calcular breakpoints, como o `GridCells.Adaptive`.
  *
- * Não é preguiçosa: mede todos os filhos, então pode ficar dentro de uma coluna que rola (`DSScreen`).
+ * Não é preguiçosa: mede todos os filhos, então pode ficar dentro de uma coluna que rola ([DSScreenColumn]).
  * Para centenas de itens, use `LazyVerticalGrid(GridCells.Adaptive(...))`. Cada item ocupa a largura da
- * coluna e fica centralizado na altura da linha, como no iOS.
+ * coluna e fica centralizado na altura da linha.
  */
 @Composable
 public fun DSAdaptiveGrid(
@@ -58,7 +58,7 @@ private fun DSAdaptiveGridPreview() {
     DSPreviewContainer("Adaptive grid") {
         DSAdaptiveGrid(minItemWidth = 140.dp) {
             repeat(6) { i ->
-                DSCard { Text("Item ${i + 1}", style = DSTypography.headline, color = DSTheme.colors.onSurfaceHigh) }
+                DSCard { Text("Item ${i + 1}", style = DSTheme.typography.titleMedium) }
             }
         }
     }

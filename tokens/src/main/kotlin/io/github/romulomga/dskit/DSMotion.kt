@@ -1,35 +1,31 @@
 package io.github.romulomga.dskit
 
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.tween
 
 /**
- * Curvas de animação do DSKit iOS. Movimento curto e firme.
- *
- * As molas usam a conversão do SwiftUI: `stiffness = (2π / response)²` e o mesmo `dampingRatio`.
- * Quem respeita "Remover animações" é o componente: com `LocalDSReduceMotion` ligado, troque o
- * movimento por um crossfade ou por nada.
+ * Durações e curvas da especificação de movimento do Material 3, para as animações que o componente monta
+ * sozinho (os componentes do Material já trazem as deles). As animações do Compose respeitam "Remover
+ * animações" do sistema.
  */
 public object DSMotion {
-    /** easeInOut de 180 ms. */
-    public fun <T> short(): AnimationSpec<T> = tween(durationMillis = 180, easing = FastOutSlowInEasing)
+    /** Curva padrão: entra e sai suave, para mudanças dentro da tela. */
+    public val standard: Easing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
 
-    /** easeInOut de 280 ms. */
-    public fun <T> medium(): AnimationSpec<T> = tween(durationMillis = 280, easing = FastOutSlowInEasing)
+    /** Curva enfática de entrada: o elemento chega rápido e assenta devagar. */
+    public val emphasizedDecelerate: Easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
 
-    /** Mola padrão (response 0,36 s, amortecimento 0,78). */
-    public fun <T> spring(): AnimationSpec<T> = spring(dampingRatio = 0.78f, stiffness = stiffness(0.36f))
+    /** Curva enfática de saída: o elemento sai acelerando. */
+    public val emphasizedAccelerate: Easing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)
 
-    /** Mola interativa e rápida (response 0,28 s, amortecimento 0,88). */
-    public fun <T> snappy(): AnimationSpec<T> = spring(dampingRatio = 0.88f, stiffness = stiffness(0.28f))
+    /** 150 ms: troca de cor, de estado, de ícone. */
+    public fun <T> short(): FiniteAnimationSpec<T> = tween(durationMillis = 150, easing = standard)
 
-    /** Mola maior para mudanças de estado com destaque (response 0,5 s, amortecimento 0,82). */
-    public fun <T> emphasized(): AnimationSpec<T> = spring(dampingRatio = 0.82f, stiffness = stiffness(0.5f))
+    /** 300 ms: elemento que aparece, some ou muda de tamanho. */
+    public fun <T> medium(): FiniteAnimationSpec<T> = tween(durationMillis = 300, easing = standard)
 
-    private fun stiffness(response: Float): Float {
-        val omega = (2 * Math.PI / response).toFloat()
-        return omega * omega
-    }
+    /** 500 ms: transição que atravessa a tela. */
+    public fun <T> long(): FiniteAnimationSpec<T> = tween(durationMillis = 500, easing = emphasizedDecelerate)
 }

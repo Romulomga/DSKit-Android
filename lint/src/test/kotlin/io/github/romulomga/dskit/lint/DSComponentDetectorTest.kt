@@ -19,7 +19,8 @@ class DSComponentDetectorTest : LintDetectorTest() {
             fun TextField(value: String) {}
             fun Switch(checked: Boolean) {}
             fun MaterialTheme(content: () -> Unit) {}
-            fun Scaffold() {}
+            fun DatePicker() {}
+            fun AlertDialog(onDismissRequest: () -> Unit) {}
             """
         ).indented(),
         kotlin(
@@ -36,6 +37,7 @@ class DSComponentDetectorTest : LintDetectorTest() {
             kotlin(
                 """
                 package com.example.feature
+                import androidx.compose.material3.AlertDialog
                 import androidx.compose.material3.Button
                 import androidx.compose.material3.MaterialTheme
                 import androidx.compose.material3.Switch
@@ -46,13 +48,15 @@ class DSComponentDetectorTest : LintDetectorTest() {
                     Button(onClick = {})
                     TextField("")
                     Switch(true)
+                    AlertDialog(onDismissRequest = {})
                 }
                 """
             ).indented()
         ).allowMissingSdk().testModes(TestMode.DEFAULT).run()
-            .expectErrorCount(4)
-            .expectContains("Button do Material: use DSPrimaryButton.")
+            .expectErrorCount(5)
+            .expectContains("Button do Material: use DSButton.")
             .expectContains("TextField do Material: use DSTextField.")
+            .expectContains("AlertDialog do Material: use DSAlertDialog.")
     }
 
     fun testMaterialWithoutEquivalentAndOtherPackagesPass() {
@@ -61,11 +65,11 @@ class DSComponentDetectorTest : LintDetectorTest() {
             kotlin(
                 """
                 package com.example.feature
-                import androidx.compose.material3.Scaffold
+                import androidx.compose.material3.DatePicker
                 import com.example.other.Button
 
                 fun screen() {
-                    Scaffold()
+                    DatePicker()
                     Button(onClick = {})
                 }
                 """

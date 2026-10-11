@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
 
 /**
- * Vibração dos componentes, como o `DSHaptics` do DSKit iOS. Respeita `LocalDSHapticsEnabled` (o "Vibração"
+ * Vibração dos componentes. Respeita `LocalDSHapticsEnabled` (o "Vibração"
  * do app) e a configuração de toque do sistema, porque usa `performHapticFeedback` da view.
  */
 @Stable

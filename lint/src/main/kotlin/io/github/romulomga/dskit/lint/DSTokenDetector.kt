@@ -36,23 +36,33 @@ class DSTokenDetector :
             }
 
             "padding", "spacedBy" -> if (args.any { DP_LITERAL.containsMatchIn(it) }) {
-                report(context, SPACING_LITERAL, node, "Espaçamento literal: use `DSSpacing`.")
+                reportSpacing(context, node)
             }
 
             "shadow" -> if (args.any { DP_LITERAL.containsMatchIn(it) }) {
-                report(context, SHADOW_LITERAL, node, "Sombra literal: use `Modifier.dsShadow(DSShadow.subtle | card | floating)`.")
+                report(
+                    context,
+                    SHADOW_LITERAL,
+                    node,
+                    "Sombra literal: use a elevação dos componentes do Material (`DSCard`, `DSFab`, menus)."
+                )
             }
 
             "tween", "spring" -> if (isComposeAnimation(method) && args.isNotEmpty()) {
-                report(context, ANIMATION_LITERAL, node, "Animação literal: use `DSMotion.short()`, `snappy()`, `spring()`…")
+                reportAnimation(context, node, method.name, args)
             }
 
             "CircularProgressIndicator" -> if (isMaterial(method) && args.isEmpty()) {
-                report(context, PROGRESS_INDICATOR, node, "Indicador solto: use `DSLoadingState` ou um componente de carregamento do app.")
+                report(
+                    context,
+                    PROGRESS_INDICATOR,
+                    node,
+                    "Indicador solto: use `DSLoadingState`, `DSLoadingOverlay` ou `Modifier.dsSkeleton`."
+                )
             }
 
             "TextStyle", "Text" -> if (args.any { SP_LITERAL.containsMatchIn(it) } || node.hasNamedFontArgument()) {
-                report(context, FONT_LITERAL, node, "Fonte literal: use `DSTypography` (escala com a fonte do sistema).")
+                report(context, FONT_LITERAL, node, "Fonte literal: use `DSTheme.typography` (escala com a fonte do sistema).")
             }
         }
     }
@@ -70,6 +80,67 @@ class DSTokenDetector :
             }
         }
     }
+
+    /**
+     * Diz o token de cada `N.dp` e, quando o valor é um passo da escala, oferece a troca (o "quick fix" do
+     * Android Studio). Fora da escala, sugere o passo mais próximo, sem troca automática: o layout mudaria.
+     */
+    private fun reportSpacing(context: JavaContext, node: UCallExpression) {
+        val literals = node.valueArguments.mapNotNull { arg ->
+            val text = arg.sourcePsi?.text?.trim() ?: return@mapNotNull null
+            val value = DP_VALUE.find(text)?.groupValues?.get(1)?.toFloatOrNull() ?: return@mapNotNull null
+            Triple(arg, text, value)
+        }
+
+        val exact = literals.mapNotNull { (arg, text, value) -> SPACING_TOKENS[value]?.let { Triple(arg, text, it) } }
+        val fix = if (exact.isEmpty()) {
+            null
+        } else {
+            val fixes = exact.map { (arg, text, token) ->
+                fix()
+                    .name("Trocar por DSSpacing.$token")
+                    .replace()
+                    .range(context.getLocation(arg))
+                    .text(text)
+                    .with("io.github.romulomga.dskit.DSSpacing.$token")
+                    .shortenNames()
+                    .build()
+            }
+            if (fixes.size == 1) fixes.single() else fix().name("Trocar pelos tokens de DSSpacing").composite(*fixes.toTypedArray())
+        }
+
+        val hint = literals.joinToString { (_, text, value) ->
+            SPACING_TOKENS[value]?.let { "`$text` é `DSSpacing.$it`" }
+                ?: "`$text` não está na escala (o mais perto é `DSSpacing.${nearestSpacing(value)}`)"
+        }
+
+        context.report(SPACING_LITERAL, node, context.getLocation(node), "Espaçamento literal: $hint.", fix)
+    }
+
+    /** `tween(150)`, `tween(300)` e `tween(500)` sem curva viram `DSMotion.short()`, `medium()` e `long()`. */
+    private fun reportAnimation(context: JavaContext, node: UCallExpression, name: String, args: List<String>) {
+        val duration = args.singleOrNull()?.removePrefix("durationMillis")?.trimStart(' ', '=')?.toIntOrNull()
+        val token = if (name == "tween") MOTION_TOKENS[duration] else null
+
+        val fix = token?.let {
+            fix()
+                .name("Trocar por DSMotion.$it()")
+                .replace()
+                .all()
+                .with("io.github.romulomga.dskit.DSMotion.$it()")
+                .shortenNames()
+                .build()
+        }
+        val message = if (token != null) {
+            "Animação literal: `tween($duration)` é `DSMotion.$token()`."
+        } else {
+            "Animação literal: use `DSMotion.short()` (150 ms), `medium()` (300 ms) ou `long()` (500 ms)."
+        }
+
+        context.report(ANIMATION_LITERAL, node, context.getLocation(node), message, fix)
+    }
+
+    private fun nearestSpacing(value: Float): String = SPACING_TOKENS.minBy { (dp, _) -> kotlin.math.abs(dp - value) }.value
 
     private fun UCallExpression.hasNamedFontArgument(): Boolean {
         val text = sourcePsi?.text ?: return false
@@ -89,6 +160,14 @@ class DSTokenDetector :
     companion object {
         private val HEX_LITERAL = Regex("""0x[0-9A-Fa-f]{6,8}L?""")
         private val DP_LITERAL = Regex("""(?<![\w.])\d+(\.\d+)?f?\.dp\b""")
+        private val DP_VALUE = Regex("""^(?:\w+\s*=\s*)?(\d+(?:\.\d+)?)f?\.dp$""")
+
+        /** A escala de `DSSpacing` (módulo `tokens`); mude junto quando a escala mudar. */
+        private val SPACING_TOKENS = mapOf(2f to "xxs", 4f to "xs", 8f to "sm", 12f to "md", 16f to "lg", 24f to "xl", 32f to "xxl")
+
+        /** As durações de `DSMotion` (módulo `tokens`). */
+        private val MOTION_TOKENS = mapOf(150 to "short", 300 to "medium", 500 to "long")
+
         private val SP_LITERAL = Regex("""(?<![\w.])\d+(\.\d+)?f?\.sp\b""")
         private val FONT_NAMED_ARG = Regex("""\bfontFamily\s*=\s*FontFamily\.""")
         private val RAW_COLOR_CONSTANT = Regex("""Color\.(White|Black|Gray|DarkGray|LightGray|Red|Green|Blue|Yellow)""")
@@ -109,7 +188,7 @@ class DSTokenDetector :
         val RAW_COLOR = issue(
             "DSRawColor",
             "Cor fora dos tokens do DSKit",
-            "Cores vêm de `DSTheme.colors` (claro e escuro) ou das cores de marca passadas ao `DSTheme`. Uma cor literal não muda no modo escuro."
+            "Cores vêm de `DSTheme.colors` e `DSTheme.status` (claro, escuro e Material You). Uma cor literal não muda com o tema."
         )
         val SPACING_LITERAL = issue(
             "DSSpacingLiteral",
@@ -119,22 +198,22 @@ class DSTokenDetector :
         val SHADOW_LITERAL = issue(
             "DSShadowLiteral",
             "Sombra literal",
-            "Sombras vêm dos presets `DSShadow` aplicados com `Modifier.dsShadow`."
+            "Sombra vem da elevação dos componentes do Material, que muda o tom da superfície no tema escuro."
         )
         val ANIMATION_LITERAL = issue(
             "DSAnimationLiteral",
             "Animação literal",
-            "Durações e molas vêm de `DSMotion`, e o componente respeita \"Remover animações\" (`DSTheme.reduceMotion`)."
+            "Durações e curvas vêm de `DSMotion`, a especificação de movimento do Material 3."
         )
         val PROGRESS_INDICATOR = issue(
             "DSProgressIndicator",
             "Indicador de progresso solto",
-            "Carregamento usa `DSLoadingState` ou um componente de carregamento do design system do app."
+            "Carregamento usa `DSLoadingState`, `DSLoadingOverlay` ou o esqueleto do DSKit."
         )
         val FONT_LITERAL = issue(
             "DSFontLiteral",
             "Fonte fora dos tokens do DSKit",
-            "Texto usa `DSTypography`, que escala com a fonte do sistema e aplica a família do app."
+            "Texto usa `DSTheme.typography`, a escala do Material com a família do app, que escala com a fonte do sistema."
         )
         val MATERIAL_ICON_LITERAL = issue(
             "DSMaterialIcon",

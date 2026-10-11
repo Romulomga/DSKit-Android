@@ -1,98 +1,112 @@
 # DSKit Android
 
-Design system em Jetpack Compose, irmão do [DSKit iOS](https://github.com/Romulomga/DSKit) (paridade com a tag
-`1.0.38`): os mesmos tokens, com os mesmos valores, e os mesmos componentes, com os mesmos nomes. É agnóstico:
-nenhum app tem código aqui; cada app passa a própria marca e a própria fonte pelo tema.
+Design system em Jetpack Compose sobre o **Material 3**. Os componentes são os do Material, configurados com os
+padrões do app: marca, vibração, acessibilidade, estados (carregando, destrutivo, erro) e uma API curta. A tela
+segue o Android: barra superior, FAB, listas, campos com rótulo flutuante, snackbar, navegação inferior que vira
+lateral em tela larga. É agnóstico: nenhum app tem código aqui; cada app passa a própria marca e a própria fonte
+pelo tema.
 
-- minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3.
+- minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
 - Sem dependência além de AndroidX/Compose.
-- Ainda **não publicado**. Quando houver tag no GitHub, o consumo será pelo JitPack:
-  `implementation("com.github.Romulomga.DSKit-Android:components:<tag>")`.
+- Ainda **não publicado**; o histórico de mudanças fica em [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Uso
 
-```kotlin
-val Brand = DSBrand(
-    accent = Color(0xFFD0212E),
-    accentDark = Color(0xFFEA4652),
-    accentSecondary = Color(0xFF1F8A5A),
-)
+Gere os esquemas de cor no [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
+a partir da cor da marca e exporte para Jetpack Compose; o arquivo exportado traz o `lightScheme` e o `darkScheme`.
 
-DSTheme(appName = "Homer", brand = Brand, fontFamily = Raleway, fieldLabelStyle = DSFieldLabelStyle.Prominent) {
-    DSScreen(title = "Publicações", bottomAction = { DSPrimaryButton("Publicar", onClick = ::publish) }) {
-        DSCard { Text("Olá", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
+```kotlin
+val HomerBrand = DSBrand(light = lightScheme, dark = darkScheme)
+
+DSTheme(brand = HomerBrand, fontFamily = Raleway, dynamicColor = false) {
+    DSScreen(
+        title = "Publicações",
+        topBarStyle = DSTopAppBarStyle.Large,
+        floatingActionButton = { DSExtendedFab("Nova publicação", DSIcons.Add, onClick = ::compose) },
+    ) { padding ->
+        LazyColumn(contentPadding = DSScreenDefaults.contentPadding(padding)) {
+            items(posts) { DSCard(onClick = { open(it) }) { Text(it.title, style = DSTheme.typography.titleMedium) } }
+        }
     }
 }
 ```
 
-| DSKit iOS | DSKit Android |
-|---|---|
-| `.dsTheme(DSTheme(...))` + colorsets `Accent`/`OnAccent` do app | `DSTheme(brand = DSBrand(...)) { }` |
-| `DSTypography.family = DSFontFamily("Raleway")` | `DSTheme(fontFamily = …)` |
-| `Color.surface`, `theme.primary` | `DSTheme.colors.surface`, `DSTheme.primary` |
-| `DSTypography.headline()` | `DSTypography.headline` |
-| `DSSpacing.lg`, `DSRadius.lg`, `.dsShadow(.card)`, `DSMotion.snappy` | `DSSpacing.lg`, `DSRadius.large`, `Modifier.dsShadow(DSShadow.card)`, `DSMotion.snappy()` |
-| `.dsGroupedCanvas()`, `dsSurfaceLevel` | `DSGroupedCanvas { }`, `DSSurfaceContainer { }`, `DSTheme.surfaceLevel` |
-| `systemImage: "star"` | `icon: ImageVector` (`DSIcons` traz os que a lib usa) |
-| `@Binding` | `value` + `onValueChange` |
+- **Cor:** `DSTheme.colors` é o `ColorScheme` do Material (`primary`, `surfaceContainer`, `onSurfaceVariant`…);
+  `DSTheme.status` traz sucesso, aviso e informação, que o Material não tem. `dynamicColor = true` usa as cores do
+  papel de parede (Material You) no Android 12+. Com os esquemas de contraste médio e alto no `DSBrand`
+  (o Theme Builder também os exporta), o tema segue o "Contraste de cor" do Android 14+.
+- **Tipo:** `DSTheme.typography` é a escala do Material (display, headline, title, body, label) com a fonte do app.
+- **Forma e movimento:** `DSTheme.shapes` do Material; `DSMotion` com as durações e curvas do Material 3.
+- **Espaço:** `DSSpacing` (grade de 4 dp) e `DSTouchTarget.minimum` (48 dp).
 
-O `DSTheme` também monta um `MaterialTheme` com os mesmos tokens, então componentes Material (seletor de data,
-bottom sheet, menus) herdam cor e fonte.
+## Componentes
+
+| Grupo | Componentes |
+|---|---|
+| Ações | `DSButton`, `DSTonalButton`, `DSOutlinedButton`, `DSTextButton` (com `loading` e `destructive`), `DSIconButton` (com dica ao segurar), `DSFab`, `DSExtendedFab`, `DSTextLink` |
+| Contêiner | `DSCard` (filled, elevated, outlined), `DSAdaptiveGrid`, `DSDivider`, `DSVerticalDivider` |
+| Listas | `DSListItem`, `DSSwitchListItem`, `DSCheckboxListItem`, `DSRadioListItem`, `DSListSectionHeader` |
+| Entrada | `DSTextField` (senha, limpar, erro), `DSNumberField`, `DSDropdownField`, `DSAutocompleteField`, `DSSlider`, `DSRangeSlider` |
+| Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSTabs`, `DSTabbedPager` |
+| Navegação | `DSScreen`, `DSScreenColumn`, `DSTopAppBar`, `DSNavigationScaffold`, `DSNavigationBar`, `DSNavigationRail` |
+| Feedback | `DSSnackbarHost` + `showDSSnackbar`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSLinearProgress`, `DSLoadingState`, `DSEmptyState`, `DSErrorState`, `Modifier.dsSkeleton`, `DSSkeletonRow` |
+| Sobreposição | `DSAlertDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |
+| Tela larga | `Modifier.dsReadableColumn`, `DSAdaptiveColumns`, `DSLayout` |
+
+Cada componente tem uma página em [`docs/components/`](docs/components/README.md). O que o Material já resolve
+bem e o DSKit não embrulha (`DropdownMenu`, `DatePicker`, `TimePicker`, `SearchBar`) segue livre e já sai com a
+marca, porque o `DSTheme` é um `MaterialTheme`.
+
+Uma tela de formulário:
+
+```kotlin
+DSScreen(title = "Editar perfil", onBack = ::pop) { padding ->
+    DSScreenColumn(padding) {
+        DSTextField(value = name, onValueChange = { name = it }, label = "Nome")
+        DSButton("Salvar", onClick = ::save, loading = saving)
+    }
+}
+```
+
+A navegação principal (barra embaixo no celular, lateral em tablet):
+
+```kotlin
+DSNavigationScaffold(items = tabs, selection = tab, onSelectionChange = { tab = it }) {
+    when (tab) { Tab.Home -> HomeScreen(); Tab.Chat -> ChatScreen() }
+}
+```
 
 ## Módulos
 
 | Módulo | Conteúdo |
 |---|---|
-| `tokens` | cores (geradas), tipografia, espaçamento, raio, sombra, movimento, `DSTheme` |
+| `tokens` | `DSTheme`, `DSBrand`, cores de status, tipografia, espaçamento, movimento |
 | `components` | os componentes, ícones, vibração, acessibilidade, previews; strings em 10 línguas |
 | `lint` | regras de Android Lint publicadas com o AAR (`lintPublish`) |
-| `sample` | catálogo com todos os componentes, claro/escuro e rótulos em destaque |
-
-Componentes: `DSPrimaryButton`, `DSSecondaryButton`, `DSDestructiveButton`, `DSPillButton`, `DSIconButton`, `DSCard`,
-`DSFeatureCard`, `DSResultCard`, `DSBadge`, `DSProBadge`, `DSTextField`, `DSPickerField`, `DSNumberField`, `DSListInput`,
-`DSInputBox`, `DSFieldLabel`, `DSFieldCaption`, `DSToast`/`DSToastHost`, `DSErrorState`, `DSEmptyState`, `DSLoadingState`,
-`DSProgressBar`, `DSScreen`, `DSSection`, `DSSettingsSection`/`DSSettingsRow`, `DSAdaptiveGrid`, `DSToggleRow`, `DSChip`,
-`DSOptionChip`, `DSSegmentedPicker`, `DSPagedTabs`, `DSRangeSlider`. Ficaram de fora, até um app pedir: paywall, plano,
-swatch de cor, rolagem paginada vertical, fundo atmosférico e Liquid Glass.
+| `sample` | catálogo com abas, claro/escuro e Material You |
 
 ## Regras de lint para quem usa a lib
+
+`DSComponent` é **erro**: componente do Material 3 chamado direto onde o DSKit tem o seu (`Button` → `DSButton`,
+`OutlinedTextField` → `DSTextField`, `Scaffold` → `DSScreen`, `TopAppBar` → `DSTopAppBar`, `AlertDialog` →
+`DSAlertDialog`, `ModalBottomSheet` → `DSBottomSheet`, `ListItem` → `DSListItem`…; o mapa está em
+`DSComponentDetector.REPLACEMENTS`). Veio do `DesignSystemDetector` do Now in Android. Se o DSKit não cobre o caso,
+evolua o DSKit em vez de suprimir.
 
 Fora do próprio DSKit e de pacotes `…designsystem…` do app, avisam: `DSRawColor` (`Color(0x…)`, `Color.White`),
 `DSSpacingLiteral` (`padding(16.dp)`), `DSShadowLiteral`, `DSAnimationLiteral` (`tween(300)`), `DSProgressIndicator`
 (`CircularProgressIndicator()` solto), `DSFontLiteral` (`fontSize = 14.sp`) e `DSMaterialIcon` (`Icons.Default.*`).
-São as `ds_*` do SwiftLint do app iOS.
-
-`DSComponent` é **erro**: componente do Material 3 chamado onde o DSKit tem o seu (`Button` → `DSPrimaryButton`,
-`TextField` → `DSTextField`, `Switch` → `DSToggleRow`, `MaterialTheme` → `DSTheme`…; o mapa está em
-`DSComponentDetector.REPLACEMENTS`). Material sem equivalente (`Scaffold`, `ModalBottomSheet`…) segue livre.
-Veio do `DesignSystemDetector` do Now in Android. Se o DSKit não cobre o caso, evolua o DSKit em vez de suprimir.
+Espaçamento e duração dizem o token certo e, quando o valor está na escala, o Android Studio troca sozinho
+(`16.dp` → `DSSpacing.lg`, `tween(300)` → `DSMotion.medium()`).
 
 ## Desenvolvimento
 
 ```sh
 ./gradlew ktlint lint test :sample:assembleDebug   # tudo o que o CI vai rodar
-./gradlew :components:recordRoborazziDebug         # grava as screenshots (claro, escuro, fonte 200 %) e roda o ATF
-./gradlew :components:verifyRoborazziDebug         # compara com as gravadas
-scripts/sync-tokens.py                             # regenera as cores a partir dos colorsets do DSKit iOS
-scripts/sync-tokens.py --check                     # só confere (CI)
+./gradlew :components:recordRoborazziDebug   # grava as screenshots (claro, escuro, fonte 200 %, RTL, alto contraste) e roda o ATF
+./gradlew :components:verifyRoborazziDebug   # compara com as gravadas
+./gradlew assembleRelease -Pdskit.composeReports=true   # relatório de estabilidade do Compose em build/compose_compiler
 ```
 
-As cores vêm dos colorsets do DSKit iOS (`Sources/DSKit/Resources/Colors.xcassets`), que são a fonte de verdade; o
-`DESIGN.md` do iOS está desatualizado (1.0.21). Convenções de porte em [`CONVENTIONS.md`](CONVENTIONS.md).
-
-## Diferenças em relação ao DSKit iOS
-
-Escolhas de plataforma, não lacunas:
-
-- **Alvo de toque de 48 dp** (o iOS usa 44 pt): `DSIconButton`, caixas de campo, pílula do seletor e trilho do slider
-  têm 48 dp de altura mínima; o desenho interno (polegar do slider, chip de opção) mantém o tamanho do iOS.
-- **Sem cantos contínuos** (`RoundedCornerShape`) e **sem material translúcido**: `DSCardVariant.Material` desenha como
-  `Elevated` sem borda; a barra inferior do `DSScreen` é opaca com uma linha no topo.
-- **Sem `DSKeyboardToolbar`**: o "OK" do teclado numérico é a `ImeAction.Done` do próprio teclado.
-- **Texto sobre cor de marca usa `onAccent`** onde o iOS pinta branco fixo (lacuna do `DESIGN.md` do iOS).
-- **Fonte de sistema é a Roboto** quando o app não passa família (no iOS, a San Francisco).
-- `DSErrorState`/`DSEmptyState` juntam ícone e texto num elemento do TalkBack, mas o botão continua tocável à parte.
-- `DSResultCard` reduz o texto até 50 % antes de quebrar (`TextAutoSize`), como o `minimumScaleFactor`.
-- `DSRangeSlider` tem trilho próprio (o `RangeSlider` do Material sobrepõe as alças e não garante distância mínima em passos): cada alça anda numa pista deslocada de uma largura de alça, então o intervalo desce a 1 passo sem sobrepor; não anima o número.
-- `DSNumberField` não apaga o campo quando se digita um caractere inválido depois de um número (o iOS apaga; parece bug
-  do iOS, não reproduzido aqui).
+Decisões de arquitetura em [`docs/adr/`](docs/adr/); convenções em
+[`CONVENTIONS.md`](CONVENTIONS.md).

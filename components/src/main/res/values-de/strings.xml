@@ -1,25 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dskit_clear">Löschen</string>
-    <string name="dskit_continue">Weiter</string>
-    <string name="dskit_done">Fertig</string>
     <string name="dskit_enter_valid_number">Gib eine gültige Zahl ein</string>
-    <string name="dskit_no_items">Keine Einträge</string>
-    <string name="dskit_one_item_per_line">Ein Eintrag pro Zeile</string>
-    <string name="dskit_paste">Einsetzen</string>
     <string name="dskit_try_again">Erneut versuchen</string>
-    <plurals name="dskit_items_count">
-        <item quantity="one">%d Eintrag</item>
-        <item quantity="other">%d Einträge</item>
-    </plurals>
-    <plurals name="dskit_duplicates_count">
-        <item quantity="one">%d Duplikat</item>
-        <item quantity="other">%d Duplikate</item>
-    </plurals>
     <string name="dskit_hide_password">Passwort ausblenden</string>
     <string name="dskit_show_password">Passwort anzeigen</string>
-    <string name="dskit_not_selected">Nicht ausgewählt</string>
-    <string name="dskit_locked">Gesperrt</string>
-    <string name="dskit_minimum">Minimum</string>
-    <string name="dskit_maximum">Maximum</string>
+    <string name="dskit_back">Zurück</string>
+    <string name="dskit_loading">Wird geladen…</string>
+    <string name="dskit_remove_item">%1$s entfernen</string>
+    <string name="dskit_dismiss">Schließen</string>
 </resources>

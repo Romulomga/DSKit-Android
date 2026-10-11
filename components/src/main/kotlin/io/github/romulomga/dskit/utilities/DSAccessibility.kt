@@ -5,7 +5,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 
-/** Ajudas de acessibilidade, como o `DSAccessibility` do DSKit iOS. */
+/** Ajudas de acessibilidade para o TalkBack. */
 public object DSAccessibility {
     /** Junta as partes não vazias com ", ", para o TalkBack ler um bloco como uma frase. */
     public fun combinedLabel(vararg parts: String?): String = parts.filterNot { it.isNullOrBlank() }.joinToString(", ")

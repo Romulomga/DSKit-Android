@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dskit_clear">クリア</string>
-    <string name="dskit_continue">続ける</string>
-    <string name="dskit_done">完了</string>
     <string name="dskit_enter_valid_number">有効な数字を入力してください</string>
-    <string name="dskit_no_items">項目なし</string>
-    <string name="dskit_one_item_per_line">1行に1項目</string>
-    <string name="dskit_paste">ペースト</string>
     <string name="dskit_try_again">再試行</string>
-    <plurals name="dskit_items_count">
-        <item quantity="other">%d件</item>
-    </plurals>
-    <plurals name="dskit_duplicates_count">
-        <item quantity="other">%d件の重複</item>
-    </plurals>
     <string name="dskit_hide_password">パスワードを非表示</string>
     <string name="dskit_show_password">パスワードを表示</string>
-    <string name="dskit_not_selected">未選択</string>
-    <string name="dskit_locked">ロック中</string>
-    <string name="dskit_minimum">最小</string>
-    <string name="dskit_maximum">最大</string>
+    <string name="dskit_back">戻る</string>
+    <string name="dskit_loading">読み込み中…</string>
+    <string name="dskit_remove_item">%1$sを削除</string>
+    <string name="dskit_dismiss">閉じる</string>
 </resources>

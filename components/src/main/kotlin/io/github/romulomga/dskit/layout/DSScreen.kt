@@ -1,133 +1,178 @@
 package io.github.romulomga.dskit
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Contêiner de tela reutilizável: cabeçalho com título grande, subtítulo e slot à direita, conteúdo que
- * rola e uma área de ação fixa no rodapé.
+ * Uma tela do app, o `Scaffold` do Material 3 com o que toda tela repete: a barra superior (que encolhe ou
+ * muda de cor ao rolar), o FAB, a barra inferior, o snackbar e o "puxar para atualizar".
  *
- * Trata os insets de borda a borda uma vez, aqui: o conteúdo começa abaixo da barra de status e do recorte
- * da câmera, e a ação de rodapé fica acima da barra de navegação e **sobe com o teclado** (`ime`), para o
- * botão principal nunca ficar escondido. Sem ação de rodapé, é o fim do conteúdo que ganha essa folga.
- *
- * Não pinta fundo de tela, como no iOS: o fundo é do app (`DSTheme.colors.background`, um degradê…).
- * A barra de rodapé é opaca em `background` com uma linha fina no topo; o iOS usa material translúcido,
- * que o Android não tem.
+ * O conteúdo recebe o `PaddingValues` das barras, como no `Scaffold`, e decide como rolar: uma
+ * [DSScreenColumn] para formulários e telas curtas, uma `LazyColumn` com [DSScreenDefaults.contentPadding]
+ * para listas.
  *
  * ```
- * DSScreen(
- *     title = "Sorteio de nomes",
- *     subtitle = "Adicione nomes e sorteie",
- *     bottomAction = { DSPrimaryButton("Sortear", onClick = { … }) },
- * ) {
- *     DSListInput(…)
+ * DSScreen(title = "Publicações", topBarStyle = DSTopAppBarStyle.Large, floatingActionButton = { DSFab(…) }) { padding ->
+ *     LazyColumn(contentPadding = DSScreenDefaults.contentPadding(padding)) { items(posts) { PostCard(it) } }
  * }
  * ```
+ *
+ * @param title título da barra superior; sem título e sem [onBack], a tela não tem barra.
+ * @param topBarStyle o tamanho da barra; `Medium` e `Large` encolhem ao rolar.
+ * @param onBack mostra a seta de voltar.
+ * @param actions botões à direita da barra.
+ * @param snackbarHostState onde os snackbars da tela aparecem (acima do FAB e da barra inferior).
+ * @param onRefresh liga o "puxar para atualizar"; [isRefreshing] mostra o indicador.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun DSScreen(
     modifier: Modifier = Modifier,
     title: String? = null,
-    subtitle: String? = null,
-    trailing: (@Composable RowScope.() -> Unit)? = null,
-    bottomAction: (@Composable () -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit
+    topBarStyle: DSTopAppBarStyle = DSTopAppBarStyle.Small,
+    onBack: (() -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
+    bottomBar: @Composable () -> Unit = {},
+    snackbarHostState: SnackbarHostState? = null,
+    isRefreshing: Boolean = false,
+    onRefresh: (() -> Unit)? = null,
+    content: @Composable (PaddingValues) -> Unit
 ) {
-    val horizontalInsets = WindowInsets.displayCutout.union(WindowInsets.navigationBars).only(WindowInsetsSides.Horizontal)
-    val bottomInsets = WindowInsets.navigationBars.union(WindowInsets.ime).only(WindowInsetsSides.Bottom)
+    val showsTopBar = title != null || onBack != null
+    val scrollBehavior = when (topBarStyle) {
+        DSTopAppBarStyle.Medium, DSTopAppBarStyle.Large -> TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+        DSTopAppBarStyle.Small, DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.pinnedScrollBehavior()
+    }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(horizontalInsets)
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Top))
-                .then(if (bottomAction == null) Modifier.windowInsetsPadding(bottomInsets) else Modifier)
-                .padding(start = DSSpacing.lg, end = DSSpacing.lg, top = DSSpacing.md, bottom = DSSpacing.xl),
-            verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)
-        ) {
-            if (title != null || subtitle != null || trailing != null) {
-                ScreenHeader(title, subtitle, trailing)
+    Scaffold(
+        modifier = modifier.then(if (showsTopBar) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier),
+        topBar = {
+            if (showsTopBar) {
+                TopAppBarContent(
+                    title = title.orEmpty(),
+                    modifier = Modifier,
+                    style = topBarStyle,
+                    onBack = onBack,
+                    actions = actions,
+                    scrollBehavior = scrollBehavior
+                )
             }
+        },
+        bottomBar = bottomBar,
+        snackbarHost = { if (snackbarHostState != null) DSSnackbarHost(snackbarHostState) },
+        floatingActionButton = floatingActionButton
+    ) { innerPadding ->
+        if (onRefresh == null) {
+            content(innerPadding)
+        } else {
+            // O indicador desce por baixo da barra superior: a caixa começa onde a barra termina.
+            val layoutDirection = LocalLayoutDirection.current
 
-            content()
-        }
-
-        if (bottomAction != null) {
-            Column(modifier = Modifier.fillMaxWidth().background(DSTheme.colors.background)) {
-                Box(Modifier.fillMaxWidth().height(0.75.dp).background(DSTheme.colors.hairline))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .windowInsetsPadding(bottomInsets)
-                        .padding(horizontal = DSSpacing.lg, vertical = DSSpacing.md),
-                    contentAlignment = Alignment.Center
-                ) {
-                    bottomAction()
-                }
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize().padding(top = innerPadding.calculateTopPadding())
+            ) {
+                content(
+                    PaddingValues(
+                        start = innerPadding.calculateStartPadding(layoutDirection),
+                        end = innerPadding.calculateEndPadding(layoutDirection),
+                        bottom = innerPadding.calculateBottomPadding()
+                    )
+                )
             }
         }
     }
 }
 
+/** Medidas de conteúdo de tela. */
+public object DSScreenDefaults {
+    /** Margem lateral do conteúdo, a do Material em janela compacta. */
+    public val margin: Dp = DSSpacing.lg
+
+    /**
+     * O `PaddingValues` das barras ([innerPadding]) somado às margens de tela, para o `contentPadding` de uma
+     * `LazyColumn`: o primeiro e o último item não encostam nas barras e a lista rola por baixo delas.
+     *
+     * @param horizontalMargin margem lateral; passe `0.dp` numa lista de [DSListItem], que já tem a sua.
+     */
+    @Composable
+    public fun contentPadding(innerPadding: PaddingValues, horizontalMargin: Dp = margin): PaddingValues {
+        val layoutDirection = LocalLayoutDirection.current
+
+        return PaddingValues(
+            start = innerPadding.calculateStartPadding(layoutDirection) + horizontalMargin,
+            end = innerPadding.calculateEndPadding(layoutDirection) + horizontalMargin,
+            top = innerPadding.calculateTopPadding() + DSSpacing.sm,
+            bottom = innerPadding.calculateBottomPadding() + DSSpacing.xl
+        )
+    }
+}
+
+/**
+ * O conteúdo de um [DSScreen] que rola como um todo (formulário, detalhe): coluna com as margens de tela,
+ * espaço entre os blocos, coluna de leitura em tela larga e folga para o teclado, para o campo focado nunca
+ * ficar escondido.
+ *
+ * ```
+ * DSScreen(title = "Editar perfil", onBack = ::pop) { padding ->
+ *     DSScreenColumn(padding) { DSTextField(…); DSButton(…) }
+ * }
+ * ```
+ */
 @Composable
-private fun ScreenHeader(title: String?, subtitle: String?, trailing: (@Composable RowScope.() -> Unit)?) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
-        Column(
-            modifier = Modifier.weight(1f).alignByBaseline(),
-            verticalArrangement = Arrangement.spacedBy(DSSpacing.xs)
-        ) {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = DSTypography.largeTitle,
-                    color = DSTheme.colors.onSurfaceHigh,
-                    modifier = Modifier.semantics { heading() }
-                )
-            }
+public fun DSScreenColumn(
+    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(DSSpacing.lg),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .consumeWindowInsets(innerPadding)
+            .imePadding()
+            .verticalScroll(rememberScrollState())
+            .padding(DSScreenDefaults.contentPadding(innerPadding))
+            .dsReadableColumn(),
+        verticalArrangement = verticalArrangement,
+        content = content
+    )
+}
 
-            if (subtitle != null) {
-                Text(subtitle, style = DSTypography.subheadline, color = DSTheme.colors.onSurfaceMedium)
-            }
-        }
-
-        if (trailing != null) {
-            Row(modifier = Modifier.alignByBaseline(), verticalAlignment = Alignment.CenterVertically) {
-                trailing()
+@DSPreviews
+@Composable
+private fun DSScreenPreview() {
+    DSPreviewContainer("Screen", modifier = Modifier.height(480.dp)) {
+        DSScreen(title = "Edit profile", onBack = {}, floatingActionButton = { DSFab(DSIcons.Check, "Save", onClick = {}) }) { padding ->
+            DSScreenColumn(padding) {
+                DSCard { Text("Content goes here") }
             }
         }
     }
@@ -135,18 +180,12 @@ private fun ScreenHeader(title: String?, subtitle: String?, trailing: (@Composab
 
 @DSPreviews
 @Composable
-private fun DSScreenPreview() {
-    DSPreviewContainer("Screen", modifier = Modifier.height(480.dp)) {
-        DSScreen(
-            title = "Name Picker",
-            subtitle = "Add names and pick a winner",
-            bottomAction = {
-                DSCard(variant = DSCardVariant.Elevated) {
-                    Text("Pick winner", style = DSTypography.headline, color = DSTheme.colors.accent)
-                }
+private fun DSScreenLazyPreview() {
+    DSPreviewContainer("Lazy screen", modifier = Modifier.height(480.dp)) {
+        DSScreen(title = "Messages", topBarStyle = DSTopAppBarStyle.Large) { padding ->
+            LazyColumn(contentPadding = DSScreenDefaults.contentPadding(padding, horizontalMargin = 0.dp)) {
+                items(20) { index -> DSListItem("Conversation ${index + 1}", supporting = "Last message") }
             }
-        ) {
-            DSCard { Text("Content goes here", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
         }
     }
 }

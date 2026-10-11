@@ -68,6 +68,37 @@ class DSTokenDetectorTest : LintDetectorTest() {
         ).allowMissingSdk().testModes(TestMode.DEFAULT).run().expectWarningCount(4)
     }
 
+    fun testSpacingOnTheScaleOffersTheToken() {
+        lint().files(
+            *stubs,
+            kotlin(
+                """
+                package com.example.feature
+                import androidx.compose.ui.Modifier
+                import androidx.compose.ui.padding
+                import androidx.compose.ui.unit.dp
+
+                fun screen() {
+                    val a = Modifier.padding(16.dp)
+                    val b = Modifier.padding(all = 14.dp)
+                }
+                """
+            ).indented()
+        ).allowMissingSdk().testModes(TestMode.DEFAULT).run()
+            .expectContains("16.dp é DSSpacing.lg")
+            .expectContains("14.dp não está na escala (o mais perto é DSSpacing.md)")
+            .expectFixDiffs(
+                """
+                Fix for src/com/example/feature/test.kt line 7: Trocar por DSSpacing.lg:
+                @@ -2 +2
+                + import io.github.romulomga.dskit.DSSpacing
+                @@ -7 +8
+                -     val a = Modifier.padding(16.dp)
+                +     val a = Modifier.padding(DSSpacing.lg)
+                """
+            )
+    }
+
     fun testTheAppDesignSystemPackageIsExempt() {
         lint().files(
             *stubs,

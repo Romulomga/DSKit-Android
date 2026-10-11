@@ -6,8 +6,8 @@ import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 
 /**
- * Regras que viajam com o AAR do DSKit (`lintPublish`): as mesmas `ds_*` do SwiftLint do app iOS, para que
- * layout fora do design system do app use só tokens e componentes.
+ * Regras que viajam com o AAR do DSKit (`lintPublish`), para que layout fora do design system do app use só
+ * tokens e componentes do DSKit.
  */
 class DSKitIssueRegistry : IssueRegistry() {
     override val issues: List<Issue> = DSTokenDetector.ISSUES + DSComponentDetector.ISSUE

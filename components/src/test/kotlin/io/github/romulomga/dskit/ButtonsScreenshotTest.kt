@@ -3,42 +3,62 @@ package io.github.romulomga.dskit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.runtime.Composable
 import org.junit.Test
 
 class ButtonsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun secondary() = snapshot("buttons_secondary") {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSSecondaryButton("Share", onClick = {}, icon = DSIcons.ArrowClockwise)
+    fun buttons() = snapshot("buttons_variants") {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+            DSButton("Publish", onClick = {}, icon = DSIcons.Add)
 
-            DSSecondaryButton("Draw again", onClick = {})
+            DSTonalButton("Save draft", onClick = {})
 
-            DSSecondaryButton("Disabled", onClick = {}, enabled = false)
+            DSOutlinedButton("Cancel", onClick = {})
+
+            DSTextButton("Forgot password", onClick = {})
         }
     }
 
     @Test
-    fun destructive() = snapshot("buttons_destructive") {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSDestructiveButton("Clear list", onClick = {}, icon = DSIcons.Close)
+    fun destructiveAndDisabled() = snapshot("buttons_destructive") {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+            DSButton("Delete account", onClick = {}, destructive = true)
 
-            DSDestructiveButton("Disabled", onClick = {}, enabled = false)
+            DSTonalButton("Remove partner", onClick = {}, destructive = true)
+
+            DSOutlinedButton("Leave group", onClick = {}, destructive = true)
+
+            DSButton("Disabled", onClick = {}, enabled = false)
         }
     }
 
     @Test
-    fun icon() = snapshot("buttons_icon") {
+    fun iconButtons() = snapshot("buttons_icon") {
+        Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+            DSIconButton(DSIcons.Share, "Share", onClick = {})
+
+            DSIconButton(DSIcons.Add, "Add", onClick = {}, style = DSIconButtonStyle.Filled)
+
+            DSIconButton(DSIcons.Edit, "Edit", onClick = {}, style = DSIconButtonStyle.Tonal)
+
+            DSIconButton(DSIcons.Delete, "Delete", onClick = {}, style = DSIconButtonStyle.Outlined)
+        }
+    }
+
+    @Test
+    fun fab() = snapshot("buttons_fab") {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSIconButton(DSIcons.ArrowClockwise, "Share", onClick = {}, style = DSIconButtonStyle.Plain)
+            DSFab(DSIcons.Edit, "Compose", onClick = {})
 
-            DSIconButton(DSIcons.Check, "Copy", onClick = {}, style = DSIconButtonStyle.Tinted)
-
-            DSIconButton(DSIcons.Plus, "Add", onClick = {}, style = DSIconButtonStyle.Filled)
-
-            DSIconButton(DSIcons.Lock, "Settings", onClick = {}, shape = DSIconButtonShape.Rounded)
-
-            DSIconButton(DSIcons.Plus, "Disabled", onClick = {}, enabled = false)
+            DSExtendedFab("New post", DSIcons.Add, onClick = {})
         }
+    }
+
+    @Test
+    fun textLink() = snapshot("buttons_text_link") {
+        DSTextLink(
+            text = "By continuing you accept the Terms of use and the Privacy policy.",
+            links = listOf(DSLink.Url("Terms of use", "https://example.com/terms"), DSLink.Action("Privacy policy") {})
+        )
     }
 }

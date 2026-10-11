@@ -1,94 +1,92 @@
 package io.github.romulomga.dskit
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 
-/**
- * Variante de superfície do [DSCard]. Escolha pelo que está por baixo:
- * - [Default]: card padrão com contorno discreto e sombra suave; sempre se destaca do fundo da rolagem.
- * - [Elevated]: sombra mais forte, para cards de destaque.
- * - [Material]: no iOS é o vidro translúcido de overlays e barras flutuantes. O Android não tem material
- *   translúcido equivalente: aqui ele é desenhado como [Elevated], mas sem contorno.
- */
+/** Os três cards do Material 3. */
 public enum class DSCardVariant {
-    Default,
+    /** Fundo `surfaceContainerHighest`, sem sombra: o card padrão. */
+    Filled,
+
+    /** Fundo `surfaceContainerLow` com sombra: quando o card precisa se destacar do que está atrás. */
     Elevated,
-    Material
+
+    /** Fundo da tela com contorno: listas de cards lado a lado, sem peso visual. */
+    Outlined
 }
 
 /**
- * Contêiner de card com cantos arredondados. A variante [DSCardVariant.Default] tem contorno e sombra
- * discretos para o card nunca se confundir com o fundo da tela.
+ * Card do Material 3: agrupa o conteúdo de um item (uma publicação, um resumo). Com [onClick], o card
+ * inteiro é tocável e mostra o ripple; o TalkBack lê o conteúdo junto, como um botão.
  *
- * O conteúdo fica dentro de [DSSurfaceContainer]: um campo dentro do card lê um nível de superfície a mais
- * e é pintado em `surfaceElevated`. No [DSGroupedCanvas] o próprio card já fica em `surfaceElevated`.
+ * @param contentPadding folga interna; o padrão é `DSSpacing.lg`. Passe `PaddingValues(0.dp)` para uma
+ * imagem que vai até a borda.
  */
 @Composable
 public fun DSCard(
     modifier: Modifier = Modifier,
-    variant: DSCardVariant = DSCardVariant.Default,
+    variant: DSCardVariant = DSCardVariant.Filled,
+    onClick: (() -> Unit)? = null,
+    contentPadding: PaddingValues = PaddingValues(DSSpacing.lg),
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val shape = DSRadius.large
-    val shadow = when (variant) {
-        DSCardVariant.Default -> DSShadow.subtle
-        DSCardVariant.Elevated, DSCardVariant.Material -> DSShadow.card
+    val haptics = rememberDSHaptics()
+    val body: @Composable ColumnScope.() -> Unit = {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(contentPadding),
+            verticalArrangement = Arrangement.spacedBy(DSSpacing.sm),
+            content = content
+        )
     }
-    val bordered = variant != DSCardVariant.Material
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .dsShadow(shadow, shape)
-            .clip(shape)
-            .background(DSTheme.colors.surface(DSTheme.surfaceLevel))
-            .then(if (bordered) Modifier.border(0.75.dp, DSTheme.colors.hairline, shape) else Modifier)
-            .padding(DSSpacing.lg)
-    ) {
-        DSSurfaceContainer {
-            Column(content = content)
+    val click = onClick?.let {
+        {
+            haptics.light()
+            it()
         }
     }
-}
 
-@DSPreviews
-@Composable
-private fun DSCardVariantsPreview() {
-    DSPreviewContainer("Card variants") {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSCard { Text("Default — subtle border + soft shadow", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
+    when (variant) {
+        DSCardVariant.Filled ->
+            if (click != null) Card(onClick = click, modifier = modifier, content = body) else Card(modifier = modifier, content = body)
 
-            DSCard(variant = DSCardVariant.Elevated) {
-                Text("Elevated — stronger shadow", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh)
+        DSCardVariant.Elevated ->
+            if (click != null) {
+                ElevatedCard(onClick = click, modifier = modifier, content = body)
+            } else {
+                ElevatedCard(modifier = modifier, content = body)
             }
 
-            DSCard(variant = DSCardVariant.Material) {
-                Text("Material — no border", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh)
+        DSCardVariant.Outlined ->
+            if (click != null) {
+                OutlinedCard(onClick = click, modifier = modifier, content = body)
+            } else {
+                OutlinedCard(modifier = modifier, content = body)
             }
-        }
     }
 }
 
 @DSPreviews
 @Composable
-private fun DSCardGroupedPreview() {
-    DSPreviewContainer("Grouped canvas") {
-        DSGroupedCanvas {
-            Column(Modifier.padding(DSSpacing.lg), verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-                DSCard { Text("Elevated cell on grouped canvas", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
+private fun DSCardPreview() {
+    DSPreviewContainer("Cards") {
+        DSCard {
+            Text("Filled card", style = DSTheme.typography.titleMedium)
 
-                DSCard { Text("Settings look", style = DSTypography.body, color = DSTheme.colors.onSurfaceHigh) }
-            }
+            Text("The default card", style = DSTheme.typography.bodyMedium)
         }
+
+        DSCard(variant = DSCardVariant.Elevated, onClick = {}) { Text("Elevated, tappable") }
+
+        DSCard(variant = DSCardVariant.Outlined) { Text("Outlined") }
     }
 }

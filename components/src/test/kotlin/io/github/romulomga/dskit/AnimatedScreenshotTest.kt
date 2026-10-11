@@ -3,17 +3,13 @@ package io.github.romulomga.dskit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
-import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,63 +23,77 @@ class AnimatedScreenshotTest : ScreenshotTestBase() {
     val composeRule = createComposeRule()
 
     @Test
-    fun primaryLight() = composeRule.stillSnapshot("buttons_primary", StillMode.Light) { PrimaryStates() }
+    fun buttonLoadingLight() = composeRule.stillSnapshot("buttons_loading", StillMode.Light) { LoadingButtons() }
 
     @Test
-    fun primaryDark() = composeRule.stillSnapshot("buttons_primary", StillMode.Dark) { PrimaryStates() }
+    fun buttonLoadingDark() = composeRule.stillSnapshot("buttons_loading", StillMode.Dark) { LoadingButtons() }
 
     @Test
-    fun primaryFont200() = composeRule.stillSnapshot("buttons_primary", StillMode.Font200) { PrimaryStates() }
+    fun buttonLoadingFont200() = composeRule.stillSnapshot("buttons_loading", StillMode.Font200) { LoadingButtons() }
 
     @Composable
-    private fun PrimaryStates() {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSPrimaryButton("Draw", onClick = {}, icon = DSIcons.Star)
+    private fun LoadingButtons() {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+            DSButton("Publishing", onClick = {}, loading = true)
 
-            DSPrimaryButton("Loading", onClick = {}, isLoading = true)
-
-            DSPrimaryButton("Disabled", onClick = {}, enabled = false)
-        }
-    }
-
-    @Test
-    fun pillLight() = composeRule.stillSnapshot("buttons_pill", StillMode.Light) { PillStates() }
-
-    @Test
-    fun pillDark() = composeRule.stillSnapshot("buttons_pill", StillMode.Dark) { PillStates() }
-
-    @Test
-    fun pillFont200() = composeRule.stillSnapshot("buttons_pill", StillMode.Font200) { PillStates() }
-
-    @Composable
-    private fun PillStates() {
-        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
-            DSPillButton("Continuar", onClick = {})
-
-            DSPillButton("Começar jornada", onClick = {}, icon = DSIcons.Star)
-
-            DSPillButton("Loading", onClick = {}, isLoading = true)
-
-            DSPillButton("Secundário", onClick = {}, variant = DSPillButtonVariant.Secondary)
-
-            DSPillButton("Outlined", onClick = {}, variant = DSPillButtonVariant.Outlined)
-
-            DSPillButton("Disabled", onClick = {}, enabled = false)
+            DSTonalButton("Saving", onClick = {}, loading = true)
         }
     }
 
     @Test
     fun loadingStateLight() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Light) {
-        DSLoadingState(message = "Drawing winner…")
+        DSLoadingState(message = "Loading properties…")
     }
 
     @Test
     fun loadingStateDark() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Dark) {
-        DSLoadingState(message = "Drawing winner…")
+        DSLoadingState(message = "Loading properties…")
     }
 
     @Test
     fun loadingStateFont200() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Font200) {
-        DSLoadingState(message = "Drawing winner…")
+        DSLoadingState(message = "Loading properties…")
+    }
+
+    @Test
+    fun skeletonLight() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Light) { SkeletonStates() }
+
+    @Test
+    fun skeletonDark() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Dark) { SkeletonStates() }
+
+    @Test
+    fun skeletonFont200() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Font200) { SkeletonStates() }
+
+    @Composable
+    private fun SkeletonStates() {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
+            DSSkeletonRow()
+
+            DSSkeletonRow()
+
+            DSCard {
+                Text("Sample title of a post", style = DSTheme.typography.titleMedium, modifier = Modifier.dsSkeleton(true))
+
+                Text("Sample line of the description", style = DSTheme.typography.bodyMedium, modifier = Modifier.dsSkeleton(true))
+            }
+        }
+    }
+
+    @Test
+    fun loadingOverlayLight() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Light) { OverlayStates() }
+
+    @Test
+    fun loadingOverlayDark() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Dark) { OverlayStates() }
+
+    @Test
+    fun loadingOverlayFont200() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Font200) { OverlayStates() }
+
+    @Composable
+    private fun OverlayStates() {
+        Box(Modifier.fillMaxWidth().height(240.dp)) {
+            DSCard { Text("Form behind the veil") }
+
+            DSLoadingOverlay(visible = true, message = "Publishing…")
+        }
     }
 }

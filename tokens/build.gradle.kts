@@ -36,6 +36,18 @@ kotlin {
     explicitApi()
 }
 
+composeCompiler {
+    // Tipos de fora do módulo que o DSKit trata como estáveis (ver o arquivo).
+    stabilityConfigurationFiles.add(rootProject.layout.projectDirectory.file("compose-stability.conf"))
+
+    // Relatório de estabilidade e de pulos: `./gradlew assembleRelease -Pdskit.composeReports=true`,
+    // saída em `build/compose_compiler/`.
+    if (providers.gradleProperty("dskit.composeReports").orNull == "true") {
+        reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
+        metricsDestination.set(layout.buildDirectory.dir("compose_compiler"))
+    }
+}
+
 dependencies {
     api(platform(Dependencies.Compose.bom))
     api(Dependencies.Compose.ui)

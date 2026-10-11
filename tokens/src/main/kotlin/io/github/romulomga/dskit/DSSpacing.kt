@@ -3,7 +3,7 @@ package io.github.romulomga.dskit
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** Escala de espaçamento, o ritmo 4/8 do DSKit iOS (pt → dp). */
+/** Escala de espaçamento na grade de 4 dp do Material. */
 public object DSSpacing {
     public val xxs: Dp = 2.dp
     public val xs: Dp = 4.dp
@@ -14,10 +14,7 @@ public object DSSpacing {
     public val xxl: Dp = 32.dp
 }
 
-/** Alvos de toque. O Android pede 48 dp (o iOS usa 44 pt). */
+/** Alvo mínimo de toque do Android. */
 public object DSTouchTarget {
     public val minimum: Dp = 48.dp
-
-    /** Altura mínima de botão retangular, a mesma do DSKit iOS. */
-    public val button: Dp = 50.dp
 }

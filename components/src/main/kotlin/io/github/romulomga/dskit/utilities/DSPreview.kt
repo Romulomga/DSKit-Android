@@ -17,20 +17,26 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(name = "Fonte 200 %", showBackground = true, fontScale = 2f)
 public annotation class DSPreviews
 
-/** Moldura padrão de preview e de screenshot: tema do DSKit, fundo e uma legenda. */
+/**
+ * Moldura padrão de preview e de screenshot: tema do DSKit, fundo `surface` e uma legenda. Passe a marca do
+ * app em [brand] para ver o componente com as cores dele.
+ */
 @Composable
 public fun DSPreviewContainer(
     title: String,
     modifier: Modifier = Modifier,
     darkTheme: Boolean = isSystemInDarkTheme(),
+    brand: DSBrand = DSBrand.Default,
+    contrast: DSContrast = DSContrast.Standard,
     content: @Composable () -> Unit
 ) {
-    DSTheme(darkTheme = darkTheme) {
+    DSTheme(brand = brand, darkTheme = darkTheme, contrast = contrast) {
         Column(
-            modifier = modifier.background(DSTheme.colors.background).padding(DSSpacing.lg),
+            modifier = modifier.background(DSTheme.colors.surface).padding(DSSpacing.lg),
             verticalArrangement = Arrangement.spacedBy(DSSpacing.md)
         ) {
-            Text(title, style = DSTypography.footnote, color = DSTheme.colors.onSurfaceMedium)
+            Text(title, style = DSTheme.typography.labelMedium, color = DSTheme.colors.onSurfaceVariant)
+
             content()
         }
     }

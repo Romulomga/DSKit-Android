@@ -1,63 +1,57 @@
 # Convenções do DSKit Android
 
-O DSKit Android é o irmão do DSKit iOS (`~/DSKit`, tag 1.0.38). Cada componente é o porte do arquivo Swift de
-mesmo nome: mesmo nome, mesmos parâmetros traduzidos, mesmo visual, mesmos estados.
+O DSKit Android é um design system **nativo do Android**: cada componente é um componente do Material 3 com os
+padrões do app, não um desenho próprio. Quando o Material tem a peça, o DSKit a embrulha; quando não tem
+(esqueleto, estado vazio, véu de carregamento), o DSKit a desenha com os papéis de cor e a tipografia do Material.
+
+Outros design systems (o DSKit iOS, o do Homer iOS) servem de fonte de ideias sobre **quais** peças um app precisa,
+nunca de **como** elas parecem ou se comportam. Nada de título grande no conteúdo, ajustes agrupados com chevron,
+escala de tipo do iOS, níveis de superfície ou toast no topo: o equivalente Android é a `TopAppBar` grande, o
+`ListItem`, a escala do Material e o snackbar.
 
 ## Onde fica
 
-- Um arquivo por componente em `components/src/main/kotlin/io/github/romulomga/dskit/<grupo>/<Nome>.kt`
-  (`buttons/`, `cards/`, `inputs/`, `feedback/`, `layout/`, `controls/`, `monetization/`). O pacote é sempre
-  `io.github.romulomga.dskit`, sem subpacote: quem usa importa tudo de um lugar, como o `import DSKit`.
+- Um arquivo por componente (ou família pequena, como os quatro botões) em
+  `components/src/main/kotlin/io/github/romulomga/dskit/<grupo>/<Nome>.kt` (`buttons/`, `cards/`, `controls/`,
+  `feedback/`, `inputs/`, `layout/`, `lists/`, `navigation/`, `overlays/`). O pacote é sempre
+  `io.github.romulomga.dskit`, sem subpacote: quem usa importa tudo de um lugar.
 - `explicitApi()` está ligado: toda declaração pública leva `public`; o que não é API é `internal` ou `private`.
-- Não mexer em `tokens/` nem em `utilities/`. Ícone que falte em `DSIcons`: declare `private` no seu arquivo,
-  com o caminho do Material Icons.
+- Ícone que falte em `DSIcons`: adicione lá, com o nome e o caminho do Material Icons (`autoMirror` nos de direção).
 
-## Tradução da API do SwiftUI
+## Como escrever um componente
 
-| SwiftUI (DSKit iOS) | Compose (DSKit Android) |
-|---|---|
-| `title: LocalizedStringKey` | `title: String` (o app passa `stringResource`) |
-| `systemImage: String?` | `icon: ImageVector?` |
-| `@Binding var x` | `value: T` + `onValueChange: (T) -> Unit` |
-| `.disabled(true)` / `isEnabled` | parâmetro `enabled: Boolean = true` |
-| `@ViewBuilder content` | `content: @Composable () -> Unit` (ou `ColumnScope.() -> Unit` quando empilha) |
-| `action: () -> Void` | `onClick: () -> Unit` |
-| ordem | parâmetros obrigatórios, depois `modifier: Modifier = Modifier`, depois opcionais, por último o lambda de conteúdo |
-| `Color.surface`, `Color.accent`… | `DSTheme.colors.surface`, `DSTheme.colors.accent` |
-| `theme.primary` | `DSTheme.primary` |
-| `DSTypography.headline()` | `DSTypography.headline` |
-| `DSSpacing.lg`, `DSRadius.lg` | os mesmos nomes (`Dp`); formas prontas em `DSRadius.large`, `DSRadius.capsule` |
-| `.dsShadow(.card)` | `Modifier.dsShadow(DSShadow.card, shape)` |
-| `DSMotion.snappy` | `DSMotion.snappy()` (`AnimationSpec`) |
-| `@Environment(\.dsSurfaceLevel)` | `DSTheme.surfaceLevel`; pinte `DSTheme.colors.surface(DSTheme.surfaceLevel)` e embrulhe o conteúdo em `DSSurfaceContainer { }` |
-| `accessibilityReduceMotion` | `DSTheme.reduceMotion` (troque movimento por crossfade ou nada) |
-| `DSHaptics.medium(if: hapticsEnabled)` | `val haptics = rememberDSHaptics()` e `haptics.medium()` |
-| `DSPressableButtonStyle` | `Modifier.dsPressScale(interactionSource)` junto com o ripple |
-| `@Environment(\.dsFieldLabelStyle)` | `LocalDSFieldLabelStyle.current` |
-| `ProgressView()` | `CircularProgressIndicator` do Material 3 com cor de token e tamanho do texto |
-| `.strokeBorder(Color.hairline, lineWidth: 0.75)` | `Modifier.border(0.75.dp, DSTheme.colors.hairline, shape)` |
-| strings do `Localizable.xcstrings` | `stringResource(R.string.dskit_…)` (`io.github.romulomga.dskit.components.R`) |
+- Comece pelo componente do Material e mude só o necessário. Cores, formas, alturas e paddings ficam os do Material,
+  vindos do `DSTheme` (`DSTheme.colors`, `DSTheme.typography`, `DSTheme.shapes`); não redesenhe o que o Material já
+  desenha.
+- API: parâmetros obrigatórios, depois `modifier: Modifier = Modifier`, depois opcionais, por último o lambda de
+  conteúdo. Texto como `String` (o app passa `stringResource`), ícone como `ImageVector`, estado como
+  `value` + `onValueChange`, desabilitado por `enabled: Boolean = true`. Nomes do Material quando existem
+  (`DSTonalButton`, `DSFilterChip`, `supportingText`, `label`).
+- **API experimental do Material nunca na assinatura pública** (`SheetState`, `TopAppBarScrollBehavior`…): use com
+  `@OptIn` dentro do componente e exponha algo estável (`visible: Boolean`, o estilo da barra). Senão todo app
+  precisaria de `@OptIn` para usar o DSKit.
+- Vibração: `val haptics = rememberDSHaptics()` e `haptics.light()` no toque; `warning()` em ações destrutivas.
+- Strings da lib em `components/src/main/res/values*/strings.xml`, nas 10 línguas, com prefixo `dskit_`.
+- Remover ou renomear algo público é quebra: anote em `CHANGELOG.md`, com o código de migração.
+- Componente novo ganha uma página em `docs/components/` e entra no índice e no mapa do lint
+  (`DSComponentDetector.REPLACEMENTS`), se embrulha um componente do Material.
 
 ## Regras
 
-- Só tokens: nada de cor, fonte, espaçamento, raio, sombra ou duração literais. Exceções que o iOS também tem
-  (altura mínima de botão = `DSTouchTarget.button`, linha de 0,75 dp) ficam como no Swift.
-- Texto sempre em `DSTypography` (escala com a fonte do sistema). Sem altura fixa em linha de texto: use
-  `heightIn(min = …)`.
-- Acessibilidade: alvo mínimo de 48 dp (`DSTouchTarget.minimum`) em tudo que é tocável; `Role` certo
-  (`Role.Button`, `Role.Switch`, `Role.RadioButton`, `Role.Checkbox`, `Role.Tab`); estado por `selected`,
-  `stateDescription` ou `toggleableState`; cards e linhas com `mergeDescendants`; ícone decorativo com
-  `contentDescription = null`; controle só com ícone exige `contentDescription` no parâmetro, não opcional.
-- Nativo do Android: ripple nos tocáveis (o `clickable` padrão), `ModalBottomSheet`/`DropdownMenu` do Material
-  onde o iOS usa `Menu`, teclado por `KeyboardOptions`/`KeyboardActions` (o "OK" do teclado numérico é a
-  `ImeAction.Done`; não existe `DSKeyboardToolbar`).
-- Cada arquivo termina com previews `@DSPreviews` dentro de `DSPreviewContainer`, cobrindo os estados do
-  `#Preview` do Swift (normal, desabilitado, carregando, erro…).
+- Só tokens: nada de cor, fonte, espaçamento, sombra ou duração literais. Cor vem de `DSTheme.colors` ou
+  `DSTheme.status`; texto de `DSTheme.typography` (escala com a fonte do sistema); animação de `DSMotion`.
+- Acessibilidade: alvo mínimo de 48 dp em tudo que é tocável (os componentes do Material já garantem); `Role` certo
+  quando a linha inteira é o controle (`Role.Switch`, `Role.Checkbox`, `Role.RadioButton`) e o controle desenhado
+  com `onCheckedChange = null`; ícone decorativo com `contentDescription = null`; controle só com ícone exige
+  `contentDescription` no parâmetro, não opcional.
+- Cada arquivo termina com previews `@DSPreviews` dentro de `DSPreviewContainer` (claro, escuro, fonte 200 %),
+  cobrindo os estados (normal, desabilitado, carregando, erro…).
 - Cada grupo tem um teste de screenshot em `components/src/test/kotlin/io/github/romulomga/dskit/<Grupo>ScreenshotTest.kt`
-  que estende `ScreenshotTestBase` e chama `snapshot("<grupo>_<componente>") { … }` para cada componente
-  e estado relevante.
+  que estende `ScreenshotTestBase` e chama `snapshot("<grupo>_<componente>") { … }`, que captura cinco modos:
+  claro, escuro, fonte 200 %, da direita para a esquerda (`_rtl`) e alto contraste (`_highcontrast`). Confira o
+  `_rtl`: ícone de direção espelha, texto alinha à direita, nada de `padding(left=…)`. Animação infinita (indicador,
+  esqueleto) vai no `AnimatedScreenshotTest` pelo `stillSnapshot`; diálogo e painel, que abrem em janela própria, no
+  `DialogScreenshotTest`.
 - O `snapshot` também roda o Accessibility Test Framework do Google no claro e no escuro (alvo de toque, contraste,
-  rótulo legível pelo TalkBack) e falha em erro, como o Now in Android. Exceção real vai em
-  `accessibilitySuppressions`, com o motivo ao lado; o `stillSnapshot` (animação infinita) confere também.
-- KDoc em português nas declarações públicas, dizendo para que serve e quando usar (o iOS tem o texto em inglês;
-  traduza o sentido).
+  rótulo legível pelo TalkBack) e falha em erro. Exceção real vai em `accessibilitySuppressions`, com o motivo ao lado.
+- KDoc em português nas declarações públicas, dizendo para que serve e quando usar (e quando usar outro componente).
