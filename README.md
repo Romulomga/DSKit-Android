@@ -8,28 +8,40 @@ pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
 - Sem dependência além de AndroidX/Compose.
-- Publicado pelo [JitPack](https://jitpack.io/#Romulomga/DSKit-Android); mudanças de cada versão em
-  [`CHANGELOG.md`](CHANGELOG.md).
+- Versões por tag no GitHub; mudanças de cada uma em [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Instalação
 
-```kotlin
-// settings.gradle.kts
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io") { content { includeGroup("com.github.Romulomga.DSKit-Android") } }
-    }
-}
+Como no Swift Package Manager: o app traz o repositório numa tag e o Gradle compila o DSKit junto, sem servidor de
+pacotes no meio.
 
-// build.gradle.kts do app
+```sh
+git submodule add https://github.com/Romulomga/DSKit-Android.git DSKit-Android
+git -C DSKit-Android checkout 0.1.1
+```
+
+```kotlin
+// settings.gradle.kts do app
+includeBuild("DSKit-Android")
+
+// build.gradle.kts do módulo do app
 dependencies {
-    implementation("com.github.Romulomga.DSKit-Android:components:0.1.0") // traz o tokens e as regras de lint
+    implementation("com.github.Romulomga.DSKit-Android:components:0.1.1") // traz o tokens
+    lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.1") // as regras DSComponent, DSSpacingLiteral…
 }
 ```
 
-O `content { includeGroup(…) }` faz o Gradle buscar só o DSKit no JitPack, e nada mais.
+O Gradle troca essas coordenadas pelos projetos do submódulo (a versão escrita ali não importa; vale a tag em que
+o submódulo está). Atualizar é `git -C DSKit-Android checkout <tag>` e commitar o submódulo.
+
+Requisitos do app, porque tudo vira um build só:
+
+- **o mesmo Android Gradle Plugin do DSKit** (hoje 9.4.1): o AGP não aceita duas versões no mesmo build;
+- Kotlin 2.4 com o plugin do Compose, JDK 21 e `compileSdk` 37 ou maior;
+- o Android SDK achado pelo `local.properties` do app ou por `ANDROID_HOME` (o DSKit copia o `sdk.dir` do app).
+
+Quem não puder acompanhar o AGP do DSKit pode usar o binário pelo [JitPack](https://jitpack.io/#Romulomga/DSKit-Android)
+(`maven("https://jitpack.io")` e as mesmas coordenadas; aí as regras de lint já vêm no AAR).
 
 ## Uso
 

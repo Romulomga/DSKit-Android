@@ -7,6 +7,11 @@ apply {
     from("$rootDir/ktlint.gradle")
 }
 
+// Com o DSKit como submódulo, o app pega estas regras por `lintChecks("com.github.Romulomga.DSKit-Android:lint")`:
+// o `lintPublish` do components só vale quando a lib chega como AAR.
+group = project.property("GROUP").toString()
+version = project.property("VERSION_NAME").toString()
+
 kotlin {
     jvmToolchain(Configs.Common.javaVersion)
 }

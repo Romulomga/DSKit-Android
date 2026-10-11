@@ -21,16 +21,21 @@ import org.jetbrains.uast.getContainingUFile
 class DSTokenDetector :
     Detector(),
     SourceCodeScanner {
-    override fun getApplicableMethodNames(): List<String> = listOf(
-        "Color", "padding", "spacedBy", "shadow", "tween", "spring", "CircularProgressIndicator", "TextStyle", "Text"
-    )
+    override fun getApplicableUastTypes(): List<Class<out UElement>> =
+        listOf(UCallExpression::class.java, UQualifiedReferenceExpression::class.java)
 
-    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UQualifiedReferenceExpression::class.java)
-
-    override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
-        if (isExempt(node)) return
+    /**
+     * Chamadas pelo nome do código-fonte: `padding(16.dp)`, `Text(color = …)` e outras funções com parâmetro `Dp`
+     * ou `Color` (value classes) saem compiladas com o nome alterado (`padding-3ABfNKs`), e o
+     * `getApplicableMethodNames` do lint não as acharia em código de verdade.
+     */
+    private fun visitCall(context: JavaContext, node: UCallExpression) {
+        val name = node.sourceName() ?: return
+        if (name !in CALL_NAMES || isExempt(node)) return
+        val method = node.resolve() ?: return
         val args = node.valueArguments.map { it.sourcePsi?.text?.trim().orEmpty() }
-        when (method.name) {
+
+        when (name) {
             "Color" -> if (args.size == 1 && HEX_LITERAL.matches(args[0])) {
                 report(context, RAW_COLOR, node, "Cor literal: use `DSTheme.colors` ou uma cor de marca do app.")
             }
@@ -49,7 +54,7 @@ class DSTokenDetector :
             }
 
             "tween", "spring" -> if (isComposeAnimation(method) && args.isNotEmpty()) {
-                reportAnimation(context, node, method.name, args)
+                reportAnimation(context, node, name, args)
             }
 
             "CircularProgressIndicator" -> if (isMaterial(method) && args.isEmpty()) {
@@ -68,6 +73,8 @@ class DSTokenDetector :
     }
 
     override fun createUastHandler(context: JavaContext) = object : com.android.tools.lint.client.api.UElementHandler() {
+        override fun visitCallExpression(node: UCallExpression) = visitCall(context, node)
+
         override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
             if (isExempt(node)) return
             val text = node.sourcePsi?.text ?: return
@@ -158,6 +165,9 @@ class DSTokenDetector :
     }
 
     companion object {
+        private val CALL_NAMES =
+            setOf("Color", "padding", "spacedBy", "shadow", "tween", "spring", "CircularProgressIndicator", "TextStyle", "Text")
+
         private val HEX_LITERAL = Regex("""0x[0-9A-Fa-f]{6,8}L?""")
         private val DP_LITERAL = Regex("""(?<![\w.])\d+(\.\d+)?f?\.dp\b""")
         private val DP_VALUE = Regex("""^(?:\w+\s*=\s*)?(\d+(?:\.\d+)?)f?\.dp$""")
@@ -232,6 +242,9 @@ class DSTokenDetector :
         )
     }
 }
+
+/** O nome da função como está no código-fonte, sem o sufixo que o Kotlin põe nas que recebem value class. */
+internal fun UCallExpression.sourceName(): String? = (methodIdentifier?.name ?: methodName)?.substringBefore('-')
 
 /** Código do próprio DSKit ou de um pacote `designsystem` do app: é lá que tokens e Material viram componentes. */
 internal fun isExempt(node: UElement): Boolean {

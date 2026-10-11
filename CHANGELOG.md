@@ -6,6 +6,20 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.1] - 2026-10-11
+
+### Adicionado
+
+- Instalação como submódulo git (`includeBuild`), sem servidor de pacotes: os módulos têm as coordenadas Maven
+  para o Gradle trocar pelos projetos, e o `lint` pode entrar por `lintChecks`.
+- Incluído num app sem `local.properties` próprio, o DSKit usa o `sdk.dir` do app.
+
+### Corrigido
+
+- As regras de lint não achavam chamadas a funções com parâmetro `Dp` ou `Color` em código de verdade (o Kotlin
+  muda o nome delas no binário): `padding(16.dp)`, `spacedBy`, `Text(fontSize = …)`, `HorizontalDivider`, `Badge`
+  e outros passavam sem aviso.
+
 ## [0.1.0] - 2026-10-11
 
 Primeira versão publicada.

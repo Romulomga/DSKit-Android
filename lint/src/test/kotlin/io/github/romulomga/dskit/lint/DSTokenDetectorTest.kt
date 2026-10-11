@@ -15,8 +15,9 @@ class DSTokenDetectorTest : LintDetectorTest() {
         kotlin(
             """
             package androidx.compose.ui.unit
-            class Dp
-            val Int.dp: Dp get() = Dp()
+            @JvmInline
+            value class Dp(val value: Float)
+            val Int.dp: Dp get() = Dp(toFloat())
             """
         ).indented(),
         kotlin(

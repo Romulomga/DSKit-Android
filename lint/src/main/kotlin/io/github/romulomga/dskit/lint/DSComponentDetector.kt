@@ -1,5 +1,6 @@
 package io.github.romulomga.dskit.lint
 
+import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Implementation
@@ -8,8 +9,8 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
-import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UCallExpression
+import org.jetbrains.uast.UElement
 
 /**
  * Componente do Material 3 usado onde o DSKit tem o seu. É o `DesignSystemDetector` do Now in Android
@@ -22,19 +23,20 @@ import org.jetbrains.uast.UCallExpression
 class DSComponentDetector :
     Detector(),
     SourceCodeScanner {
-    override fun getApplicableMethodNames(): List<String> = REPLACEMENTS.keys.toList()
+    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UCallExpression::class.java)
 
-    override fun visitMethodCall(context: JavaContext, node: UCallExpression, method: PsiMethod) {
-        if (isExempt(node)) return
-        val owner = method.containingClass?.qualifiedName.orEmpty()
-        if (!owner.startsWith(MATERIAL3)) return
-        val replacement = REPLACEMENTS[method.name] ?: return
-        context.report(
-            ISSUE,
-            node,
-            context.getLocation(node),
-            "`${method.name}` do Material: use `$replacement`."
-        )
+    // Pelo nome do código-fonte, não pelo `getApplicableMethodNames`: composable com parâmetro `Color` ou `Dp`
+    // (value classes) sai compilado com o nome alterado (`Badge-eopBjH0`) e escaparia.
+    override fun createUastHandler(context: JavaContext): UElementHandler = object : UElementHandler() {
+        override fun visitCallExpression(node: UCallExpression) {
+            val name = node.sourceName() ?: return
+            val replacement = REPLACEMENTS[name] ?: return
+            if (isExempt(node)) return
+            val owner = node.resolve()?.containingClass?.qualifiedName.orEmpty()
+            if (!owner.startsWith(MATERIAL3)) return
+
+            context.report(ISSUE, node, context.getLocation(node), "`$name` do Material: use `$replacement`.")
+        }
     }
 
     companion object {

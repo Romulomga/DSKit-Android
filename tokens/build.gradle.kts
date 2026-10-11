@@ -8,6 +8,11 @@ apply {
     from("$rootDir/ktlint.gradle")
 }
 
+// Grupo e versão das coordenadas Maven: num app que inclui o DSKit como submódulo (`includeBuild`), o Gradle troca
+// `com.github.Romulomga.DSKit-Android:<módulo>` por este projeto.
+group = project.property("GROUP").toString()
+version = project.property("VERSION_NAME").toString()
+
 android {
     namespace = Configs.Modules.Tokens.namespace
     compileSdk = Configs.Common.compileSdk
@@ -71,9 +76,7 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            groupId = project.property("GROUP").toString()
             artifactId = "tokens"
-            version = project.property("VERSION_NAME").toString()
 
             afterEvaluate {
                 from(components["release"])
