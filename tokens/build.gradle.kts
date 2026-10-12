@@ -72,7 +72,8 @@ dependencies {
     testImplementation(Dependencies.Test.junit)
 }
 
-// `com.github.Romulomga.DSKit-Android:tokens:<versão>` pelo JitPack, ou `./gradlew publishToMavenLocal` para testar.
+// O artefato `com.github.Romulomga.DSKit-Android:tokens`: `./gradlew publishToMavenLocal` gera o AAR para testar fora do
+// submódulo.
 publishing {
     publications {
         register<MavenPublication>("release") {

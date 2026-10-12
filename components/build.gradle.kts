@@ -86,7 +86,8 @@ dependencies {
     debugImplementation(Dependencies.Compose.uiTestManifest)
 }
 
-// `com.github.Romulomga.DSKit-Android:components:<versão>` pelo JitPack, ou `./gradlew publishToMavenLocal` para testar.
+// O artefato `com.github.Romulomga.DSKit-Android:components`: `./gradlew publishToMavenLocal` gera o AAR para testar fora do
+// submódulo.
 publishing {
     publications {
         register<MavenPublication>("release") {

@@ -1,6 +1,0 @@
-# JitPack compila a tag pedida e serve tokens e components (sem o sample e sem rodar testes: o workflow de
-# release já rodou tudo antes de criar a release).
-jdk:
-  - openjdk21
-install:
-  - ./gradlew :tokens:publishToMavenLocal :components:publishToMavenLocal

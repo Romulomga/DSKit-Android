@@ -6,6 +6,14 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+### Removido
+
+- Publicação pelo JitPack: o DSKit entra no app como submódulo git (ver o README).
+
+### Adicionado
+
+- Licença MIT.
+
 ## [0.1.1] - 2026-10-11
 
 ### Adicionado

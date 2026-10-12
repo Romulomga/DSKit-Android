@@ -1,5 +1,5 @@
 # Lança uma versão quando uma tag x.y.z chega ao GitHub: confere que a tag é a VERSION_NAME, roda as mesmas
-# checagens do desenvolvimento, cria a release com a seção do CHANGELOG e pede ao JitPack para compilar.
+# checagens do desenvolvimento e cria a release com a seção do CHANGELOG.
 name: Release
 
 on:
@@ -46,6 +46,3 @@ jobs:
             on { print }
           ' CHANGELOG.md > notes.md
           gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md
-
-      - name: Compilar no JitPack
-        run: curl --silent --max-time 900 "https://jitpack.io/com/github/${GITHUB_REPOSITORY}/${GITHUB_REF_NAME}/build.log" | tail -n 20

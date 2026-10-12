@@ -8,6 +8,7 @@ pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
 - Sem dependência além de AndroidX/Compose.
+- Licença [MIT](LICENSE).
 - Versões por tag no GitHub; mudanças de cada uma em [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Instalação
@@ -41,9 +42,6 @@ Requisitos do app, porque tudo vira um build só:
 - o Android SDK achado pelo `local.properties` do app ou por `ANDROID_HOME` (o DSKit copia o `sdk.dir` do app).
 - memória para o Gradle compilar o DSKit junto: `org.gradle.jvmargs=-Xmx4096m` no `gradle.properties` do app (com
   o padrão de 512 MB, a compilação para por falta de memória).
-
-Quem não puder acompanhar o AGP do DSKit pode usar o binário pelo [JitPack](https://jitpack.io/#Romulomga/DSKit-Android)
-(`maven("https://jitpack.io")` e as mesmas coordenadas; aí as regras de lint já vêm no AAR).
 
 ## Uso
 
@@ -145,7 +143,7 @@ Espaçamento e duração dizem o token certo e, quando o valor está na escala, 
 
 Para lançar uma versão: mova o "Não lançado" do `CHANGELOG.md` para `## [x.y.z] - data`, ponha `VERSION_NAME=x.y.z`
 em `gradle.properties`, faça o commit e envie a tag (`git tag x.y.z && git push origin x.y.z`). O workflow
-`release.yml` confere a versão, roda as checagens, cria a release no GitHub e pede a compilação ao JitPack.
+`release.yml` confere a versão, roda as checagens, e cria a release no GitHub.
 
 Decisões de arquitetura em [`docs/adr/`](docs/adr/); convenções em
 [`CONVENTIONS.md`](CONVENTIONS.md).
