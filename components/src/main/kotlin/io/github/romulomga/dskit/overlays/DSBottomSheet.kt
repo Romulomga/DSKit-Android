@@ -44,6 +44,9 @@ import androidx.compose.ui.semantics.semantics
  * @param visible se o painel está aberto. Ao virar `false`, o painel desce antes de sair da tela.
  * @param onDismissRequest o usuário arrastou para baixo, tocou fora ou usou o voltar: desligue [visible].
  * @param title título opcional no topo do painel.
+ * @param scrollable `true` faz o painel rolar o conteúdo inteiro (o padrão, para conteúdo comum). Passe `false`
+ * quando o conteúdo já rola sozinho, como uma `LazyColumn` com uma lista longa (países, contas): uma lista
+ * preguiçosa dentro de um conteúdo que rola não tem altura máxima e trava o app.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +55,7 @@ public fun DSBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    scrollable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -77,7 +81,7 @@ public fun DSBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .then(if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier)
                 .padding(bottom = DSSpacing.lg)
         ) {
             if (title != null) {

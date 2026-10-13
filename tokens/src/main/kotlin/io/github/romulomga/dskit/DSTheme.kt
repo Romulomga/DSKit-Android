@@ -80,7 +80,7 @@ public fun DSTheme(
     val typography = remember(fontFamily) { DSTypography.create(fontFamily) }
 
     CompositionLocalProvider(
-        LocalDSStatusColors provides if (darkTheme) brand.darkStatus else brand.lightStatus,
+        LocalDSStatusColors provides brand.statusColors(darkTheme, contrast),
         LocalDSHapticsEnabled provides hapticsEnabled,
         LocalDSReduceMotion provides rememberReduceMotion()
     ) {

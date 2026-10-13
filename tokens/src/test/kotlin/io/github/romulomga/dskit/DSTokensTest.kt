@@ -39,6 +39,26 @@ class DSTokensTest {
     }
 
     @Test
+    fun highContrastStatusColorsReachAaa() {
+        listOf(DSStatusColors.LightHighContrast, DSStatusColors.DarkHighContrast).forEach { status ->
+            listOf(status.success, status.warning, status.info).forEach { role ->
+                assertTrue(contrast(role.onColor, role.color) >= 7.0)
+                assertTrue(contrast(role.onContainer, role.container) >= 7.0)
+            }
+        }
+    }
+
+    @Test
+    fun highContrastStatusColorsOnlyApplyToHighContrast() {
+        val brand = DSBrand.Default
+
+        assertEquals(DSStatusColors.LightHighContrast, brand.statusColors(darkTheme = false, contrast = DSContrast.High))
+        assertEquals(DSStatusColors.DarkHighContrast, brand.statusColors(darkTheme = true, contrast = DSContrast.High))
+        assertEquals(DSStatusColors.Light, brand.statusColors(darkTheme = false, contrast = DSContrast.Medium))
+        assertEquals(DSStatusColors.Dark, brand.statusColors(darkTheme = true, contrast = DSContrast.Standard))
+    }
+
+    @Test
     fun contrastFallsBackToTheNearestSchemeTheBrandHas() {
         val medium = lightColorScheme(primary = Color.Blue)
         val high = darkColorScheme(primary = Color.Red)

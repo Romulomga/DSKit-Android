@@ -35,6 +35,7 @@ if (!file("local.properties").exists() && System.getenv("ANDROID_HOME") == null 
 include(
     ":tokens",
     ":components",
+    ":seed",
     ":lint",
     ":sample",
 )

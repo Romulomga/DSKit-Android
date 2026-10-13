@@ -28,6 +28,7 @@ includeBuild("DSKit-Android")
 // build.gradle.kts do módulo do app
 dependencies {
     implementation("com.github.Romulomga.DSKit-Android:components:0.1.1") // traz o tokens
+    implementation("com.github.Romulomga.DSKit-Android:seed:0.1.1") // opcional: marca a partir de uma cor
     lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.1") // as regras DSComponent, DSSpacingLiteral…
 }
 ```
@@ -45,8 +46,14 @@ Requisitos do app, porque tudo vira um build só:
 
 ## Uso
 
-Gere os esquemas de cor no [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)
-a partir da cor da marca e exporte para Jetpack Compose; o arquivo exportado traz o `lightScheme` e o `darkScheme`.
+A marca entra de um de dois jeitos:
+
+- **De uma cor só** (módulo opcional `seed`): `DSBrand.fromSeed(Color(0xFF3C0079))` calcula, como o Material
+  Theme Builder, os esquemas claro e escuro, os de contraste médio e alto e as cores de status puxadas para o tom
+  da marca. Qualquer cor serve, até preto ou verde neon: os tons saem com o contraste do Material.
+  `style = DSSeedStyle.Fidelity` deixa o `primary` mais perto da cor dada.
+- **Exportada do [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)**, para
+  quem quer ajustar cada papel à mão: o arquivo exportado traz o `lightScheme`, o `darkScheme` e os de contraste.
 
 ```kotlin
 val HomerBrand = DSBrand(light = lightScheme, dark = darkScheme)
@@ -115,6 +122,7 @@ DSNavigationScaffold(items = tabs, selection = tab, onSelectionChange = { tab = 
 |---|---|
 | `tokens` | `DSTheme`, `DSBrand`, cores de status, tipografia, espaçamento, movimento |
 | `components` | os componentes, ícones, vibração, acessibilidade, previews; strings em 10 línguas |
+| `seed` | opcional: `DSBrand.fromSeed`, a marca inteira a partir de uma cor ([ADR 0007](docs/adr/0007-marca-a-partir-de-uma-cor.md)) |
 | `lint` | regras de Android Lint publicadas com o AAR (`lintPublish`) |
 | `sample` | catálogo com abas, claro/escuro e Material You |
 

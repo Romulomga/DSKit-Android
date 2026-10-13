@@ -17,6 +17,11 @@ object Configs {
             const val name = ":components"
         }
 
+        object Seed {
+            const val namespace = "io.github.romulomga.dskit.seed"
+            const val name = ":seed"
+        }
+
         object Lint {
             const val name = ":lint"
         }

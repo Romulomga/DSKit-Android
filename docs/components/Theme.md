@@ -19,6 +19,18 @@ Leia o tema atual pelo objeto `DSTheme`, num lugar só:
 
 ## Uso
 
+De uma cor só, com o módulo opcional `seed`:
+
+```kotlin
+val HomerBrand = remember { DSBrand.fromSeed(Color(0xFF3C0079)) } // ou style = DSSeedStyle.Fidelity
+
+DSTheme(brand = HomerBrand) {
+    App()
+}
+```
+
+Ou com os esquemas exportados do Material Theme Builder:
+
 ```kotlin
 val HomerBrand = DSBrand(
     light = lightScheme,

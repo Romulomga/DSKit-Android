@@ -16,5 +16,7 @@ aviso e informação, que o Material não tem, ficam em `DSStatusColors`, no for
 
 ## Consequências
 
-- Mudar a cor da marca é exportar de novo do builder, não mudar uma constante.
-- As cores de status não variam com o contraste; as padrão já passam de 4,5:1.
+- Mudar a cor da marca é exportar de novo do builder, não mudar uma constante. Quem não precisa ajustar papel
+  por papel gera tudo de uma cor com `DSBrand.fromSeed` ([0007](0007-marca-a-partir-de-uma-cor.md)).
+- As cores de status têm uma versão de alto contraste (`lightHighContrastStatus`, `darkHighContrastStatus`), em
+  tons que passam de 7:1.

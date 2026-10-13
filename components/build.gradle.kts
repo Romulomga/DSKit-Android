@@ -77,6 +77,7 @@ dependencies {
     lintPublish(project(Dependencies.General.lint)) { isTransitive = false }
 
     testImplementation(Dependencies.Test.junit)
+    testImplementation(project(Dependencies.General.seed))
     testImplementation(Dependencies.Test.robolectric)
     testImplementation(Dependencies.Test.roborazzi)
     testImplementation(Dependencies.Test.roborazziCompose)

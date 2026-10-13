@@ -35,6 +35,7 @@ kotlin {
 
 dependencies {
     implementation(project(Dependencies.General.components))
+    implementation(project(Dependencies.General.seed))
     implementation(Dependencies.AndroidX.activityCompose)
     implementation(Dependencies.Compose.uiToolingPreview)
     debugImplementation(Dependencies.Compose.uiTooling)

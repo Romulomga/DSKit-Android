@@ -11,7 +11,7 @@ e licença.
 
 O DSKit depende só de AndroidX/Compose. Exceção é possível, mas é decidida caso a caso, com o custo à vista. Já
 avaliadas: Coil (carregar imagem remota, aceito se um componente precisar), MaterialKolor (gerar o esquema de cor a
-partir de uma semente, recusado: o Theme Builder exporta o esquema), Dokka e Showkase (ferramentas de
+partir de uma semente: aceito só o algoritmo de cor, num módulo opcional; ver [0007](0007-marca-a-partir-de-uma-cor.md)), Dokka e Showkase (ferramentas de
 documentação, recusadas: o KDoc e o app `sample` cobrem) e o plugin de publicação no Maven Central (adiado: o app inclui o DSKit como
 submódulo git, sem servidor de pacotes).
 

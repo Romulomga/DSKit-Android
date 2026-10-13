@@ -13,6 +13,15 @@ quebra vem descrita aqui com o código de migração.
 ### Adicionado
 
 - Licença MIT.
+- Módulo opcional `seed`: `DSBrand.fromSeed(cor, style)` gera a marca inteira a partir de uma cor (claro, escuro,
+  contraste médio e alto, cores de status puxadas para o tom da marca), com o algoritmo de cor do Material.
+- Cores de status de alto contraste (`DSStatusColors.LightHighContrast`/`DarkHighContrast`, acima de 7:1), usadas
+  pelo `DSTheme` no contraste alto; o `DSBrand` aceita as suas.
+- `DSBottomSheet(scrollable = false)` para conteúdo que já rola sozinho, como uma `LazyColumn`.
+
+### Corrigido
+
+- Uma `LazyColumn` dentro do `DSBottomSheet` travava o app (lista sem altura máxima dentro de conteúdo que rola).
 
 ## [0.1.1] - 2026-10-11
 

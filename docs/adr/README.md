@@ -11,3 +11,4 @@ nova ganha o próximo número; decisão revista ganha uma nova página que diz q
 | [0004](0004-cor-da-marca.md) | Cor da marca pelo Material Theme Builder, cor dinâmica opcional |
 | [0005](0005-screenshots-e-acessibilidade.md) | Screenshot em cinco modos com o Accessibility Test Framework |
 | [0006](0006-api-publica-versionada.md) | API pública versionada (proposta, bloqueada) |
+| [0007](0007-marca-a-partir-de-uma-cor.md) | Marca a partir de uma cor, num módulo opcional |

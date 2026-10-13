@@ -31,7 +31,9 @@ public data class DSBrand(
     val lightMediumContrast: ColorScheme? = null,
     val darkMediumContrast: ColorScheme? = null,
     val lightHighContrast: ColorScheme? = null,
-    val darkHighContrast: ColorScheme? = null
+    val darkHighContrast: ColorScheme? = null,
+    val lightHighContrastStatus: DSStatusColors = DSStatusColors.LightHighContrast,
+    val darkHighContrastStatus: DSStatusColors = DSStatusColors.DarkHighContrast
 ) {
     /** O esquema para o modo e o contraste pedidos; sem o de alto, cai no médio, e sem o médio, no padrão. */
     public fun colorScheme(darkTheme: Boolean, contrast: DSContrast): ColorScheme {
@@ -44,6 +46,14 @@ public data class DSBrand(
             DSContrast.Medium -> medium
             DSContrast.High -> high
         }
+    }
+
+    /** As cores de status para o modo e o contraste pedidos: as de alto contraste só no [DSContrast.High]. */
+    public fun statusColors(darkTheme: Boolean, contrast: DSContrast): DSStatusColors = when {
+        contrast == DSContrast.High && darkTheme -> darkHighContrastStatus
+        contrast == DSContrast.High -> lightHighContrastStatus
+        darkTheme -> darkStatus
+        else -> lightStatus
     }
 
     public companion object {
@@ -85,6 +95,23 @@ public data class DSStatusColors(val success: DSColorRole, val warning: DSColorR
             success = DSColorRole(Color(0xFF95D691), Color(0xFF00390D), Color(0xFF13521A), Color(0xFFB0F2AB)),
             warning = DSColorRole(Color(0xFFF5BF48), Color(0xFF402D00), Color(0xFF5C4200), Color(0xFFFFDEA3)),
             info = DSColorRole(Color(0xFF9ECAFF), Color(0xFF003258), Color(0xFF00497D), Color(0xFFD1E4FF))
+        )
+
+        /**
+         * Alto contraste no tema claro: tons 20/100/30/100, escuros com texto branco, que passam de 7:1 (o nível
+         * AAA) contra o conteúdo e se destacam mais da superfície clara.
+         */
+        public val LightHighContrast: DSStatusColors = DSStatusColors(
+            success = DSColorRole(Color(0xFF00390D), Color(0xFFFFFFFF), Color(0xFF13521A), Color(0xFFFFFFFF)),
+            warning = DSColorRole(Color(0xFF402D00), Color(0xFFFFFFFF), Color(0xFF5C4200), Color(0xFFFFFFFF)),
+            info = DSColorRole(Color(0xFF003258), Color(0xFFFFFFFF), Color(0xFF00497D), Color(0xFFFFFFFF))
+        )
+
+        /** Alto contraste no tema escuro: tons 90/10/80/10, claros com texto quase preto. */
+        public val DarkHighContrast: DSStatusColors = DSStatusColors(
+            success = DSColorRole(Color(0xFFB0F2AB), Color(0xFF002106), Color(0xFF95D691), Color(0xFF002106)),
+            warning = DSColorRole(Color(0xFFFFDEA3), Color(0xFF261900), Color(0xFFF5BF48), Color(0xFF261900)),
+            info = DSColorRole(Color(0xFFD1E4FF), Color(0xFF001D36), Color(0xFF9ECAFF), Color(0xFF001D36))
         )
     }
 }

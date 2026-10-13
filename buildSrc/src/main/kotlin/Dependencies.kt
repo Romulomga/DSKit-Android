@@ -16,6 +16,10 @@ object Dependencies {
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest"
     }
 
+    object Libraries {
+        const val materialColorUtilities = "com.materialkolor:material-color-utilities:${Versions.materialColorUtilities}"
+    }
+
     object Lint {
         const val api = "com.android.tools.lint:lint-api:${Versions.lint}"
         const val checks = "com.android.tools.lint:lint-checks:${Versions.lint}"
@@ -38,6 +42,7 @@ object Dependencies {
     object General {
         const val tokens = Configs.Modules.Tokens.name
         const val components = Configs.Modules.Components.name
+        const val seed = Configs.Modules.Seed.name
         const val lint = Configs.Modules.Lint.name
     }
 }

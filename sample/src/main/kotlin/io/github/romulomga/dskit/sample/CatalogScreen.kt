@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
@@ -85,7 +86,14 @@ import kotlinx.coroutines.launch
 private enum class Tab(val label: String) { Actions("Ações"), Inputs("Entrada"), Feedback("Feedback"), Settings("Ajustes") }
 
 @Composable
-internal fun CatalogApp(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynamicColor: Boolean, onDynamicColorChange: (Boolean) -> Unit) {
+internal fun CatalogApp(
+    dark: Boolean,
+    onDarkChange: (Boolean) -> Unit,
+    dynamicColor: Boolean,
+    onDynamicColorChange: (Boolean) -> Unit,
+    brand: SampleBrand,
+    onBrandChange: (SampleBrand) -> Unit
+) {
     var tab by rememberSaveable { mutableStateOf(Tab.Actions) }
 
     DSNavigationScaffold(
@@ -102,7 +110,7 @@ internal fun CatalogApp(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynamicC
             Tab.Actions -> ActionsScreen()
             Tab.Inputs -> InputsScreen()
             Tab.Feedback -> FeedbackScreen()
-            Tab.Settings -> SettingsScreen(dark, onDarkChange, dynamicColor, onDynamicColorChange)
+            Tab.Settings -> SettingsScreen(dark, onDarkChange, dynamicColor, onDynamicColorChange, brand, onBrandChange)
         }
     }
 }
@@ -349,7 +357,14 @@ private fun FeedbackScreen() {
 private val Neighborhoods = listOf("Botafogo", "Copacabana", "Gávea", "Ipanema", "Jardim Botânico", "Lagoa", "Laranjeiras", "Leblon")
 
 @Composable
-private fun SettingsScreen(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynamicColor: Boolean, onDynamicColorChange: (Boolean) -> Unit) {
+private fun SettingsScreen(
+    dark: Boolean,
+    onDarkChange: (Boolean) -> Unit,
+    dynamicColor: Boolean,
+    onDynamicColorChange: (Boolean) -> Unit,
+    brand: SampleBrand,
+    onBrandChange: (SampleBrand) -> Unit
+) {
     var notifications by remember { mutableStateOf(true) }
 
     DSScreen(title = "Ajustes", topBarStyle = DSTopAppBarStyle.Large) { padding ->
@@ -364,6 +379,17 @@ private fun SettingsScreen(dark: Boolean, onDarkChange: (Boolean) -> Unit, dynam
                     supporting = "Material You, no Android 12 ou mais novo",
                     checked = dynamicColor,
                     onCheckedChange = onDynamicColorChange
+                )
+            }
+
+            item {
+                DSDropdownField(
+                    selection = brand,
+                    onSelectionChange = onBrandChange,
+                    options = SampleBrand.entries.map { DSOption(it, it.label) },
+                    label = "Cor da marca",
+                    supportingText = "Gerada por DSBrand.fromSeed; vale quando as cores do papel de parede estão desligadas",
+                    modifier = Modifier.padding(horizontal = DSSpacing.lg, vertical = DSSpacing.sm)
                 )
             }
 

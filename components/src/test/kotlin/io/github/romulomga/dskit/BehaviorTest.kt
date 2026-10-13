@@ -1,5 +1,6 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.autofill.ContentType
@@ -111,6 +112,22 @@ class BehaviorTest {
         composeRule.onNodeWithText("Save").performClick()
 
         composeRule.runOnIdle { assertTrue(clicks == 1) }
+    }
+
+    @Test
+    fun bottomSheetHoldsALazyListWhenItDoesNotScrollItself() {
+        composeRule.setContent {
+            DSTheme {
+                DSBottomSheet(visible = true, onDismissRequest = {}, title = "Country", scrollable = false) {
+                    LazyColumn {
+                        items(200) { index -> DSListItem("Country $index") }
+                    }
+                }
+            }
+        }
+
+        composeRule.onNodeWithText("Country 0").assertExists()
+        composeRule.onNodeWithText("Country 199").assertDoesNotExist()
     }
 
     private fun linkAnnotations(): List<AnnotatedString.Range<LinkAnnotation>> {

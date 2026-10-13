@@ -8,6 +8,9 @@ object Versions {
     // Lint API acompanha o AGP: 9.4.1 + 23 = 32.4.1.
     const val lint = "32.4.1"
 
+    // Só o algoritmo de cor do Material (material-color-utilities do Google em Kotlin), sem o Compose do MaterialKolor.
+    const val materialColorUtilities = "5.0.1"
+
     const val junit = "4.13.2"
     const val robolectric = "4.17"
     const val roborazzi = "1.76.0"
