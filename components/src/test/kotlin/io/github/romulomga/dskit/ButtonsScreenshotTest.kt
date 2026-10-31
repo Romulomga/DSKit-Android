@@ -51,6 +51,8 @@ class ButtonsScreenshotTest : ScreenshotTestBase() {
             DSFab(DSIcons.Edit, "Compose", onClick = {})
 
             DSExtendedFab("New post", DSIcons.Add, onClick = {})
+
+            DSExtendedFab("New post", DSIcons.Add, onClick = {}, expanded = false)
         }
     }
 

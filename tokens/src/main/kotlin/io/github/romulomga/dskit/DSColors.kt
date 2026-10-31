@@ -32,8 +32,8 @@ public data class DSBrand(
     val darkMediumContrast: ColorScheme? = null,
     val lightHighContrast: ColorScheme? = null,
     val darkHighContrast: ColorScheme? = null,
-    val lightHighContrastStatus: DSStatusColors = DSStatusColors.LightHighContrast,
-    val darkHighContrastStatus: DSStatusColors = DSStatusColors.DarkHighContrast
+    val lightHighContrastStatus: DSStatusColors? = null,
+    val darkHighContrastStatus: DSStatusColors? = null
 ) {
     /** O esquema para o modo e o contraste pedidos; sem o de alto, cai no médio, e sem o médio, no padrão. */
     public fun colorScheme(darkTheme: Boolean, contrast: DSContrast): ColorScheme {
@@ -50,11 +50,23 @@ public data class DSBrand(
 
     /** As cores de status para o modo e o contraste pedidos: as de alto contraste só no [DSContrast.High]. */
     public fun statusColors(darkTheme: Boolean, contrast: DSContrast): DSStatusColors = when {
-        contrast == DSContrast.High && darkTheme -> darkHighContrastStatus
-        contrast == DSContrast.High -> lightHighContrastStatus
+        contrast == DSContrast.High && darkTheme ->
+            darkHighContrastStatus ?: highContrastFallback(darkStatus, DSStatusColors.Dark, DSStatusColors.DarkHighContrast)
+
+        contrast == DSContrast.High ->
+            lightHighContrastStatus ?: highContrastFallback(lightStatus, DSStatusColors.Light, DSStatusColors.LightHighContrast)
+
         darkTheme -> darkStatus
+
         else -> lightStatus
     }
+
+    /**
+     * Sem status de alto contraste próprio: a marca que personalizou as cores de status continua com elas (perder o
+     * tom da marca justo no modo de acessibilidade surpreende); a que ficou com as do DSKit ganha as de alto contraste.
+     */
+    private fun highContrastFallback(brand: DSStatusColors, dskitDefault: DSStatusColors, dskitHigh: DSStatusColors): DSStatusColors =
+        if (brand == dskitDefault) dskitHigh else brand
 
     public companion object {
         /** O esquema base do Material 3, para previews e para começar antes da marca existir. */

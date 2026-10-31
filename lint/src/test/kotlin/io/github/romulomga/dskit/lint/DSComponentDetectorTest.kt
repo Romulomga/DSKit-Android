@@ -2,7 +2,6 @@ package io.github.romulomga.dskit.lint
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 
@@ -52,11 +51,29 @@ class DSComponentDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run()
+        ).allowMissingSdk().run()
             .expectErrorCount(5)
             .expectContains("Button do Material: use DSButton.")
             .expectContains("TextField do Material: use DSTextField.")
             .expectContains("AlertDialog do Material: use DSAlertDialog.")
+    }
+
+    fun testAnAliasedImportIsStillCaught() {
+        lint().files(
+            *stubs,
+            kotlin(
+                """
+                package com.example.feature
+                import androidx.compose.material3.Button as MaterialButton
+
+                fun screen() {
+                    MaterialButton(onClick = {})
+                }
+                """
+            ).indented()
+        ).allowMissingSdk().run()
+            .expectErrorCount(1)
+            .expectContains("Button do Material: use DSButton.")
     }
 
     fun testMaterialWithoutEquivalentAndOtherPackagesPass() {
@@ -74,7 +91,7 @@ class DSComponentDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run().expectClean()
+        ).allowMissingSdk().run().expectClean()
     }
 
     fun testTheAppDesignSystemPackageIsExempt() {
@@ -90,6 +107,6 @@ class DSComponentDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run().expectClean()
+        ).allowMissingSdk().run().expectClean()
     }
 }

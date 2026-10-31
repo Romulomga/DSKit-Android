@@ -17,6 +17,15 @@ android {
     namespace = Configs.Modules.Tokens.namespace
     compileSdk = Configs.Common.compileSdk
 
+    // Como no seed e no components: é este módulo que chama APIs com nível mínimo (contraste do sistema, API 34;
+    // cor dinâmica, API 31), e um aviso de lint aqui não pode passar batido.
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        // "Há um Gradle mais novo" depende do dia em que o CI roda: atualizar o Gradle é decisão de release, não erro.
+        disable += "AndroidGradlePluginVersion"
+    }
+
     defaultConfig {
         minSdk = Configs.Common.minSdk
         buildConfigField("String", "DSKIT_VERSION", "\"${project.property("VERSION_NAME")}\"")

@@ -25,7 +25,8 @@ public fun DSErrorState(
         iconColor = DSTheme.colors.onErrorContainer,
         title = title,
         message = message,
-        modifier = modifier
+        modifier = modifier,
+        announce = true
     ) {
         if (onRetry != null) DSButton(retryText, onClick = onRetry, icon = DSIcons.Refresh)
     }

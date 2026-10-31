@@ -92,7 +92,7 @@ public fun DSSwitchListItem(
         supporting = supporting,
         leading = leadingIcon?.let { { Icon(it, contentDescription = null) } },
         // A linha cuida do toque; o interruptor só desenha o estado.
-        trailing = { Switch(checked = checked, onCheckedChange = null, enabled = enabled) },
+        trailing = { Switch(checked = checked, onCheckedChange = null) },
         enabled = enabled
     )
 }
@@ -116,7 +116,7 @@ public fun DSCheckboxListItem(
             onCheckedChange(it)
         },
         supporting = supporting,
-        leading = { Checkbox(checked = checked, onCheckedChange = null, enabled = enabled) },
+        leading = { Checkbox(checked = checked, onCheckedChange = null) },
         enabled = enabled
     )
 }
@@ -143,7 +143,7 @@ public fun DSRadioListItem(
             onClick()
         },
         supporting = supporting,
-        leading = { RadioButton(selected = selected, onClick = null, enabled = enabled) },
+        leading = { RadioButton(selected = selected, onClick = null) },
         enabled = enabled
     )
 }
@@ -176,6 +176,9 @@ private fun BaseListItem(
 ) {
     ListItem(
         headlineContent = { Text(headline) },
+        // O esmaecimento de desabilitado é este, da linha inteira. Os controles da linha (interruptor, caixa,
+        // rádio) desenham com as cores normais: com `enabled = false` neles o Material esmaeceria de novo, e o
+        // controle ficaria com ~14 % de opacidade. Quem bloqueia o toque e diz "desativado" é o `toggleable`.
         modifier = modifier.dsDisabledAlpha(enabled),
         overlineContent = overline?.let { { Text(it) } },
         supportingContent = supporting?.let { { Text(it) } },

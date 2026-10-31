@@ -2,6 +2,7 @@ package io.github.romulomga.dskit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,30 +33,44 @@ public fun DSNumberField(
     supportingText: String? = null,
     errorText: String? = null,
     invalidNumberMessage: String = stringResource(R.string.dskit_enter_valid_number),
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    imeAction: ImeAction = ImeAction.Done,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     var text by rememberSaveable { mutableStateOf(value?.toString().orEmpty()) }
     val invalid = remember(text) { text.isNotBlank() && parseNumber(text) == null }
+    // O que este campo já emitiu e o app ainda pode devolver atrasado (StateFlow, ViewModel assíncrono).
+    val emitted = remember { ArrayDeque<Int?>() }
 
-    // Valor mudou por fora (reset, outro campo): o texto acompanha. Texto inválido já representa `null`.
+    // Valor mudou por fora (reset, outro campo): o texto acompanha. Um valor que é eco do que o próprio campo
+    // emitiu não conta, senão "1" chegando atrasado apagaria o "12" já digitado.
     LaunchedEffect(value) {
-        if (parseNumber(text) != value) text = value?.toString().orEmpty()
+        when {
+            parseNumber(text) == value -> emitted.clear()
+            value !in emitted -> text = value?.toString().orEmpty()
+        }
     }
 
     DSTextField(
         value = text,
         onValueChange = { newText ->
             text = newText
-            onValueChange(parseNumber(newText))
+            val number = parseNumber(newText)
+            emitted.addLast(number)
+            if (emitted.size > EmittedHistory) emitted.removeFirst()
+            onValueChange(number)
         },
         label = label,
         modifier = modifier,
         supportingText = supportingText,
         errorText = errorText ?: invalidNumberMessage.takeIf { invalid },
         enabled = enabled,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = imeAction),
+        keyboardActions = keyboardActions
     )
 }
+
+private const val EmittedHistory = 16
 
 private fun parseNumber(raw: String): Int? = raw.trim().takeIf { it.isNotEmpty() }?.toIntOrNull()
 

@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
@@ -49,7 +50,9 @@ public fun Modifier.dsSkeleton(isLoading: Boolean, shape: Shape = DSTheme.shapes
         .clearAndSetSemantics {}
         .pointerInput(Unit) {
             awaitEachGesture {
-                awaitPointerEvent().changes.forEach { it.consume() }
+                // `Initial`: este modifier vem antes do `clickable` do elemento, e na passagem padrão (`Main`)
+                // o de dentro recebe o toque primeiro e dispara o clique.
+                awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
             }
         }
         .then(SkeletonElement(skeletonColor(), shape, pulse = !DSTheme.reduceMotion))

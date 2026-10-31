@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.error
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 
 /**
@@ -84,6 +85,7 @@ public fun <T> DSDropdownField(
                     } else {
                         null
                     },
+                    modifier = Modifier.semantics { selected = option.value == selection },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
             }

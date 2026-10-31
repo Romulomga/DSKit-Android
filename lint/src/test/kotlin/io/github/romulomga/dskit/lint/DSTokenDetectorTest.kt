@@ -66,7 +66,7 @@ class DSTokenDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run().expectWarningCount(4)
+        ).allowMissingSdk().skipTestModes(*TextMatchingModes).run().expectWarningCount(4)
     }
 
     fun testSpacingOnTheScaleOffersTheToken() {
@@ -85,7 +85,7 @@ class DSTokenDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run()
+        ).allowMissingSdk().skipTestModes(*TextMatchingModes).run()
             .expectContains("16.dp é DSSpacing.lg")
             .expectContains("14.dp não está na escala (o mais perto é DSSpacing.md)")
             .expectFixDiffs(
@@ -117,6 +117,13 @@ class DSTokenDetectorTest : LintDetectorTest() {
                 }
                 """
             ).indented()
-        ).allowMissingSdk().testModes(TestMode.DEFAULT).run().expectClean()
+        ).allowMissingSdk().skipTestModes(*TextMatchingModes).run().expectClean()
     }
 }
+
+/**
+ * As regras de token ainda comparam o texto do código em vez de resolver o símbolo: um alias (`Color as C`) ou
+ * espaços no meio (`16 . dp`) escapam delas. Limitação conhecida (CHANGELOG 0.1.2); estes modos voltam quando os
+ * detectores passarem a resolver o símbolo. A regra de componentes (`DSComponent`) já roda em todos os modos.
+ */
+private val TextMatchingModes = arrayOf(TestMode.IMPORT_ALIAS, TestMode.WHITESPACE)

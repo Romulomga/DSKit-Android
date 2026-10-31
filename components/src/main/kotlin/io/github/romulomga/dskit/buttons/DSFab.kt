@@ -39,7 +39,8 @@ public fun DSExtendedFab(text: String, icon: ImageVector, onClick: () -> Unit, m
 
     ExtendedFloatingActionButton(
         text = { Text(text) },
-        icon = { Icon(icon, contentDescription = null) },
+        // Recolhido, o texto sai da tela: o nome passa para o ícone, ou o TalkBack lê só "botão".
+        icon = { Icon(icon, contentDescription = if (expanded) null else text) },
         onClick = {
             haptics.light()
             onClick()

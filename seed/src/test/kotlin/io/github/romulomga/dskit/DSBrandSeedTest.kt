@@ -24,7 +24,9 @@ class DSBrandSeedTest {
                 listOf(brand.light, brand.dark).forEach { assertReadable(it, 4.5, "$seed $style") }
                 listOf(brand.lightHighContrast!!, brand.darkHighContrast!!).forEach { assertReadable(it, 7.0, "$seed $style alto") }
                 listOf(brand.lightStatus, brand.darkStatus).forEach { assertReadable(it, 4.5, "$seed status") }
-                listOf(brand.lightHighContrastStatus, brand.darkHighContrastStatus).forEach { assertReadable(it, 7.0, "$seed status alto") }
+                listOf(brand.lightHighContrastStatus!!, brand.darkHighContrastStatus!!).forEach {
+                    assertReadable(it, 7.0, "$seed status alto")
+                }
             }
         }
     }

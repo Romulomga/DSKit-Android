@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -57,7 +58,7 @@ public fun DSButton(
     Button(
         onClick = {
             if (loading) return@Button
-            haptics.light()
+            if (destructive) haptics.warning() else haptics.light()
             onClick()
         },
         modifier = modifier.loadingSemantics(loading),
@@ -96,7 +97,7 @@ public fun DSTonalButton(
     FilledTonalButton(
         onClick = {
             if (loading) return@FilledTonalButton
-            haptics.light()
+            if (destructive) haptics.warning() else haptics.light()
             onClick()
         },
         modifier = modifier.loadingSemantics(loading),
@@ -130,7 +131,7 @@ public fun DSOutlinedButton(
     OutlinedButton(
         onClick = {
             if (loading) return@OutlinedButton
-            haptics.light()
+            if (destructive) haptics.warning() else haptics.light()
             onClick()
         },
         modifier = modifier.loadingSemantics(loading),
@@ -162,7 +163,7 @@ public fun DSTextButton(
 
     TextButton(
         onClick = {
-            haptics.light()
+            if (destructive) haptics.warning() else haptics.light()
             onClick()
         },
         modifier = modifier,
@@ -205,7 +206,11 @@ private fun contentPadding(icon: ImageVector?): PaddingValues =
 private fun Modifier.loadingSemantics(loading: Boolean): Modifier {
     if (!loading) return this
     val label = stringResource(R.string.dskit_loading)
-    return semantics { stateDescription = label }
+    // Carregando, o toque é ignorado: o TalkBack precisa ouvir "desativado", não "toque duas vezes para ativar".
+    return semantics {
+        stateDescription = label
+        disabled()
+    }
 }
 
 @DSPreviews

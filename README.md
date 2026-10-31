@@ -18,7 +18,7 @@ pacotes no meio.
 
 ```sh
 git submodule add https://github.com/Romulomga/DSKit-Android.git DSKit-Android
-git -C DSKit-Android checkout 0.1.1
+git -C DSKit-Android checkout 0.1.2
 ```
 
 ```kotlin
@@ -27,9 +27,9 @@ includeBuild("DSKit-Android")
 
 // build.gradle.kts do módulo do app
 dependencies {
-    implementation("com.github.Romulomga.DSKit-Android:components:0.1.1") // traz o tokens
-    implementation("com.github.Romulomga.DSKit-Android:seed:0.1.1") // opcional: marca a partir de uma cor
-    lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.1") // as regras DSComponent, DSSpacingLiteral…
+    implementation("com.github.Romulomga.DSKit-Android:components:0.1.2") // traz o tokens
+    implementation("com.github.Romulomga.DSKit-Android:seed:0.1.2") // opcional: marca a partir de uma cor
+    lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.2") // as regras DSComponent, DSSpacingLiteral…
 }
 ```
 
@@ -51,7 +51,8 @@ A marca entra de um de dois jeitos:
 - **De uma cor só** (módulo opcional `seed`): `DSBrand.fromSeed(Color(0xFF3C0079))` calcula, como o Material
   Theme Builder, os esquemas claro e escuro, os de contraste médio e alto e as cores de status puxadas para o tom
   da marca. Qualquer cor serve, até preto ou verde neon: os tons saem com o contraste do Material.
-  `style = DSSeedStyle.Fidelity` deixa o `primary` mais perto da cor dada.
+  `style = DSSeedStyle.Fidelity` deixa o `primary` mais perto da cor dada. Calcule uma vez (num `remember` ou fora
+  da composição): gerar os esquemas custa alguns milissegundos.
 - **Exportada do [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/)**, para
   quem quer ajustar cada papel à mão: o arquivo exportado traz o `lightScheme`, o `darkScheme` e os de contraste.
 

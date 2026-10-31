@@ -29,10 +29,13 @@ class DSComponentDetector :
     // (value classes) sai compilado com o nome alterado (`Badge-eopBjH0`) e escaparia.
     override fun createUastHandler(context: JavaContext): UElementHandler = object : UElementHandler() {
         override fun visitCallExpression(node: UCallExpression) {
-            val name = node.sourceName() ?: return
+            val source = node.sourceName() ?: return
+            val resolved = node.resolve()
+            // Import com alias (`Button as MaterialButton`): o nome escrito não está no mapa, o resolvido está.
+            val name = if (source in REPLACEMENTS) source else resolved?.name?.substringBefore('-') ?: return
             val replacement = REPLACEMENTS[name] ?: return
             if (isExempt(node)) return
-            val owner = node.resolve()?.containingClass?.qualifiedName.orEmpty()
+            val owner = resolved?.containingClass?.qualifiedName.orEmpty()
             if (!owner.startsWith(MATERIAL3)) return
 
             context.report(ISSUE, node, context.getLocation(node), "`$name` do Material: use `$replacement`.")

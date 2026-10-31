@@ -6,6 +6,8 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.2] - 2026-10-31
+
 ### Removido
 
 - Publicação pelo JitPack: o DSKit entra no app como submódulo git (ver o README).
@@ -18,10 +20,41 @@ quebra vem descrita aqui com o código de migração.
 - Cores de status de alto contraste (`DSStatusColors.LightHighContrast`/`DarkHighContrast`, acima de 7:1), usadas
   pelo `DSTheme` no contraste alto; o `DSBrand` aceita as suas.
 - `DSBottomSheet(scrollable = false)` para conteúdo que já rola sozinho, como uma `LazyColumn`.
+- `DSSlider`/`DSRangeSlider(onValueChangeFinished)`, para aplicar um filtro só ao soltar a alça.
+- `DSNumberField(imeAction, keyboardActions)`, para avançar o foco num formulário.
+
+### Mudado
+
+- `DSLoadingOverlay` abre numa janela própria: bloqueia o toque, o TalkBack, o teclado e o voltar, e pode ser
+  chamado em qualquer lugar da tela (antes só parava o dedo, e o TalkBack alcançava o que estava por baixo). A
+  assinatura não muda; a saída deixa de ter o fade.
+- `DSBrand.lightHighContrastStatus`/`darkHighContrastStatus` agora são opcionais (`null`): sem eles, a marca que
+  personalizou `lightStatus`/`darkStatus` continua com as suas cores no contraste alto, e a que ficou com as do
+  DSKit recebe as de alto contraste. Quem passava os dois não muda nada; quem os lia de um `DSBrand` trata o `null`.
+- `DSSnackbarVisuals`/`showDSSnackbar`: com ação, `withDismissAction` passa a ser `true` por padrão. O snackbar com
+  ação não some sozinho, e sem o "x" travava a fila do host.
+- Ações destrutivas (`DSButton`, `DSTonalButton`, `DSOutlinedButton`, `DSTextButton`, `DSSheetAction`) vibram com
+  `warning()`, como pede o CONVENTIONS.
 
 ### Corrigido
 
 - Uma `LazyColumn` dentro do `DSBottomSheet` travava o app (lista sem altura máxima dentro de conteúdo que rola).
+- `DSExtendedFab` recolhido ficava sem nome para o TalkBack (o texto some; agora o ícone leva o nome).
+- `DSInputChip` era lido como caixa de seleção "não marcado" e repetia o rótulo; agora é um botão "Remover <rótulo>".
+- `Modifier.dsSkeleton` não bloqueava o toque do elemento: o `clickable` de dentro recebia o evento primeiro.
+- Linhas de lista desabilitadas com controle (`DSSwitchListItem`, `DSCheckboxListItem`, `DSRadioListItem`) ficavam
+  esmaecidas duas vezes (~14 % de opacidade no controle).
+- Botão carregando era anunciado como acionável; agora o TalkBack ouve "desativado".
+- Sliders: o TalkBack lê o `valueText` ("3 quartos") em vez da porcentagem, o rótulo não é lido duas vezes, o
+  cabeçalho esmaece quando desabilitado, e o `minimumDistance` encosta a alça no limite em vez de descartar o arraste.
+- `DSNumberField`: um valor que o app devolve atrasado (ViewModel assíncrono) não desfaz mais o que foi digitado.
+- `DSBanner` e `DSErrorState` são anunciados ao aparecer; os títulos deles e do `DSEmptyState` são cabeçalhos.
+- `DSDropdownField` anuncia qual opção está escolhida.
+- Lint: `DSComponent` pega um componente do Material importado com alias. Os testes da regra rodam em todos os modos
+  do lint; os das regras de token ainda pulam o de alias e o de espaços, porque elas comparam texto (limitação
+  conhecida, a resolver).
+- Lint ligado com `warningsAsErrors` também no módulo `tokens`, como nos outros.
+- Exemplo do `fromSeed` no KDoc e no README calcula a marca uma vez (`remember`), não a cada recomposição.
 
 ## [0.1.1] - 2026-10-11
 

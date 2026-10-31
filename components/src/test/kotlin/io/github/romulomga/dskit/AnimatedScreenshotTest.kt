@@ -93,7 +93,7 @@ class AnimatedScreenshotTest : ScreenshotTestBase() {
         Box(Modifier.fillMaxWidth().height(240.dp)) {
             DSCard { Text("Form behind the veil") }
 
-            DSLoadingOverlay(visible = true, message = "Publishing…")
+            LoadingVeil(message = "Publishing…")
         }
     }
 }

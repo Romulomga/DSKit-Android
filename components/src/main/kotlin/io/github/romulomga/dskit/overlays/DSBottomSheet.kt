@@ -119,7 +119,7 @@ public fun DSSheetAction(
         headlineContent = { Text(text) },
         modifier = modifier
             .clickable(enabled = enabled, role = Role.Button) {
-                haptics.light()
+                if (destructive) haptics.warning() else haptics.light()
                 onClick()
             }
             .padding(horizontal = DSSpacing.sm)

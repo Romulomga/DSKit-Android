@@ -3,16 +3,22 @@ package io.github.romulomga.dskit
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.input.ImeAction
@@ -140,4 +146,62 @@ class BehaviorTest {
     private object ThrowingUriHandler : UriHandler {
         override fun openUri(uri: String): Unit = throw IllegalStateException("No activity for $uri")
     }
+
+    @Test
+    fun aSkeletonSwallowsTheTapOfTheElementUnderIt() {
+        var taps = 0
+        // O pulso do esqueleto anima para sempre: com o relógio andando sozinho a tela nunca fica ociosa.
+        composeRule.mainClock.autoAdvance = false
+        composeRule.setContent {
+            DSTheme {
+                DSButton("Publish", onClick = { taps++ }, modifier = Modifier.dsSkeleton(true))
+            }
+        }
+        composeRule.mainClock.advanceTimeBy(FrameMillis)
+
+        composeRule.onRoot().performTouchInput { click(center) }
+        composeRule.mainClock.advanceTimeBy(FrameMillis * 10)
+
+        assertEquals(0, taps)
+    }
+
+    @Test
+    fun anInputChipIsARemoveButtonNotACheckbox() {
+        var removed = false
+        composeRule.setContent {
+            DSTheme {
+                DSInputChip("Ipanema", onRemove = { removed = true })
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("Remove Ipanema")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.ToggleableState))
+            .performClick()
+
+        assertTrue(removed)
+    }
+
+    @Test
+    fun aCollapsedExtendedFabKeepsItsName() {
+        composeRule.setContent {
+            DSTheme {
+                DSExtendedFab("New post", DSIcons.Add, onClick = {}, expanded = false)
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("New post").assertExists()
+    }
+
+    @Test
+    fun theRangeSliderStopsAtTheMinimumDistanceInsteadOfIgnoringTheDrag() {
+        // Arrastar a alça de baixo de 1 para 3,6 com distância 1: ela encosta em 3 (4 − 1), não fica parada em 1.
+        assertEquals(3f..4f, keepDistance(3.6f..4f, previous = 1f..4f, minimum = 1f))
+        // Arrastar a de cima de 4 para 1,2: encosta em 2 (1 + 1).
+        assertEquals(1f..2f, keepDistance(1f..1.2f, previous = 1f..4f, minimum = 1f))
+        // Erro de ponto flutuante dos passos não trava uma posição válida.
+        assertEquals(1f..1.9999999f, keepDistance(1f..1.9999999f, previous = 1f..3f, minimum = 1f))
+    }
 }
+
+private const val FrameMillis = 16L

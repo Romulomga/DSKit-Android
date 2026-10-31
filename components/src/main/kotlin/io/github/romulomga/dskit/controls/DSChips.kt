@@ -14,6 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import io.github.romulomga.dskit.components.R
 
 /**
@@ -76,10 +82,24 @@ public fun DSInputChip(
             onRemove()
         },
         label = { Text(label) },
-        modifier = modifier,
+        // O `InputChip` do Material é selecionável (caixa de seleção "não marcado"); este chip é um botão
+        // que remove, e o TalkBack o lê assim, uma vez só.
+        modifier = modifier.clearAndSetSemantics {
+            contentDescription = removeLabel
+            role = Role.Button
+            if (enabled) {
+                onClick(label = removeLabel) {
+                    haptics.light()
+                    onRemove()
+                    true
+                }
+            } else {
+                disabled()
+            }
+        },
         enabled = enabled,
         leadingIcon = icon?.let { { Icon(it, contentDescription = null, modifier = Modifier.size(InputChipDefaults.IconSize)) } },
-        trailingIcon = { Icon(DSIcons.Close, contentDescription = removeLabel, modifier = Modifier.size(InputChipDefaults.IconSize)) }
+        trailingIcon = { Icon(DSIcons.Close, contentDescription = null, modifier = Modifier.size(InputChipDefaults.IconSize)) }
     )
 }
 

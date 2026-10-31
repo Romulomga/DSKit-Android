@@ -29,7 +29,8 @@ public data class DSSnackbarVisuals(
     override val message: String,
     val style: DSSnackbarStyle = DSSnackbarStyle.Default,
     override val actionLabel: String? = null,
-    override val withDismissAction: Boolean = false,
+    // Com ação o snackbar não some sozinho (`Indefinite`): sem o "x" ele travaria a fila do host.
+    override val withDismissAction: Boolean = actionLabel != null,
     override val duration: SnackbarDuration = if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite
 ) : SnackbarVisuals
 
@@ -44,7 +45,7 @@ public suspend fun SnackbarHostState.showDSSnackbar(
     message: String,
     style: DSSnackbarStyle = DSSnackbarStyle.Default,
     actionLabel: String? = null,
-    withDismissAction: Boolean = false
+    withDismissAction: Boolean = actionLabel != null
 ): SnackbarResult = showSnackbar(DSSnackbarVisuals(message, style, actionLabel, withDismissAction))
 
 /**

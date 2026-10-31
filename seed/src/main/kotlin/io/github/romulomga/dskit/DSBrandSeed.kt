@@ -27,12 +27,13 @@ public enum class DSSeedStyle {
 }
 
 /**
- * Gera a marca inteira a partir de uma cor só, como o Material Theme Builder: os 30 papéis do Material em claro e
+ * Gera a marca inteira a partir de uma cor só, como o Material Theme Builder: todos os papéis do `ColorScheme` em claro e
  * escuro, as versões de contraste médio e alto, e as cores de status (sucesso, aviso, informação) puxadas para o tom
  * da marca. Qualquer cor serve, inclusive preto ou verde neon: os tons saem calculados para passar no contraste.
  *
  * ```
- * DSTheme(brand = DSBrand.fromSeed(Color(0xFF3C0079))) { App() }
+ * val brand = remember { DSBrand.fromSeed(Color(0xFF3C0079)) }
+ * DSTheme(brand = brand) { App() }
  * ```
  *
  * Calcule uma vez (fora da composição ou num `remember`): gerar os seis esquemas custa alguns milissegundos.

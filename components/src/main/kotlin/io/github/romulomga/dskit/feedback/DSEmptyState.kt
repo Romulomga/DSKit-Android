@@ -16,6 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,7 @@ internal fun DSStateLayout(
     title: String,
     message: String,
     modifier: Modifier,
+    announce: Boolean = false,
     action: @Composable () -> Unit
 ) {
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -63,7 +67,10 @@ internal fun DSStateLayout(
             verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)
         ) {
             Column(
-                modifier = Modifier.semantics(mergeDescendants = true) {},
+                // `announce`: a tela trocou para este estado sem o usuário pedir (um erro), e o TalkBack precisa ouvir.
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    if (announce) liveRegion = LiveRegionMode.Polite
+                },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)
             ) {
@@ -71,7 +78,13 @@ internal fun DSStateLayout(
                     Icon(icon, contentDescription = null, modifier = Modifier.padding(DSSpacing.lg).size(32.dp))
                 }
 
-                Text(title, style = DSTheme.typography.titleLarge, color = DSTheme.colors.onSurface, textAlign = TextAlign.Center)
+                Text(
+                    title,
+                    style = DSTheme.typography.titleLarge,
+                    color = DSTheme.colors.onSurface,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.semantics { heading() }
+                )
 
                 Text(message, style = DSTheme.typography.bodyMedium, color = DSTheme.colors.onSurfaceVariant, textAlign = TextAlign.Center)
             }

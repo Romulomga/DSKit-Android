@@ -18,6 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.romulomga.dskit.components.R
 
@@ -49,7 +53,15 @@ public fun DSBanner(
 ) {
     val (container, content, icon) = bannerColors(style)
 
-    Surface(modifier = modifier.fillMaxWidth(), shape = DSTheme.shapes.medium, color = container, contentColor = content) {
+    // Aparece sem o usuário pedir ("Sem conexão"): o TalkBack precisa ouvir; o de erro interrompe.
+    val announcement = if (style == DSBannerStyle.Error) LiveRegionMode.Assertive else LiveRegionMode.Polite
+
+    Surface(
+        modifier = modifier.fillMaxWidth().semantics { liveRegion = announcement },
+        shape = DSTheme.shapes.medium,
+        color = container,
+        contentColor = content
+    ) {
         Row(
             modifier = Modifier.padding(start = DSSpacing.lg, top = DSSpacing.md, bottom = DSSpacing.md, end = DSSpacing.xs),
             horizontalArrangement = Arrangement.spacedBy(DSSpacing.md)
@@ -58,7 +70,7 @@ public fun DSBanner(
 
             Column(modifier = Modifier.weight(1f).padding(end = if (onDismiss == null) DSSpacing.md else 0.dp)) {
                 if (title != null) {
-                    Text(title, style = DSTheme.typography.titleSmall)
+                    Text(title, style = DSTheme.typography.titleSmall, modifier = Modifier.semantics { heading() })
                 }
 
                 Text(message, style = DSTheme.typography.bodyMedium)
