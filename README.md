@@ -18,7 +18,7 @@ pacotes no meio.
 
 ```sh
 git submodule add https://github.com/Romulomga/DSKit-Android.git DSKit-Android
-git -C DSKit-Android checkout 0.1.2
+git -C DSKit-Android checkout 0.1.3
 ```
 
 ```kotlin
@@ -27,9 +27,9 @@ includeBuild("DSKit-Android")
 
 // build.gradle.kts do módulo do app
 dependencies {
-    implementation("com.github.Romulomga.DSKit-Android:components:0.1.2") // traz o tokens
-    implementation("com.github.Romulomga.DSKit-Android:seed:0.1.2") // opcional: marca a partir de uma cor
-    lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.2") // as regras DSComponent, DSSpacingLiteral…
+    implementation("com.github.Romulomga.DSKit-Android:components:0.1.3") // traz o tokens
+    implementation("com.github.Romulomga.DSKit-Android:seed:0.1.3") // opcional: marca a partir de uma cor
+    lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.3") // as regras DSComponent, DSSpacingLiteral…
 }
 ```
 

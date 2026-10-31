@@ -42,6 +42,9 @@ import io.github.romulomga.dskit.components.R
  * @param contentType o que o campo guarda, para o autofill do sistema e os gerenciadores de senha
  * (`ContentType.EmailAddress`, `ContentType.Username`, `ContentType.NewPassword`…). Com [password] e sem
  * este, é `ContentType.Password`.
+ * @param visualTransformation como o texto aparece, sem mudar o [value]: a máscara de um telefone ou documento
+ * enquanto se digita. O estado guarda só o que importa (os dígitos) e o cursor fica onde a pessoa está. Ignorado
+ * com [password] escondido.
  */
 @Composable
 public fun DSTextField(
@@ -61,7 +64,8 @@ public fun DSTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    contentType: ContentType? = null
+    contentType: ContentType? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     var revealed by rememberSaveable { mutableStateOf(false) }
     val isError = errorText != null
@@ -105,7 +109,7 @@ public fun DSTextField(
         },
         supportingText = (errorText ?: supportingText)?.let { { Text(it) } },
         isError = isError,
-        visualTransformation = if (password && !revealed) PasswordVisualTransformation() else VisualTransformation.None,
+        visualTransformation = if (password && !revealed) PasswordVisualTransformation() else visualTransformation,
         keyboardOptions = if (password) {
             keyboardOptions.copy(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)
         } else {

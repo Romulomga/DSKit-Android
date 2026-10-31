@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.3] - 2026-10-31
+
+### Adicionado
+
+- `DSTextField(visualTransformation)`: máscara enquanto se digita (telefone, documento) sem mudar o `value` nem
+  perder a posição do cursor.
+
 ## [0.1.2] - 2026-10-31
 
 ### Removido

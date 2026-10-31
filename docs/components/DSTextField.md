@@ -53,6 +53,26 @@ DSTextField(
 | `maxLines` | `Int` | `1` se `singleLine`, senão `Int.MAX_VALUE` | Máximo de linhas. |
 | `keyboardOptions` | `KeyboardOptions` | `KeyboardOptions.Default` | Tipo de teclado e ação do IME. |
 | `keyboardActions` | `KeyboardActions` | `KeyboardActions.Default` | O que fazer na ação do IME. |
+| `contentType` | `ContentType?` | `null` | O que o campo guarda, para o autofill (`EmailAddress`, `NewPassword`…). |
+| `visualTransformation` | `VisualTransformation` | `VisualTransformation.None` | Como o texto aparece sem mudar o `value`: a máscara de telefone ou documento enquanto se digita. O estado guarda só os dígitos e o cursor fica no lugar. Ignorado com a senha escondida. |
+
+## Máscara ao digitar
+
+Guarde só o que importa no estado e formate na exibição com uma `VisualTransformation` (com o `OffsetMapping` certo,
+o cursor não pula para o fim ao editar no meio):
+
+```kotlin
+DSTextField(
+    value = digits,
+    onValueChange = { digits = it.filter(Char::isDigit).take(11) },
+    label = "Telefone",
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+    visualTransformation = PhoneMask
+)
+```
+
+Reformatar o `value` a cada tecla (`onValueChange = { value = mask(it) }`) também mostra a máscara, mas o cursor
+volta para o fim quando a pessoa corrige um dígito no meio.
 
 ## Acessibilidade
 

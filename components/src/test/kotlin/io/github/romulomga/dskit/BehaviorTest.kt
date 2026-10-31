@@ -3,6 +3,9 @@ package io.github.romulomga.dskit
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.platform.LocalUriHandler
@@ -18,10 +21,14 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -183,6 +190,21 @@ class BehaviorTest {
     }
 
     @Test
+    fun aVisualTransformationMasksTheTextButTheValueKeepsOnlyWhatWasTyped() {
+        var value by mutableStateOf("")
+        composeRule.setContent {
+            DSTheme {
+                DSTextField(value = value, onValueChange = { value = it }, label = "Code", visualTransformation = GroupsOfTwo)
+            }
+        }
+
+        composeRule.onNodeWithText("Code").performTextInput("1234")
+
+        assertEquals("1234", value)
+        composeRule.onNodeWithText("Code").assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString("12 34")))
+    }
+
+    @Test
     fun aCollapsedExtendedFabKeepsItsName() {
         composeRule.setContent {
             DSTheme {
@@ -205,3 +227,18 @@ class BehaviorTest {
 }
 
 private const val FrameMillis = 16L
+
+/** "1234" aparece como "12 34": um espaço depois de cada dois caracteres, menos no fim. */
+private object GroupsOfTwo : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val masked = text.text.chunked(2).joinToString(" ")
+
+        val mapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int = offset + (offset - 1).coerceAtLeast(0) / 2
+
+            override fun transformedToOriginal(offset: Int): Int = offset - offset / 3
+        }
+
+        return TransformedText(AnnotatedString(masked), mapping)
+    }
+}
