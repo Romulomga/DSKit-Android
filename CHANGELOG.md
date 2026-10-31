@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.4] - 2026-10-31
+
+### Adicionado
+
+- `DSTextField(leadingContent, trailingContent)`: seletor no início ou no fim do campo, para valores em partes
+  (DDI + número, UF + registro + tipo) lidos como uma coisa só.
+
 ## [0.1.3] - 2026-10-31
 
 ### Adicionado

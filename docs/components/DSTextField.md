@@ -54,6 +54,8 @@ DSTextField(
 | `keyboardOptions` | `KeyboardOptions` | `KeyboardOptions.Default` | Tipo de teclado e ação do IME. |
 | `keyboardActions` | `KeyboardActions` | `KeyboardActions.Default` | O que fazer na ação do IME. |
 | `contentType` | `ContentType?` | `null` | O que o campo guarda, para o autofill (`EmailAddress`, `NewPassword`…). |
+| `leadingContent` | `(@Composable () -> Unit)?` | `null` | Conteúdo próprio no início, no lugar de `leadingIcon`: um seletor que faz parte do valor (DDI, UF de um registro). |
+| `trailingContent` | `(@Composable () -> Unit)?` | `null` | Conteúdo próprio no fim (sufixo que se escolhe, unidade). Fica atrás do olho da senha e na frente do limpar e do ícone de erro. |
 | `visualTransformation` | `VisualTransformation` | `VisualTransformation.None` | Como o texto aparece sem mudar o `value`: a máscara de telefone ou documento enquanto se digita. O estado guarda só os dígitos e o cursor fica no lugar. Ignorado com a senha escondida. |
 
 ## Máscara ao digitar
@@ -73,6 +75,12 @@ DSTextField(
 
 Reformatar o `value` a cada tecla (`onValueChange = { value = mask(it) }`) também mostra a máscara, mas o cursor
 volta para o fim quando a pessoa corrige um dígito no meio.
+
+## Valor em partes
+
+Quando o valor tem partes que se escolhem (DDI + número, UF + número de registro + tipo), mostre tudo num campo só,
+com o seletor em `leadingContent`/`trailingContent`, em vez de campos soltos lado a lado: a pessoa lê como uma coisa
+só. Cada seletor precisa de alvo de 48 dp e de uma descrição que diga o que ele escolhe ("UF do CRECI: SP").
 
 ## Acessibilidade
 

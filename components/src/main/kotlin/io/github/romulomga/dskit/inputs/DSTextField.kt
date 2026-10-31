@@ -35,6 +35,10 @@ import io.github.romulomga.dskit.components.R
  * @param supportingText linha de apoio ("Mínimo 6 caracteres").
  * @param errorText mensagem de erro; não nula, o campo fica em estado de erro.
  * @param leadingIcon ícone decorativo à esquerda (busca, e-mail).
+ * @param leadingContent conteúdo próprio no início, no lugar de [leadingIcon]: um seletor que faz parte do valor,
+ * como o DDI de um telefone ou a UF de um registro. Garanta alvo de 48 dp e descrição para o TalkBack.
+ * @param trailingContent conteúdo próprio no fim (um sufixo que se escolhe, uma unidade). Fica atrás do olho da
+ * senha e na frente do botão de limpar e do ícone de erro.
  * @param password esconde o texto e mostra o olho para alternar. Força o teclado de senha (sem sugestão nem
  * aprendizado, mesmo com [keyboardOptions] próprio) e avisa o autofill que o campo é senha.
  * @param clearable mostra o botão de limpar enquanto há texto.
@@ -65,7 +69,9 @@ public fun DSTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentType: ContentType? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    leadingContent: (@Composable () -> Unit)? = null,
+    trailingContent: (@Composable () -> Unit)? = null
 ) {
     var revealed by rememberSaveable { mutableStateOf(false) }
     val isError = errorText != null
@@ -82,7 +88,7 @@ public fun DSTextField(
         readOnly = readOnly,
         label = { Text(label) },
         placeholder = placeholder?.let { { Text(it) } },
-        leadingIcon = leadingIcon?.let { { Icon(it, contentDescription = null) } },
+        leadingIcon = leadingContent ?: leadingIcon?.let { { Icon(it, contentDescription = null) } },
         trailingIcon = when {
             password -> {
                 {
@@ -92,6 +98,8 @@ public fun DSTextField(
                     }
                 }
             }
+
+            trailingContent != null -> trailingContent
 
             clearable && value.isNotEmpty() && enabled && !readOnly -> {
                 {
@@ -133,6 +141,13 @@ private fun DSTextFieldPreview() {
             DSTextField(value = "broker@", onValueChange = {}, label = "Email", errorText = "Invalid email")
 
             DSTextField(value = "Ipanema", onValueChange = {}, label = "Search", leadingIcon = DSIcons.Search, clearable = true)
+
+            DSTextField(
+                value = "11 98765-4321",
+                onValueChange = {},
+                label = "Phone",
+                leadingContent = { DSTextButton("+55", onClick = {}) }
+            )
         }
     }
 }

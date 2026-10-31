@@ -3,6 +3,9 @@ package io.github.romulomga.dskit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
 import org.junit.Test
 
 class InputsScreenshotTest : ScreenshotTestBase() {
@@ -18,6 +21,14 @@ class InputsScreenshotTest : ScreenshotTestBase() {
             DSTextField(value = "broker@", onValueChange = {}, label = "Email", errorText = "Invalid email")
 
             DSTextField(value = "Locked", onValueChange = {}, label = "Disabled", enabled = false)
+
+            DSTextField(
+                value = "11 98765-4321",
+                onValueChange = {},
+                label = "Phone",
+                leadingContent = { DSTextButton("+55", onClick = {}) },
+                trailingContent = { Text("mobile", modifier = Modifier.padding(end = DSSpacing.lg)) }
+            )
         }
     }
 
