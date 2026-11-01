@@ -63,6 +63,31 @@ class BehaviorTest {
     }
 
     @Test
+    fun alertDialogDismissButtonRunsOnDismissNotTheOutsideTap() {
+        var dismissed = 0
+        var outside = 0
+
+        composeRule.setContent {
+            DSTheme {
+                DSAlertDialog(
+                    title = "Close the alert?",
+                    confirmText = "Keep the alert",
+                    dismissText = "I'm fine, close",
+                    emphasizeConfirm = true,
+                    onConfirm = {},
+                    onDismiss = { dismissed++ },
+                    onDismissRequest = { outside++ }
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("I'm fine, close").performClick()
+
+        assertEquals(1, dismissed)
+        assertEquals(0, outside)
+    }
+
+    @Test
     fun textLinkWithABlockedSchemeIsPlainText() {
         composeRule.setContent {
             DSTheme {

@@ -38,6 +38,12 @@ class DialogScreenshotTest : ScreenshotTestBase() {
     fun alertDialogDark() = screen("overlays_alert_dialog_dark", dark = true) { Alert() }
 
     @Test
+    fun alertDialogEmphasizedLight() = screen("overlays_alert_dialog_emphasized_light", dark = false) { EmphasizedAlert() }
+
+    @Test
+    fun alertDialogEmphasizedDark() = screen("overlays_alert_dialog_emphasized_dark", dark = true) { EmphasizedAlert() }
+
+    @Test
     fun bottomSheetLight() = screen("overlays_bottom_sheet_light", dark = false) { Sheet() }
 
     @Test
@@ -90,6 +96,20 @@ class DialogScreenshotTest : ScreenshotTestBase() {
             dismissText = "Cancel",
             destructive = true,
             onConfirm = {},
+            onDismissRequest = {}
+        )
+    }
+
+    @Composable
+    private fun EmphasizedAlert() {
+        DSAlertDialog(
+            title = "Close the alert?",
+            message = "If you haven't sent it yet, nobody knows.",
+            confirmText = "Keep the alert",
+            dismissText = "I'm fine, close",
+            emphasizeConfirm = true,
+            onConfirm = {},
+            onDismiss = {},
             onDismissRequest = {}
         )
     }

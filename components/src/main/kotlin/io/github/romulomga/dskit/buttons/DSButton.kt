@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
@@ -175,13 +176,18 @@ public fun DSTextButton(
     }
 }
 
-/** Texto e ícone; carregando, ficam invisíveis (guardam a largura) sob o indicador. */
+/**
+ * Texto e ícone; carregando, ficam invisíveis (guardam a largura) sob o indicador. O ícone cresce com a fonte, até o
+ * dobro, para não ficar miúdo ao lado de um texto grande.
+ */
 @Composable
 private fun ButtonContent(text: String, icon: ImageVector?, loading: Boolean) {
+    val iconSize = ButtonDefaults.IconSize * LocalDensity.current.fontScale.coerceIn(1f, MaxIconScale)
+
     Box(contentAlignment = Alignment.Center) {
         Row(modifier = Modifier.alpha(if (loading) 0f else 1f), verticalAlignment = Alignment.CenterVertically) {
             if (icon != null) {
-                Icon(icon, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                Icon(icon, contentDescription = null, modifier = Modifier.size(iconSize))
 
                 Spacer(Modifier.width(ButtonDefaults.IconSpacing))
             }
@@ -198,6 +204,8 @@ private fun ButtonContent(text: String, icon: ImageVector?, loading: Boolean) {
         }
     }
 }
+
+private const val MaxIconScale = 2f
 
 private fun contentPadding(icon: ImageVector?): PaddingValues =
     if (icon == null) ButtonDefaults.ContentPadding else ButtonDefaults.ButtonWithIconContentPadding

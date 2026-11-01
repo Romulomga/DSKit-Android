@@ -6,6 +6,21 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.5] - 2026-11-01
+
+### Adicionado
+
+- `DSAlertDialog(emphasizeConfirm)`: a confirmação vira um botão cheio quando ela é a escolha segura ("Continuar no
+  alerta"), com os botões empilhados em largura cheia.
+- `DSAlertDialog(onDismiss)`: o botão de cancelar pode fazer outra coisa que não o toque fora do diálogo. Sem ele,
+  continua igual a `onDismissRequest`.
+
+### Mudado
+
+- Os ícones dos botões crescem com a fonte do sistema, até o dobro, em vez de ficarem fixos em 18dp.
+- `DSAlertDialog`: a mensagem rola se não couber, e com fonte a partir de 150% os botões empilham em largura cheia,
+  a confirmação em cima.
+
 ## [0.1.4] - 2026-10-31
 
 ### Adicionado
