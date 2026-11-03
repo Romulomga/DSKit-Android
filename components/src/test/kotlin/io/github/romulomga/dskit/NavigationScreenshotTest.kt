@@ -33,6 +33,11 @@ class NavigationScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
+    fun topAppBarWithNavigationIcon() = snapshot("navigation_top_app_bar_navigation_icon") {
+        DSTopAppBar("Today", navigationIcon = { DSIconButton(DSIcons.Home, "Home", onClick = {}) })
+    }
+
+    @Test
     fun navigationBar() = snapshot("navigation_bar") {
         DSNavigationBar(items = items, selection = Tab.Messages, onSelectionChange = {})
     }

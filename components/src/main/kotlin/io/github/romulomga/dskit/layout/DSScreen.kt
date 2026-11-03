@@ -42,9 +42,10 @@ import androidx.compose.ui.unit.dp
  * }
  * ```
  *
- * @param title título da barra superior; sem título e sem [onBack], a tela não tem barra.
+ * @param title título da barra superior; sem título, sem [onBack] e sem [navigationIcon], a tela não tem barra.
  * @param topBarStyle o tamanho da barra; `Medium` e `Large` encolhem ao rolar.
  * @param onBack mostra a seta de voltar.
+ * @param navigationIcon o que fica no lugar da seta numa tela sem [onBack]: a marca do app na tela de topo de uma aba.
  * @param actions botões à direita da barra.
  * @param snackbarHostState onde os snackbars da tela aparecem (acima do FAB e da barra inferior).
  * @param onRefresh liga o "puxar para atualizar"; [isRefreshing] mostra o indicador.
@@ -56,6 +57,7 @@ public fun DSScreen(
     title: String? = null,
     topBarStyle: DSTopAppBarStyle = DSTopAppBarStyle.Small,
     onBack: (() -> Unit)? = null,
+    navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
@@ -64,7 +66,7 @@ public fun DSScreen(
     onRefresh: (() -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val showsTopBar = title != null || onBack != null
+    val showsTopBar = title != null || onBack != null || navigationIcon != null
     val scrollBehavior = when (topBarStyle) {
         DSTopAppBarStyle.Medium, DSTopAppBarStyle.Large -> TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         DSTopAppBarStyle.Small, DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.pinnedScrollBehavior()
@@ -79,6 +81,7 @@ public fun DSScreen(
                     modifier = Modifier,
                     style = topBarStyle,
                     onBack = onBack,
+                    navigationIcon = navigationIcon,
                     actions = actions,
                     scrollBehavior = scrollBehavior
                 )

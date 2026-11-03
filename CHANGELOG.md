@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.6] - 2026-11-03
+
+### Adicionado
+
+- `DSScreen(navigationIcon)` e `DSTopAppBar(navigationIcon)`: o lugar da seta de voltar numa tela sem `onBack`, para
+  a marca do app na tela de topo de uma aba (ou um botão de menu). Com `onBack`, a seta vence.
+
 ## [0.1.5] - 2026-11-01
 
 ### Adicionado

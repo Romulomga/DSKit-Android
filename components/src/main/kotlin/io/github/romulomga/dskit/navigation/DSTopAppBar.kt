@@ -41,6 +41,8 @@ public enum class DSTopAppBarStyle {
  *
  * @param onBack mostra a seta de voltar (espelhada em árabe); quem chama faz o pop. O voltar do sistema
  * continua sendo do app (`BackHandler` ou a biblioteca de navegação).
+ * @param navigationIcon o que fica no lugar da seta numa tela sem [onBack]: a marca do app na tela de topo de uma
+ * aba, ou um [DSIconButton] (menu). Com [onBack], a seta vence.
  * @param actions até três [DSIconButton]s; com mais ações, a terceira é um `DSIconButton(DSIcons.MoreVert, …)` que
  * abre um `DropdownMenu` com o resto.
  */
@@ -51,9 +53,10 @@ public fun DSTopAppBar(
     modifier: Modifier = Modifier,
     style: DSTopAppBarStyle = DSTopAppBarStyle.Small,
     onBack: (() -> Unit)? = null,
+    navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    TopAppBarContent(title, modifier, style, onBack, actions, scrollBehavior = null)
+    TopAppBarContent(title, modifier, style, onBack, navigationIcon, actions, scrollBehavior = null)
 }
 
 /** A barra com o comportamento de rolagem, que é API experimental do Material e fica só dentro do DSKit. */
@@ -64,19 +67,25 @@ internal fun TopAppBarContent(
     modifier: Modifier,
     style: DSTopAppBarStyle,
     onBack: (() -> Unit)?,
+    navigationIcon: (@Composable () -> Unit)?,
     actions: @Composable RowScope.() -> Unit,
     scrollBehavior: TopAppBarScrollBehavior?
 ) {
     val titleContent: @Composable () -> Unit = {
         Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
     }
-    val navigationIcon: @Composable () -> Unit = { if (onBack != null) BackButton(onBack) }
+    val leading: @Composable () -> Unit = {
+        when {
+            onBack != null -> BackButton(onBack)
+            navigationIcon != null -> navigationIcon()
+        }
+    }
 
     when (style) {
         DSTopAppBarStyle.Small -> TopAppBar(
             title = titleContent,
             modifier = modifier,
-            navigationIcon = navigationIcon,
+            navigationIcon = leading,
             actions = actions,
             scrollBehavior = scrollBehavior
         )
@@ -84,7 +93,7 @@ internal fun TopAppBarContent(
         DSTopAppBarStyle.CenterAligned -> CenterAlignedTopAppBar(
             title = titleContent,
             modifier = modifier,
-            navigationIcon = navigationIcon,
+            navigationIcon = leading,
             actions = actions,
             scrollBehavior = scrollBehavior
         )
@@ -92,7 +101,7 @@ internal fun TopAppBarContent(
         DSTopAppBarStyle.Medium -> MediumTopAppBar(
             title = titleContent,
             modifier = modifier,
-            navigationIcon = navigationIcon,
+            navigationIcon = leading,
             actions = actions,
             scrollBehavior = scrollBehavior
         )
@@ -100,7 +109,7 @@ internal fun TopAppBarContent(
         DSTopAppBarStyle.Large -> LargeTopAppBar(
             title = titleContent,
             modifier = modifier,
-            navigationIcon = navigationIcon,
+            navigationIcon = leading,
             actions = actions,
             scrollBehavior = scrollBehavior
         )
@@ -133,6 +142,8 @@ private fun DSTopAppBarPreview() {
             }
 
             DSTopAppBar("Homer", style = DSTopAppBarStyle.CenterAligned)
+
+            DSTopAppBar("Today", navigationIcon = { DSIconButton(DSIcons.Home, "Home", onClick = {}) })
 
             DSTopAppBar("Messages", style = DSTopAppBarStyle.Large)
         }
