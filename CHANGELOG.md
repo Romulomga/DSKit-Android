@@ -23,6 +23,18 @@ quebra vem descrita aqui com o código de migração.
   passo, acelerando; no limite, o botão daquele lado desliga; a soma não acumula ruído de ponto flutuante.
 - `DSDecimalField`: o `DSNumberField` para números com casas decimais (`Double?`). Vírgula e ponto valem como
   separador em qualquer idioma, e os dígitos além de `maxFractionDigits` não entram.
+- `DSBottomSheet(onDismissBlocked)`: com ele, arrastar para baixo e tocar no véu não fecham o painel e chamam o
+  lambda, para o painel com algo digitado perguntar antes (`DSDiscardGuard`).
+- `DSBottomSheet(state)` com `DSBottomSheetState` e `rememberDSBottomSheetState`: o painel para quem o tira da
+  composição por conta própria (uma navegação); `state.hide()` o faz descer antes.
+- `DSMotion.exit()`: 250 ms acelerando, para o que sai da tela.
+
+### Mudado
+
+- `DSBottomSheet`: fechado por código, desce em 250 ms com o véu apagando junto (a saída do Material chamada por
+  código parecia um corte). A alça é lida "Fechar" pelo TalkBack, em vez do "Fechar planilha" do Material em
+  português, e tocar nela com o leitor fecha. O voltar do sistema chama `onDismissRequest` direto, sem a animação
+  de voltar preditivo do Material.
 
 ## [0.1.6] - 2026-11-03
 

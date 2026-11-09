@@ -26,6 +26,9 @@ public object DSMotion {
     /** 300 ms: elemento que aparece, some ou muda de tamanho. */
     public fun <T> medium(): FiniteAnimationSpec<T> = tween(durationMillis = 300, easing = standard)
 
+    /** 250 ms acelerando: elemento que sai da tela (o painel inferior descendo). */
+    public fun <T> exit(): FiniteAnimationSpec<T> = tween(durationMillis = 250, easing = emphasizedAccelerate)
+
     /** 500 ms: transição que atravessa a tela. */
     public fun <T> long(): FiniteAnimationSpec<T> = tween(durationMillis = 500, easing = emphasizedDecelerate)
 }

@@ -1,5 +1,8 @@
 package io.github.romulomga.dskit
 
+import android.os.Looper
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
@@ -9,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -20,6 +23,7 @@ import com.github.takahirom.roborazzi.captureScreenRoboImage
 import java.time.LocalDate
 import org.junit.Rule
 import org.junit.Test
+import org.robolectric.Shadows.shadowOf
 
 /**
  * Diálogo e painel abertos de verdade: abrem em janela própria, então a captura é da tela inteira
@@ -30,7 +34,7 @@ import org.junit.Test
 @OptIn(ExperimentalRoborazziApi::class)
 class DialogScreenshotTest : ScreenshotTestBase() {
     @get:Rule
-    val composeRule = createComposeRule()
+    val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
     fun alertDialogLight() = screen("overlays_alert_dialog_light", dark = false) { Alert() }
@@ -118,10 +122,10 @@ class DialogScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun textInputDialogLight() = screen("overlays_text_input_dialog_light", dark = false) { TextInput() }
+    fun textInputDialogLight() = stillScreen("overlays_text_input_dialog_light", dark = false) { TextInput() }
 
     @Test
-    fun textInputDialogDark() = screen("overlays_text_input_dialog_dark", dark = true) { TextInput() }
+    fun textInputDialogDark() = stillScreen("overlays_text_input_dialog_dark", dark = true) { TextInput() }
 
     @Composable
     private fun TextInput() {
@@ -153,8 +157,6 @@ class DialogScreenshotTest : ScreenshotTestBase() {
             range = LocalDate.of(2026, 1, 1)..LocalDate.of(2026, 6, 30)
         )
     }
-
-    // <novos testes acima>
 
     @Composable
     private fun Alert() {
@@ -194,6 +196,20 @@ class DialogScreenshotTest : ScreenshotTestBase() {
                 DSSheetAction(text = "Delete post", icon = DSIcons.Delete, destructive = true, onClick = {})
             }
         }
+    }
+
+    /**
+     * Sem a espera de ociosidade do Compose: no Robolectric com renderização nativa, um campo de texto dentro de
+     * um diálogo nunca fica ocioso, e o `setContent` da regra esperaria até estourar o tempo.
+     */
+    private fun stillScreen(file: String, dark: Boolean, content: @Composable () -> Unit) {
+        composeRule.activity.setContent {
+            DSPreviewContainer(title = file, modifier = Modifier.fillMaxSize(), darkTheme = dark) {
+                content()
+            }
+        }
+        repeat(5) { shadowOf(Looper.getMainLooper()).idle() }
+        captureScreenRoboImage("screenshots/$file.png")
     }
 
     private fun screen(file: String, dark: Boolean, content: @Composable () -> Unit) {

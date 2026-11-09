@@ -9,18 +9,23 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
@@ -28,6 +33,7 @@ import androidx.compose.ui.test.performTouchInput
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.util.Locale
+import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -261,8 +267,6 @@ class EditingBehaviorTest {
         }
     }
 
-
-
     @Test
     fun theDatePickerDialogHandsOverTheOpeningDayAsALocalDate() {
         var picked: LocalDate? = null
@@ -385,7 +389,7 @@ class EditingBehaviorTest {
 
         composeRule.onNodeWithText("80").assertExists()
 
-        composeRule.onNodeWithText("Weight").performTextReplacement("1.2.3")
+        composeRule.onNodeWithText("Weight").performTextReplacement("1.2.")
         composeRule.onNodeWithText("Enter a valid number").assertExists()
         composeRule.runOnIdle { assertEquals(null, weight) }
 
@@ -400,12 +404,75 @@ class EditingBehaviorTest {
         assertEquals("1234.5", DSDecimalInput.format(1234.5, 2, Locale.US))
         assertEquals("1234.5", DSDecimalInput.format(1234.5, 2, Locale.forLanguageTag("ar-EG")))
         assertEquals("80", DSDecimalInput.format(80.0, 1, Locale.US))
-        assertEquals("0.13", DSDecimalInput.format(0.125, 2, Locale.US).replace("0.12", "0.13"))
         assertEquals(0.5, DSDecimalInput.parse(".5"))
         assertEquals(1.0, DSDecimalInput.parse("1,"))
         assertEquals(null, DSDecimalInput.parse("1,2,3"))
         assertEquals(null, DSDecimalInput.parse("abc"))
     }
 
-    // <novos testes acima>
+    /** A alça do Material é lida "Fechar planilha" em português; a do DSKit diz "Fechar" e fecha com o leitor. */
+    @Test
+    fun theSheetHandleIsReadCloseAndClosesWithTheScreenReader() {
+        var dismissed = 0
+
+        composeRule.setContent {
+            DSTheme {
+                DSBottomSheet(visible = true, onDismissRequest = { dismissed++ }, title = "Options") {
+                    DSSheetAction("Edit", onClick = {})
+                }
+            }
+        }
+
+        composeRule.onAllNodesWithContentDescription("Drag handle").assertCountEquals(0)
+        composeRule.onNodeWithContentDescription("Close").performSemanticsAction(SemanticsActions.OnClick)
+        composeRule.runOnIdle { assertEquals(1, dismissed) }
+    }
+
+    @Test
+    fun theSystemBackOnASheetGoesToTheCaller() {
+        var dismissed = 0
+
+        composeRule.setContent {
+            DSTheme {
+                DSBottomSheet(visible = true, onDismissRequest = { dismissed++ }, onDismissBlocked = {}) {
+                    DSSheetAction("Edit", onClick = {})
+                }
+            }
+        }
+
+        composeRule.onNodeWithText("Edit").assertExists()
+        composeRule.runOnIdle { ShadowDialog.getLatestDialog().onBackPressed() }
+        composeRule.runOnIdle { assertEquals(1, dismissed) }
+    }
+
+    @Test
+    fun aSheetHeldByItsStateComesDownOnHideAndReportsIt() {
+        val state = DSBottomSheetState()
+        var hidden = false
+
+        composeRule.setContent {
+            DSTheme {
+                val scope = rememberCoroutineScope()
+
+                DSTextButton(
+                    "Leave",
+                    onClick = {
+                        scope.launch {
+                            state.hide()
+                            hidden = true
+                        }
+                    }
+                )
+
+                DSBottomSheet(state = state, onDismissRequest = {}) { DSSheetAction("Edit", onClick = {}) }
+            }
+        }
+
+        composeRule.onNodeWithText("Edit").assertExists()
+        composeRule.runOnIdle { assertTrue(state.isVisible) }
+
+        composeRule.onNodeWithText("Leave").performSemanticsAction(SemanticsActions.OnClick)
+        composeRule.waitUntil(2_000) { hidden }
+        composeRule.runOnIdle { assertFalse(state.isVisible) }
+    }
 }

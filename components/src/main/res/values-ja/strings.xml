@@ -16,4 +16,5 @@
     <string name="dskit_ok">OK</string>
     <string name="dskit_decrease_item">%1$sを減らす</string>
     <string name="dskit_increase_item">%1$sを増やす</string>
+    <string name="dskit_close">閉じる</string>
 </resources>
