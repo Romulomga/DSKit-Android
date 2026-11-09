@@ -88,7 +88,7 @@ DSTheme(brand = HomerBrand, fontFamily = Raleway, dynamicColor = false) {
 | Contêiner | `DSCard` (filled, elevated, outlined), `DSAdaptiveGrid`, `DSDivider`, `DSVerticalDivider` |
 | Listas | `DSListItem`, `DSSwitchListItem`, `DSCheckboxListItem`, `DSRadioListItem`, `DSListSectionHeader` |
 | Entrada | `DSTextField` (senha, limpar, erro), `DSNumberField`, `DSDropdownField`, `DSAutocompleteField`, `DSSlider`, `DSRangeSlider` |
-| Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSTabs`, `DSTabbedPager` |
+| Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSStepper`, `DSTabs`, `DSTabbedPager` |
 | Navegação | `DSScreen`, `DSScreenColumn`, `DSTopAppBar`, `DSNavigationScaffold`, `DSNavigationBar`, `DSNavigationRail` |
 | Feedback | `DSSnackbarHost` + `showDSSnackbar`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSLinearProgress`, `DSLoadingState`, `DSEmptyState`, `DSErrorState`, `Modifier.dsSkeleton`, `DSSkeletonRow` |
 | Sobreposição | `DSAlertDialog`, `DSConfirmDeleteDialog`, `DSDiscardGuard` + `DSDiscardDialog`, `DSTextInputDialog`, `DSDatePickerDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |

@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">要舍弃更改吗？</string>
     <string name="dskit_cancel">取消</string>
     <string name="dskit_ok">确定</string>
+    <string name="dskit_decrease_item">减少%1$s</string>
+    <string name="dskit_increase_item">增加%1$s</string>
 </resources>

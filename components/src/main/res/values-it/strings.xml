@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">Ignorare le modifiche?</string>
     <string name="dskit_cancel">Annulla</string>
     <string name="dskit_ok">OK</string>
+    <string name="dskit_decrease_item">Diminuisci %1$s</string>
+    <string name="dskit_increase_item">Aumenta %1$s</string>
 </resources>

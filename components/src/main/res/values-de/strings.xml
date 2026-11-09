@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">Änderungen verwerfen?</string>
     <string name="dskit_cancel">Abbrechen</string>
     <string name="dskit_ok">OK</string>
+    <string name="dskit_decrease_item">%1$s verringern</string>
+    <string name="dskit_increase_item">%1$s erhöhen</string>
 </resources>

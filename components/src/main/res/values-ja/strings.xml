@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">変更を破棄しますか？</string>
     <string name="dskit_cancel">キャンセル</string>
     <string name="dskit_ok">OK</string>
+    <string name="dskit_decrease_item">%1$sを減らす</string>
+    <string name="dskit_increase_item">%1$sを増やす</string>
 </resources>

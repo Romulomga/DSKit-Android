@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">변경사항을 삭제할까요?</string>
     <string name="dskit_cancel">취소</string>
     <string name="dskit_ok">확인</string>
+    <string name="dskit_decrease_item">%1$s 줄이기</string>
+    <string name="dskit_increase_item">%1$s 늘리기</string>
 </resources>

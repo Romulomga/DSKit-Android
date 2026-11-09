@@ -14,4 +14,6 @@
     <string name="dskit_discard_changes_title">هل تريد تجاهل التغييرات؟</string>
     <string name="dskit_cancel">إلغاء</string>
     <string name="dskit_ok">حسنًا</string>
+    <string name="dskit_decrease_item">إنقاص %1$s</string>
+    <string name="dskit_increase_item">زيادة %1$s</string>
 </resources>

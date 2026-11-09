@@ -16,11 +16,13 @@ import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import java.time.LocalDate
 import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
@@ -298,6 +300,54 @@ class EditingBehaviorTest {
 
     private fun utcMillis(year: Int, month: Int, day: Int): Long =
         LocalDate.of(year, month, day).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+    @Test
+    fun theStepperAddsOneStepPerTapAndStopsAtTheLimits() {
+        var count by mutableStateOf(11)
+
+        composeRule.setContent {
+            DSTheme { DSStepper(value = count, onValueChange = { count = it }, range = 1..12, label = "Installments") }
+        }
+
+        composeRule.onNodeWithContentDescription("Increase Installments").performClick()
+        composeRule.runOnIdle { assertEquals(12, count) }
+        composeRule.onNodeWithContentDescription("Increase Installments").assertIsNotEnabled()
+
+        composeRule.onNodeWithContentDescription("Decrease Installments").performClick()
+        composeRule.runOnIdle { assertEquals(11, count) }
+    }
+
+    @Test
+    fun holdingAStepperButtonRepeatsTheStepAndReleasingDoesNotAddOneMore() {
+        var count by mutableStateOf(1)
+
+        composeRule.mainClock.autoAdvance = false
+        composeRule.setContent {
+            DSTheme { DSStepper(value = count, onValueChange = { count = it }, range = 1..100, label = "Days") }
+        }
+        composeRule.mainClock.advanceTimeByFrame()
+
+        composeRule.onNodeWithContentDescription("Increase Days").performTouchInput { down(center) }
+        composeRule.mainClock.advanceTimeBy(DSStepperMath.HoldDelayMillis + 400)
+
+        val held = composeRule.runOnIdle { count }
+
+        composeRule.onNodeWithContentDescription("Increase Days").performTouchInput { up() }
+        composeRule.mainClock.advanceTimeBy(500)
+
+        assertTrue("held for 750 ms, got $held", held >= 3)
+        composeRule.runOnIdle { assertEquals(held, count) }
+    }
+
+    @Test
+    fun theStepperMathHasNoFloatingPointNoiseAndTheRepeatAccelerates() {
+        assertEquals(0.3, DSStepperMath.step(0.1, 0.2, 0.0..1.0), 0.0)
+        assertEquals(1.0, DSStepperMath.step(0.95, 0.1, 0.0..1.0), 0.0)
+        assertEquals(0.0, DSStepperMath.step(0.05, -0.1, 0.0..1.0), 0.0)
+        assertEquals(150L, DSStepperMath.repeatInterval(0))
+        assertTrue(DSStepperMath.repeatInterval(3) < DSStepperMath.repeatInterval(1))
+        assertEquals(40L, DSStepperMath.repeatInterval(100))
+    }
 
     // <novos testes acima>
 }

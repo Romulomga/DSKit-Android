@@ -19,6 +19,8 @@ quebra vem descrita aqui com o código de migração.
   "Cancelar" nas 10 línguas. A API experimental do Material fica dentro, e os anos mostrados ficam entre 1900 e 2100
   (uma faixa como `LocalDate.MIN..hoje` fechava o app). O lint `DSComponent` passa a apontar o `DatePickerDialog` do
   Material.
+- `DSStepper`: o ajuste de um número em passos, com os botões − e + (para `Double` e para `Int`). Segurar repete o
+  passo, acelerando; no limite, o botão daquele lado desliga; a soma não acumula ruído de ponto flutuante.
 
 ## [0.1.6] - 2026-11-03
 
