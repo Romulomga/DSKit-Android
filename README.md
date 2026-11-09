@@ -87,7 +87,7 @@ DSTheme(brand = HomerBrand, fontFamily = Raleway, dynamicColor = false) {
 | Ações | `DSButton`, `DSTonalButton`, `DSOutlinedButton`, `DSTextButton` (com `loading` e `destructive`), `DSIconButton` (com dica ao segurar), `DSFab`, `DSExtendedFab`, `DSTextLink` |
 | Contêiner | `DSCard` (filled, elevated, outlined), `DSAdaptiveGrid`, `DSDivider`, `DSVerticalDivider` |
 | Listas | `DSListItem`, `DSSwitchListItem`, `DSCheckboxListItem`, `DSRadioListItem`, `DSListSectionHeader` |
-| Entrada | `DSTextField` (senha, limpar, erro), `DSNumberField`, `DSDropdownField`, `DSAutocompleteField`, `DSSlider`, `DSRangeSlider` |
+| Entrada | `DSTextField` (senha, limpar, erro), `DSNumberField`, `DSDecimalField`, `DSDropdownField`, `DSAutocompleteField`, `DSSlider`, `DSRangeSlider` |
 | Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSStepper`, `DSTabs`, `DSTabbedPager` |
 | Navegação | `DSScreen`, `DSScreenColumn`, `DSTopAppBar`, `DSNavigationScaffold`, `DSNavigationBar`, `DSNavigationRail` |
 | Feedback | `DSSnackbarHost` + `showDSSnackbar`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSLinearProgress`, `DSLoadingState`, `DSEmptyState`, `DSErrorState`, `Modifier.dsSkeleton`, `DSSkeletonRow` |

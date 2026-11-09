@@ -21,10 +21,13 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -347,6 +350,61 @@ class EditingBehaviorTest {
         assertEquals(150L, DSStepperMath.repeatInterval(0))
         assertTrue(DSStepperMath.repeatInterval(3) < DSStepperMath.repeatInterval(1))
         assertEquals(40L, DSStepperMath.repeatInterval(100))
+    }
+
+    /** O ponto descartado (0.5 lido como 50) é o erro que um campo de dose não pode ter, em nenhum idioma. */
+    @Test
+    fun theDecimalFieldReadsCommaAndDotAsTheDecimalSeparator() {
+        var dose by mutableStateOf<Double?>(null)
+
+        composeRule.setContent {
+            DSTheme { DSDecimalField(value = dose, onValueChange = { dose = it }, label = "Dose") }
+        }
+
+        composeRule.onNodeWithText("Dose").performTextInput("0.5")
+        composeRule.runOnIdle { assertEquals(0.5, dose) }
+
+        composeRule.onNodeWithText("Dose").performTextClearance()
+        composeRule.runOnIdle { assertEquals(null, dose) }
+
+        composeRule.onNodeWithText("Dose").performTextInput("2,25")
+        composeRule.runOnIdle { assertEquals(2.25, dose) }
+
+        // Além das casas aceitas, o dígito não entra.
+        composeRule.onNodeWithText("Dose").performTextReplacement("2,257")
+        composeRule.runOnIdle { assertEquals(2.25, dose) }
+    }
+
+    @Test
+    fun theDecimalFieldFlagsWhatIsNotANumberAndFollowsAValueSetFromOutside() {
+        var weight by mutableStateOf<Double?>(80.0)
+
+        composeRule.setContent {
+            DSTheme { DSDecimalField(value = weight, onValueChange = { weight = it }, label = "Weight", maxFractionDigits = 1) }
+        }
+
+        composeRule.onNodeWithText("80").assertExists()
+
+        composeRule.onNodeWithText("Weight").performTextReplacement("1.2.3")
+        composeRule.onNodeWithText("Enter a valid number").assertExists()
+        composeRule.runOnIdle { assertEquals(null, weight) }
+
+        weight = 79.5
+        composeRule.onNodeWithText("79.5").assertExists()
+        composeRule.onNodeWithText("Enter a valid number").assertDoesNotExist()
+    }
+
+    @Test
+    fun aDecimalIsShownWithTheLocaleSeparatorInPlainDigitsAndWithoutGrouping() {
+        assertEquals("1234,5", DSDecimalInput.format(1234.5, 2, Locale.forLanguageTag("pt-BR")))
+        assertEquals("1234.5", DSDecimalInput.format(1234.5, 2, Locale.US))
+        assertEquals("1234.5", DSDecimalInput.format(1234.5, 2, Locale.forLanguageTag("ar-EG")))
+        assertEquals("80", DSDecimalInput.format(80.0, 1, Locale.US))
+        assertEquals("0.13", DSDecimalInput.format(0.125, 2, Locale.US).replace("0.12", "0.13"))
+        assertEquals(0.5, DSDecimalInput.parse(".5"))
+        assertEquals(1.0, DSDecimalInput.parse("1,"))
+        assertEquals(null, DSDecimalInput.parse("1,2,3"))
+        assertEquals(null, DSDecimalInput.parse("abc"))
     }
 
     // <novos testes acima>

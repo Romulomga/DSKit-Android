@@ -42,6 +42,15 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
+    fun decimalField() = snapshot("inputs_decimal_field") {
+        Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+            DSDecimalField(value = 82.5, onValueChange = {}, label = "Weight", supportingText = "In kilograms", maxFractionDigits = 1)
+
+            DSDecimalField(value = null, onValueChange = {}, label = "Dose", placeholder = "0.25", errorText = "Enter the dose")
+        }
+    }
+
+    @Test
     fun dropdownField() = snapshot("inputs_dropdown_field") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSDropdownField(selection = "RJ", onSelectionChange = {

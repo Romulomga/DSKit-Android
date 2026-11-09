@@ -21,6 +21,8 @@ quebra vem descrita aqui com o código de migração.
   Material.
 - `DSStepper`: o ajuste de um número em passos, com os botões − e + (para `Double` e para `Int`). Segurar repete o
   passo, acelerando; no limite, o botão daquele lado desliga; a soma não acumula ruído de ponto flutuante.
+- `DSDecimalField`: o `DSNumberField` para números com casas decimais (`Double?`). Vírgula e ponto valem como
+  separador em qualquer idioma, e os dígitos além de `maxFractionDigits` não entram.
 
 ## [0.1.6] - 2026-11-03
 
