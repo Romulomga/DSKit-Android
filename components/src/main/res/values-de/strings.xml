@@ -13,4 +13,5 @@
     <string name="dskit_keep_editing">Weiter bearbeiten</string>
     <string name="dskit_discard_changes_title">Änderungen verwerfen?</string>
     <string name="dskit_cancel">Abbrechen</string>
+    <string name="dskit_ok">OK</string>
 </resources>

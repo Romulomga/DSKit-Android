@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.captureScreenRoboImage
+import java.time.LocalDate
 import org.junit.Rule
 import org.junit.Test
 
@@ -133,6 +134,23 @@ class DialogScreenshotTest : ScreenshotTestBase() {
             confirmText = "Add",
             onConfirm = {},
             onDismissRequest = {}
+        )
+    }
+
+    @Test
+    fun datePickerDialogLight() = screen("overlays_date_picker_dialog_light", dark = false) { DatePicker() }
+
+    @Test
+    fun datePickerDialogDark() = screen("overlays_date_picker_dialog_dark", dark = true) { DatePicker() }
+
+    /** Um mês fixo e passado: o contorno de "hoje" não aparece, e a imagem não muda com o dia em que o teste roda. */
+    @Composable
+    private fun DatePicker() {
+        DSDatePickerDialog(
+            date = LocalDate.of(2026, 6, 29),
+            onConfirm = {},
+            onDismissRequest = {},
+            range = LocalDate.of(2026, 1, 1)..LocalDate.of(2026, 6, 30)
         )
     }
 

@@ -13,4 +13,5 @@
     <string name="dskit_keep_editing">继续编辑</string>
     <string name="dskit_discard_changes_title">要舍弃更改吗？</string>
     <string name="dskit_cancel">取消</string>
+    <string name="dskit_ok">确定</string>
 </resources>

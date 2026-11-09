@@ -13,4 +13,5 @@
     <string name="dskit_keep_editing">Continuer la modification</string>
     <string name="dskit_discard_changes_title">Abandonner les modifications ?</string>
     <string name="dskit_cancel">Annuler</string>
+    <string name="dskit_ok">OK</string>
 </resources>

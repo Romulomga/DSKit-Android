@@ -91,11 +91,11 @@ DSTheme(brand = HomerBrand, fontFamily = Raleway, dynamicColor = false) {
 | Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSTabs`, `DSTabbedPager` |
 | Navegação | `DSScreen`, `DSScreenColumn`, `DSTopAppBar`, `DSNavigationScaffold`, `DSNavigationBar`, `DSNavigationRail` |
 | Feedback | `DSSnackbarHost` + `showDSSnackbar`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSLinearProgress`, `DSLoadingState`, `DSEmptyState`, `DSErrorState`, `Modifier.dsSkeleton`, `DSSkeletonRow` |
-| Sobreposição | `DSAlertDialog`, `DSConfirmDeleteDialog`, `DSDiscardGuard` + `DSDiscardDialog`, `DSTextInputDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |
+| Sobreposição | `DSAlertDialog`, `DSConfirmDeleteDialog`, `DSDiscardGuard` + `DSDiscardDialog`, `DSTextInputDialog`, `DSDatePickerDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |
 | Tela larga | `Modifier.dsReadableColumn`, `DSAdaptiveColumns`, `DSLayout` |
 
 Cada componente tem uma página em [`docs/components/`](docs/components/README.md). O que o Material já resolve
-bem e o DSKit não embrulha (`DropdownMenu`, `DatePicker`, `TimePicker`, `SearchBar`) segue livre e já sai com a
+bem e o DSKit não embrulha (`DropdownMenu`, `TimePicker`, `DateRangePicker`, `SearchBar`) segue livre e já sai com a
 marca, porque o `DSTheme` é um `MaterialTheme`.
 
 Uma tela de formulário:

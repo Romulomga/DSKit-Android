@@ -15,6 +15,10 @@ quebra vem descrita aqui com o código de migração.
   espera (`pending`), entrega o item em `onDelete` e fecha. Vibra o aviso uma vez só.
 - `DSTextInputDialog`: diálogo do Material com um campo de texto já focado. Tocar fora não fecha, e a ação do teclado
   confirma.
+- `DSDatePickerDialog`: o calendário do Material falando `LocalDate`, com faixa válida (`range`) e os botões "OK" e
+  "Cancelar" nas 10 línguas. A API experimental do Material fica dentro, e os anos mostrados ficam entre 1900 e 2100
+  (uma faixa como `LocalDate.MIN..hoje` fechava o app). O lint `DSComponent` passa a apontar o `DatePickerDialog` do
+  Material.
 
 ## [0.1.6] - 2026-11-03
 

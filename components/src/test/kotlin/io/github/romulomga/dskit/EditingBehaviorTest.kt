@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -20,7 +21,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import java.time.LocalDate
+import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -252,6 +257,47 @@ class EditingBehaviorTest {
     }
 
 
+
+    @Test
+    fun theDatePickerDialogHandsOverTheOpeningDayAsALocalDate() {
+        var picked: LocalDate? = null
+
+        composeRule.setContent {
+            DSTheme {
+                DSDatePickerDialog(date = LocalDate.of(2026, 6, 29), onConfirm = { picked = it }, onDismissRequest = {})
+            }
+        }
+
+        composeRule.onNodeWithText("OK").performClick()
+        composeRule.runOnIdle { assertEquals(LocalDate.of(2026, 6, 29), picked) }
+    }
+
+    @Test
+    fun theDatePickerDialogWaitsForADayWhenItOpensWithoutOne() {
+        composeRule.setContent {
+            DSTheme { DSDatePickerDialog(date = null, onConfirm = {}, onDismissRequest = {}) }
+        }
+
+        composeRule.onNodeWithText("OK").assertIsNotEnabled()
+    }
+
+    /** `LocalDate.MIN..hoje` fazia o calendário montar um mês por ano desde o ano -999999999 e fechava o app. */
+    @Test
+    fun theCalendarYearsStayInsideWhatMaterialCanBuild() {
+        val today = LocalDate.of(2026, 11, 9)
+
+        assertEquals(1900..2026, DSDatePickerBounds.yearRange(LocalDate.MIN..today))
+        assertEquals(2020..2100, DSDatePickerBounds.yearRange(LocalDate.of(2020, 1, 1)..LocalDate.MAX))
+        assertEquals(1900..2100, DSDatePickerBounds.yearRange(null))
+        assertEquals(LocalDate.of(2020, 12, 31), DSDatePickerBounds.today(LocalDate.MIN..LocalDate.of(2020, 12, 31), today))
+        assertTrue(DSDatePickerBounds.isSelectableYear(2026, LocalDate.MIN..today))
+        assertFalse(DSDatePickerBounds.isSelectableYear(2027, LocalDate.MIN..today))
+        assertFalse(DSDatePickerBounds.isSelectable(utcMillis(2026, 11, 10), LocalDate.MIN..today))
+        assertTrue(DSDatePickerBounds.isSelectable(utcMillis(2026, 11, 9), LocalDate.MIN..today))
+    }
+
+    private fun utcMillis(year: Int, month: Int, day: Int): Long =
+        LocalDate.of(year, month, day).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 
     // <novos testes acima>
 }
