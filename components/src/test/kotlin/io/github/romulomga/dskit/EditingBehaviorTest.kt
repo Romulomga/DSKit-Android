@@ -1,5 +1,6 @@
 package io.github.romulomga.dskit
 
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
@@ -11,10 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -22,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowDialog
 
 /** O que as peças de edição fazem (guarda de descarte, diálogos, campo decimal, stepper, painel), sem imagem. */
 @RunWith(RobolectricTestRunner::class)
@@ -164,6 +169,89 @@ class EditingBehaviorTest {
         composeRule.onNodeWithText("Delete client?").assertDoesNotExist()
         composeRule.runOnIdle { assertEquals(0, deleted) }
     }
+
+    @Test
+    fun theKeyboardActionConfirmsTheTextInputDialog() {
+        var confirmed = 0
+        var name by mutableStateOf("")
+
+        composeRule.setContent {
+            DSTheme {
+                DSTextInputDialog(
+                    title = "New tag",
+                    value = name,
+                    onValueChange = { name = it },
+                    label = "Name",
+                    confirmText = "Add",
+                    onConfirm = { confirmed++ },
+                    onDismissRequest = {},
+                    confirmEnabled = name.isNotBlank(),
+                    fieldTestTag = "tag-name"
+                )
+            }
+        }
+
+        composeRule.onNodeWithTag("tag-name").assertIsFocused()
+        composeRule.onNodeWithTag("tag-name").performImeAction()
+        composeRule.runOnIdle { assertEquals(0, confirmed) }
+
+        composeRule.onNodeWithTag("tag-name").performTextInput("Beach house")
+        composeRule.onNodeWithTag("tag-name").performImeAction()
+        composeRule.runOnIdle { assertEquals(1, confirmed) }
+    }
+
+    /** Um toque ao lado do teclado apagaria o que foi digitado: só o voltar e o "Cancelar" fecham. */
+    @Test
+    fun theTextInputDialogStaysOpenOnATapOutsideUnlikeTheAlert() {
+        var withField by mutableStateOf(false)
+        var dismissed = 0
+
+        composeRule.setContent {
+            DSTheme {
+                if (withField) {
+                    DSTextInputDialog(
+                        title = "New tag",
+                        value = "",
+                        onValueChange = {},
+                        label = "Name",
+                        confirmText = "Add",
+                        onConfirm = {},
+                        onDismissRequest = { dismissed++ }
+                    )
+                } else {
+                    DSAlertDialog(title = "Saved", confirmText = "OK", onConfirm = {}, onDismissRequest = { dismissed++ })
+                }
+            }
+        }
+
+        // O controle: o mesmo toque fecha um alerta comum.
+        composeRule.onNodeWithText("Saved").assertExists()
+        tapOutsideTheDialog()
+        composeRule.runOnIdle { assertEquals(1, dismissed) }
+
+        withField = true
+        composeRule.onNodeWithText("New tag").assertExists()
+        tapOutsideTheDialog()
+        composeRule.runOnIdle { assertEquals(1, dismissed) }
+
+        composeRule.onNodeWithText("Cancel").performClick()
+        composeRule.runOnIdle { assertEquals(2, dismissed) }
+    }
+
+    private fun tapOutsideTheDialog() {
+        composeRule.runOnIdle {
+            val dialog = ShadowDialog.getLatestDialog()
+
+            listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).forEach { action ->
+                val event = MotionEvent.obtain(0L, 0L, action, -100f, -100f, 0)
+
+                dialog.dispatchTouchEvent(event)
+                event.recycle()
+            }
+        }
+    }
+
+
 
     // <novos testes acima>
 }

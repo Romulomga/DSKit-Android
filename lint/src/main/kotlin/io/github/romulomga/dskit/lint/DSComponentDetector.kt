@@ -103,7 +103,7 @@ class DSComponentDetector :
             "NavigationBar" to "DSNavigationBar",
             "NavigationRail" to "DSNavigationRail",
             "NavigationSuiteScaffold" to "DSNavigationScaffold",
-            "AlertDialog" to "DSAlertDialog",
+            "AlertDialog" to "DSAlertDialog (ou DSTextInputDialog, com um campo)",
             "ModalBottomSheet" to "DSBottomSheet",
             "PullToRefreshBox" to "DSScreen(onRefresh = …)"
         )

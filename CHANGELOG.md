@@ -13,6 +13,8 @@ quebra vem descrita aqui com o código de migração.
   ("Descartar as alterações?", "Descartar", "Continuar editando") vêm nas 10 línguas e podem ser trocadas.
 - `DSConfirmDeleteDialog`: a confirmação de exclusão sobre o `DSAlertDialog`, que aparece enquanto houver um item em
   espera (`pending`), entrega o item em `onDelete` e fecha. Vibra o aviso uma vez só.
+- `DSTextInputDialog`: diálogo do Material com um campo de texto já focado. Tocar fora não fecha, e a ação do teclado
+  confirma.
 
 ## [0.1.6] - 2026-11-03
 

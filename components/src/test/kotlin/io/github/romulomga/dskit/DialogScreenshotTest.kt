@@ -116,6 +116,26 @@ class DialogScreenshotTest : ScreenshotTestBase() {
         )
     }
 
+    @Test
+    fun textInputDialogLight() = screen("overlays_text_input_dialog_light", dark = false) { TextInput() }
+
+    @Test
+    fun textInputDialogDark() = screen("overlays_text_input_dialog_dark", dark = true) { TextInput() }
+
+    @Composable
+    private fun TextInput() {
+        DSTextInputDialog(
+            title = "New tag",
+            message = "Tags group your posts in the feed.",
+            value = "Beach house",
+            onValueChange = {},
+            label = "Name",
+            confirmText = "Add",
+            onConfirm = {},
+            onDismissRequest = {}
+        )
+    }
+
     // <novos testes acima>
 
     @Composable

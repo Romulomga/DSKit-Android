@@ -55,7 +55,7 @@ class DSComponentDetectorTest : LintDetectorTest() {
             .expectErrorCount(5)
             .expectContains("Button do Material: use DSButton.")
             .expectContains("TextField do Material: use DSTextField.")
-            .expectContains("AlertDialog do Material: use DSAlertDialog.")
+            .expectContains("AlertDialog do Material: use DSAlertDialog (ou DSTextInputDialog, com um campo).")
     }
 
     fun testAnAliasedImportIsStillCaught() {
