@@ -69,6 +69,7 @@ composeCompiler {
 dependencies {
     api(project(Dependencies.General.tokens))
     implementation(Dependencies.AndroidX.coreKtx)
+    implementation(Dependencies.AndroidX.activityCompose)
     implementation(Dependencies.Compose.navigationSuite)
     api(Dependencies.Compose.uiToolingPreview)
     debugImplementation(Dependencies.Compose.uiTooling)

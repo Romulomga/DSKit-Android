@@ -87,6 +87,19 @@ class DialogScreenshotTest : ScreenshotTestBase() {
         captureScreenRoboImage("screenshots/overlays_tooltip_light.png")
     }
 
+    @Test
+    fun discardDialogLight() = screen("overlays_discard_dialog_light", dark = false) { Discard() }
+
+    @Test
+    fun discardDialogDark() = screen("overlays_discard_dialog_dark", dark = true) { Discard() }
+
+    @Composable
+    private fun Discard() {
+        DSDiscardDialog(onDiscard = {}, onKeepEditing = {}, message = "What you typed here will be lost.")
+    }
+
+    // <novos testes acima>
+
     @Composable
     private fun Alert() {
         DSAlertDialog(

@@ -9,4 +9,7 @@
     <string name="dskit_loading">Wird geladen…</string>
     <string name="dskit_remove_item">%1$s entfernen</string>
     <string name="dskit_dismiss">Schließen</string>
+    <string name="dskit_discard">Verwerfen</string>
+    <string name="dskit_keep_editing">Weiter bearbeiten</string>
+    <string name="dskit_discard_changes_title">Änderungen verwerfen?</string>
 </resources>

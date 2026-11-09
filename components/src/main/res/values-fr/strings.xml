@@ -9,4 +9,7 @@
     <string name="dskit_loading">Chargement…</string>
     <string name="dskit_remove_item">Retirer %1$s</string>
     <string name="dskit_dismiss">Ignorer</string>
+    <string name="dskit_discard">Abandonner</string>
+    <string name="dskit_keep_editing">Continuer la modification</string>
+    <string name="dskit_discard_changes_title">Abandonner les modifications ?</string>
 </resources>

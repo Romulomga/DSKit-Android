@@ -9,4 +9,7 @@
     <string name="dskit_loading">جارٍ التحميل…</string>
     <string name="dskit_remove_item">إزالة %1$s</string>
     <string name="dskit_dismiss">تجاهل</string>
+    <string name="dskit_discard">تجاهل</string>
+    <string name="dskit_keep_editing">متابعة التعديل</string>
+    <string name="dskit_discard_changes_title">هل تريد تجاهل التغييرات؟</string>
 </resources>
