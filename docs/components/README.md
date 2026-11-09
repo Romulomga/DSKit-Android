@@ -13,6 +13,6 @@ Uma página por arquivo de componente, com uso, parâmetros, acessibilidade e sc
 | layout | [DSAdaptiveGrid](DSAdaptiveGrid.md), [DSDivider](DSDivider.md), [DSReadableColumn](DSReadableColumn.md), [DSScreen](DSScreen.md) |
 | lists | [DSListItem](DSListItem.md) |
 | navigation | [DSNavigationBar](DSNavigationBar.md), [DSTopAppBar](DSTopAppBar.md) |
-| overlays | [DSAlertDialog](DSAlertDialog.md), [DSBottomSheet](DSBottomSheet.md), [DSDiscardGuard](DSDiscardGuard.md), [DSLoadingOverlay](DSLoadingOverlay.md), [DSTooltip](DSTooltip.md) |
+| overlays | [DSAlertDialog](DSAlertDialog.md), [DSBottomSheet](DSBottomSheet.md), [DSConfirmDeleteDialog](DSConfirmDeleteDialog.md), [DSDiscardGuard](DSDiscardGuard.md), [DSLoadingOverlay](DSLoadingOverlay.md), [DSTooltip](DSTooltip.md) |
 
 Utilitários sem página própria: `DSIcons`, `DSPreview`, `DSDisabled`, `DSHaptics` e `DSAccessibility`.

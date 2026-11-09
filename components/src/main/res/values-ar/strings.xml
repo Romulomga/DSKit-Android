@@ -12,4 +12,5 @@
     <string name="dskit_discard">تجاهل</string>
     <string name="dskit_keep_editing">متابعة التعديل</string>
     <string name="dskit_discard_changes_title">هل تريد تجاهل التغييرات؟</string>
+    <string name="dskit_cancel">إلغاء</string>
 </resources>

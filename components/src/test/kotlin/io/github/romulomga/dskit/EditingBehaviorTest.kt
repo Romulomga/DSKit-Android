@@ -1,12 +1,16 @@
 package io.github.romulomga.dskit
 
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -98,6 +102,67 @@ class EditingBehaviorTest {
 
             DSTextButton("Cancel", onClick = guard::requestExit)
         }
+    }
+
+    @Test
+    fun confirmingADeleteHandsOverThePendingItemClosesAndVibratesOnce() {
+        val deleted = mutableListOf<String>()
+        var pending by mutableStateOf<String?>("client-7")
+        var haptics = 0
+
+        composeRule.setContent {
+            val view = remember(composeRule.activity) {
+                object : View(composeRule.activity) {
+                    override fun performHapticFeedback(feedbackConstant: Int): Boolean {
+                        haptics++
+                        return true
+                    }
+                }
+            }
+
+            CompositionLocalProvider(LocalView provides view) {
+                DSTheme {
+                    DSConfirmDeleteDialog(
+                        pending = pending,
+                        title = "Delete client?",
+                        confirmText = "Delete client",
+                        onDelete = { deleted += it },
+                        onDismiss = { pending = null }
+                    )
+                }
+            }
+        }
+
+        composeRule.onNodeWithText("Delete client").performClick()
+
+        composeRule.onNodeWithText("Delete client?").assertDoesNotExist()
+        composeRule.runOnIdle {
+            assertEquals(listOf("client-7"), deleted)
+            assertEquals(1, haptics)
+        }
+    }
+
+    @Test
+    fun cancellingADeleteOnlyCloses() {
+        var deleted = 0
+        var visible by mutableStateOf(true)
+
+        composeRule.setContent {
+            DSTheme {
+                DSConfirmDeleteDialog(
+                    visible = visible,
+                    title = "Delete client?",
+                    confirmText = "Delete client",
+                    onDelete = { deleted++ },
+                    onDismiss = { visible = false }
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Cancel").performClick()
+
+        composeRule.onNodeWithText("Delete client?").assertDoesNotExist()
+        composeRule.runOnIdle { assertEquals(0, deleted) }
     }
 
     // <novos testes acima>

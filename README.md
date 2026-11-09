@@ -91,7 +91,7 @@ DSTheme(brand = HomerBrand, fontFamily = Raleway, dynamicColor = false) {
 | Seleção | `DSSegmentedButton`, `DSMultiSegmentedButton`, `DSFilterChip`, `DSInputChip`, `DSAssistChip`, `DSCheckbox`, `DSTabs`, `DSTabbedPager` |
 | Navegação | `DSScreen`, `DSScreenColumn`, `DSTopAppBar`, `DSNavigationScaffold`, `DSNavigationBar`, `DSNavigationRail` |
 | Feedback | `DSSnackbarHost` + `showDSSnackbar`, `DSBanner`, `DSBadge`, `DSBadgedBox`, `DSLinearProgress`, `DSLoadingState`, `DSEmptyState`, `DSErrorState`, `Modifier.dsSkeleton`, `DSSkeletonRow` |
-| Sobreposição | `DSAlertDialog`, `DSDiscardGuard` + `DSDiscardDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |
+| Sobreposição | `DSAlertDialog`, `DSConfirmDeleteDialog`, `DSDiscardGuard` + `DSDiscardDialog`, `DSBottomSheet` + `DSSheetAction`, `DSTooltip`, `DSLoadingOverlay` |
 | Tela larga | `Modifier.dsReadableColumn`, `DSAdaptiveColumns`, `DSLayout` |
 
 Cada componente tem uma página em [`docs/components/`](docs/components/README.md). O que o Material já resolve

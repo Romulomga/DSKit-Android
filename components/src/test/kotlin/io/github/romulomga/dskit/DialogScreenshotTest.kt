@@ -98,6 +98,24 @@ class DialogScreenshotTest : ScreenshotTestBase() {
         DSDiscardDialog(onDiscard = {}, onKeepEditing = {}, message = "What you typed here will be lost.")
     }
 
+    @Test
+    fun confirmDeleteDialogLight() = screen("overlays_confirm_delete_dialog_light", dark = false) { ConfirmDelete() }
+
+    @Test
+    fun confirmDeleteDialogDark() = screen("overlays_confirm_delete_dialog_dark", dark = true) { ConfirmDelete() }
+
+    @Composable
+    private fun ConfirmDelete() {
+        DSConfirmDeleteDialog(
+            visible = true,
+            title = "Delete client?",
+            message = "Their receipts stay in your history.",
+            confirmText = "Delete client",
+            onDelete = {},
+            onDismiss = {}
+        )
+    }
+
     // <novos testes acima>
 
     @Composable

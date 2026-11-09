@@ -12,4 +12,5 @@
     <string name="dskit_discard">Descartar</string>
     <string name="dskit_keep_editing">Seguir editando</string>
     <string name="dskit_discard_changes_title">¿Descartar los cambios?</string>
+    <string name="dskit_cancel">Cancelar</string>
 </resources>
