@@ -22,6 +22,11 @@ object Configs {
             const val name = ":seed"
         }
 
+        object Navigation3 {
+            const val namespace = "io.github.romulomga.dskit.navigation3"
+            const val name = ":navigation3"
+        }
+
         object Lint {
             const val name = ":lint"
         }

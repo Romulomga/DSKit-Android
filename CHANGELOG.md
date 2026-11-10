@@ -28,6 +28,10 @@ quebra vem descrita aqui com o código de migração.
 - `DSBottomSheet(state)` com `DSBottomSheetState` e `rememberDSBottomSheetState`: o painel para quem o tira da
   composição por conta própria (uma navegação); `state.hide()` o faz descer antes.
 - `DSMotion.exit()`: 250 ms acelerando, para o que sai da tela.
+- Módulo opcional `navigation3` (`com.github.Romulomga.DSKit-Android:navigation3`): `DSBottomSheetSceneStrategy`, que
+  mostra num `DSBottomSheet` a entrada do Navigation 3 marcada com `DSBottomSheetSceneStrategy.bottomSheet()`, e
+  `DSNavSheets.hideThen`, que faz o painel descer antes de a entrada sair da pilha. Quem não usa o Navigation 3 não
+  recebe a dependência.
 
 ### Mudado
 

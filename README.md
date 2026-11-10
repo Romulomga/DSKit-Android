@@ -7,7 +7,7 @@ lateral em tela larga. É agnóstico: nenhum app tem código aqui; cada app pass
 pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
-- Sem dependência além de AndroidX/Compose.
+- Sem dependência além de AndroidX/Compose. O Navigation 3 só entra com o módulo opcional `navigation3`.
 - Licença [MIT](LICENSE).
 - Versões por tag no GitHub; mudanças de cada uma em [`CHANGELOG.md`](CHANGELOG.md).
 
@@ -29,6 +29,7 @@ includeBuild("DSKit-Android")
 dependencies {
     implementation("com.github.Romulomga.DSKit-Android:components:0.1.4") // traz o tokens
     implementation("com.github.Romulomga.DSKit-Android:seed:0.1.4") // opcional: marca a partir de uma cor
+    implementation("com.github.Romulomga.DSKit-Android:navigation3:0.1.4") // opcional: painéis como cena do Navigation 3
     lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.4") // as regras DSComponent, DSSpacingLiteral…
 }
 ```
@@ -123,6 +124,7 @@ DSNavigationScaffold(items = tabs, selection = tab, onSelectionChange = { tab = 
 |---|---|
 | `tokens` | `DSTheme`, `DSBrand`, cores de status, tipografia, espaçamento, movimento |
 | `components` | os componentes, ícones, vibração, acessibilidade, previews; strings em 10 línguas |
+| `navigation3` | opcional: `DSBottomSheetSceneStrategy` e `DSNavSheets`, os painéis inferiores como cena do Navigation 3 |
 | `seed` | opcional: `DSBrand.fromSeed`, a marca inteira a partir de uma cor ([ADR 0007](docs/adr/0007-marca-a-partir-de-uma-cor.md)) |
 | `lint` | regras de Android Lint publicadas com o AAR (`lintPublish`) |
 | `sample` | catálogo com abas, claro/escuro e Material You |

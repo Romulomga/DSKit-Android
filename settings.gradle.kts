@@ -36,6 +36,7 @@ include(
     ":tokens",
     ":components",
     ":seed",
+    ":navigation3",
     ":lint",
     ":sample",
 )

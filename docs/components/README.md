@@ -14,5 +14,6 @@ Uma página por arquivo de componente, com uso, parâmetros, acessibilidade e sc
 | lists | [DSListItem](DSListItem.md) |
 | navigation | [DSNavigationBar](DSNavigationBar.md), [DSTopAppBar](DSTopAppBar.md) |
 | overlays | [DSAlertDialog](DSAlertDialog.md), [DSBottomSheet](DSBottomSheet.md), [DSConfirmDeleteDialog](DSConfirmDeleteDialog.md), [DSDatePickerDialog](DSDatePickerDialog.md), [DSDiscardGuard](DSDiscardGuard.md), [DSLoadingOverlay](DSLoadingOverlay.md), [DSTextInputDialog](DSTextInputDialog.md), [DSTooltip](DSTooltip.md) |
+| navigation3 (módulo opcional) | [DSBottomSheetSceneStrategy](DSBottomSheetSceneStrategy.md) |
 
 Utilitários sem página própria: `DSIcons`, `DSPreview`, `DSDisabled`, `DSHaptics` e `DSAccessibility`.

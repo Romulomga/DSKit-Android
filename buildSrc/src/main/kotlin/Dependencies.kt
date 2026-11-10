@@ -2,6 +2,8 @@ object Dependencies {
     object AndroidX {
         const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
         const val activityCompose = "androidx.activity:activity-compose:${Versions.activityCompose}"
+        const val navigation3Runtime = "androidx.navigation3:navigation3-runtime:${Versions.navigation3}"
+        const val navigation3Ui = "androidx.navigation3:navigation3-ui:${Versions.navigation3}"
     }
 
     object Compose {
@@ -43,6 +45,7 @@ object Dependencies {
         const val tokens = Configs.Modules.Tokens.name
         const val components = Configs.Modules.Components.name
         const val seed = Configs.Modules.Seed.name
+        const val navigation3 = Configs.Modules.Navigation3.name
         const val lint = Configs.Modules.Lint.name
     }
 }

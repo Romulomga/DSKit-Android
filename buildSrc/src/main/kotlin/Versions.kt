@@ -5,6 +5,9 @@ object Versions {
     const val activityCompose = "1.13.0"
     const val coreKtx = "1.19.0"
 
+    // A menor versão que os apps usam: o app que inclui o DSKit e pede uma mais nova fica com a dele.
+    const val navigation3 = "1.2.0"
+
     // Lint API acompanha o AGP: 9.4.1 + 23 = 32.4.1.
     const val lint = "32.4.1"
 
