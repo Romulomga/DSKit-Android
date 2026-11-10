@@ -6,7 +6,10 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.7] - 2026-11-09
+
 ### Adicionado
+
 - `DSDiscardGuard`, `rememberDSDiscardGuardState`, `rememberDSHasChanges` e `DSDiscardDialog`: a guarda de descarte de
   uma tela ou painel de edição. Com mudança, o voltar do sistema e o `requestExit` perguntam antes de sair. A pergunta
   aberta e o retrato de quando a tela abriu sobrevivem à recriação da Activity e à morte do processo. As strings
