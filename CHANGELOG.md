@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.9] - 2026-11-10
+
+### Corrigido
+
+- `DSDatePickerDialog`: o título com a data escolhida encolhe a fonte até caber em uma linha. Em pt-BR, "10 de nov.
+  de 2026" no tamanho cheio cortava o ano num celular comum.
+
 ## [0.1.8] - 2026-11-09
 
 ### Adicionado

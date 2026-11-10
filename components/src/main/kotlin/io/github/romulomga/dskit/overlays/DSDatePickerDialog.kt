@@ -1,14 +1,28 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.romulomga.dskit.components.R
 import java.time.Instant
 import java.time.LocalDate
@@ -75,9 +89,53 @@ public fun DSDatePickerDialog(
         modifier = modifier,
         dismissButton = { DSTextButton(text = dismissText, onClick = onDismissRequest) }
     ) {
-        DatePicker(state = state, showModeToggle = showModeToggle)
+        DatePicker(state = state, showModeToggle = showModeToggle, headline = { FittingHeadline(state) })
     }
 }
+
+/**
+ * O título do Material em uma linha só, com a fonte encolhendo até caber: em pt-BR, "10 de nov. de 2026" no tamanho
+ * cheio cortava o ano na largura do diálogo de um celular comum.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FittingHeadline(state: DatePickerState) {
+    val formatter = remember { DatePickerDefaults.dateFormatter() }
+    val millis = state.selectedDateMillis
+
+    if (millis == null || state.displayMode != DisplayMode.Picker) {
+        DatePickerDefaults.DatePickerHeadline(
+            selectedDateMillis = millis,
+            displayMode = state.displayMode,
+            dateFormatter = formatter,
+            modifier = Modifier.padding(HeadlinePadding)
+        )
+
+        return
+    }
+
+    val locale = LocalConfiguration.current.locales[0]
+    val shown = formatter.formatDate(millis, locale).orEmpty()
+    val spoken = formatter.formatDate(millis, locale, forContentDescription = true).orEmpty()
+
+    Text(
+        text = shown,
+        modifier = Modifier
+            .padding(HeadlinePadding)
+            .semantics {
+                liveRegion = LiveRegionMode.Polite
+                contentDescription = spoken
+            },
+        maxLines = 1,
+        autoSize = TextAutoSize.StepBased(minFontSize = HeadlineMinFontSize, maxFontSize = HeadlineMaxFontSize)
+    )
+}
+
+private val HeadlinePadding = PaddingValues(start = 24.dp, end = 12.dp, bottom = 12.dp)
+
+private val HeadlineMinFontSize = 18.sp
+
+private val HeadlineMaxFontSize = 32.sp
 
 /** Os limites que o calendário do Material aguenta, puros para o teste. */
 internal object DSDatePickerBounds {
