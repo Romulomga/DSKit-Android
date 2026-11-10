@@ -69,6 +69,8 @@ import io.github.romulomga.dskit.components.R
  * @param onDismissBlocked com ele, arrastar para baixo e tocar no véu não fecham o painel e chamam este lambda:
  * para o painel que guarda algo digitado perguntar antes (`guard::requestExit` do [DSDiscardGuard]). O voltar
  * continua em [onDismissRequest]. `null` (o padrão) deixa o gesto fechar.
+ * @param closeDescription o que o TalkBack lê na alça, por padrão "Fechar". Passe o texto do app quando ele tem
+ * línguas que o DSKit não tem.
  */
 @Composable
 public fun DSBottomSheet(
@@ -78,6 +80,7 @@ public fun DSBottomSheet(
     title: String? = null,
     scrollable: Boolean = true,
     onDismissBlocked: (() -> Unit)? = null,
+    closeDescription: String = stringResource(R.string.dskit_close),
     content: @Composable ColumnScope.() -> Unit
 ) {
     val state = rememberDSBottomSheetState()
@@ -96,7 +99,7 @@ public fun DSBottomSheet(
 
     if (!shown) return
 
-    DSBottomSheet(state, onDismissRequest, modifier, title, scrollable, onDismissBlocked, content)
+    DSBottomSheet(state, onDismissRequest, modifier, title, scrollable, onDismissBlocked, closeDescription, content)
 }
 
 /**
@@ -115,6 +118,7 @@ public fun DSBottomSheet(
     title: String? = null,
     scrollable: Boolean = true,
     onDismissBlocked: (() -> Unit)? = null,
+    closeDescription: String = stringResource(R.string.dskit_close),
     content: @Composable ColumnScope.() -> Unit
 ) {
     val blocked by rememberUpdatedState(onDismissBlocked)
@@ -142,7 +146,7 @@ public fun DSBottomSheet(
         modifier = modifier.graphicsLayer { translationY = state.exit.value * size.height },
         sheetState = sheetState,
         scrimColor = BottomSheetDefaults.ScrimColor.copy(alpha = BottomSheetDefaults.ScrimColor.alpha * (1f - state.exit.value)),
-        dragHandle = { SheetHandle(onClose = onDismissRequest) },
+        dragHandle = { SheetHandle(label = closeDescription, onClose = onDismissRequest) },
         // O voltar do sistema vai direto a quem chama (o BackHandler abaixo), que decide: fechar ou perguntar antes.
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false)
     ) {
@@ -203,9 +207,7 @@ public fun rememberDSBottomSheetState(): DSBottomSheetState = remember { DSBotto
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SheetHandle(onClose: () -> Unit) {
-    val label = stringResource(R.string.dskit_close)
-
+private fun SheetHandle(label: String, onClose: () -> Unit) {
     Box(
         modifier = Modifier.semantics(mergeDescendants = true) {
             contentDescription = label

@@ -55,9 +55,10 @@ public fun DSDatePickerDialog(
     confirmText: String = stringResource(R.string.dskit_ok),
     dismissText: String = stringResource(R.string.dskit_cancel)
 ) {
+    val selected = DSDatePickerBounds.selectable(date, range)
     val state = rememberDatePickerState(
-        initialSelectedDateMillis = date?.toUtcMillis(),
-        initialDisplayedMonthMillis = (date ?: DSDatePickerBounds.today(range)).toUtcMillis(),
+        initialSelectedDateMillis = selected?.toUtcMillis(),
+        initialDisplayedMonthMillis = (selected ?: DSDatePickerBounds.today(range)).toUtcMillis(),
         yearRange = DSDatePickerBounds.yearRange(range),
         selectableDates = remember(range) { rangeSelectableDates(range) }
     )
@@ -90,6 +91,14 @@ internal object DSDatePickerBounds {
 
         return first..last
     }
+
+    /**
+     * O dia que o calendário abre escolhido: [date] se couber em [range] e nos anos do calendário, senão nenhum. O
+     * Material lança exceção quando o ano do dia inicial está fora dos anos do calendário (o relógio do aparelho voltou,
+     * um registro antigo fora da faixa), e um dia que não se pode escolher não deve abrir escolhido.
+     */
+    fun selectable(date: LocalDate?, range: ClosedRange<LocalDate>?): LocalDate? =
+        date?.takeIf { it.year in yearRange(range) && (range == null || it in range) }
 
     /** Hoje, puxado para dentro de [range]: o mês em que o calendário abre quando não há dia escolhido. */
     fun today(range: ClosedRange<LocalDate>?, today: LocalDate = LocalDate.now()): LocalDate {

@@ -6,6 +6,18 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.8] - 2026-11-09
+
+### Adicionado
+
+- `DSBottomSheet(closeDescription)`: o texto que o TalkBack lê na alça, para o app com mais línguas que o DSKit
+  passar o seu. Por padrão continua "Fechar".
+
+### Corrigido
+
+- `DSDatePickerDialog`: uma data fora da faixa (ou de um ano fora do calendário) abre sem dia escolhido, no mês de
+  hoje. Antes o Material lançava exceção quando o ano da data inicial ficava fora dos anos do calendário.
+
 ## [0.1.7] - 2026-11-09
 
 ### Adicionado
