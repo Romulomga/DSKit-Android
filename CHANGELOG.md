@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.10] - 2026-11-11
+
+### Adicionado
+
+- `DSScreen(containerColor)`: o fundo da tela, que a barra superior parada acompanha (rolada, ela sobe um degrau
+  como antes). Para a tela de fundo agrupado, cinza com cards claros por cima. Sem ele, nada muda.
+
 ## [0.1.9] - 2026-11-10
 
 ### Corrigido

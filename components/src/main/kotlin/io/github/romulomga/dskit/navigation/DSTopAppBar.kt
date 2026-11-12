@@ -11,9 +11,12 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -69,8 +72,11 @@ internal fun TopAppBarContent(
     onBack: (() -> Unit)?,
     navigationIcon: (@Composable () -> Unit)?,
     actions: @Composable RowScope.() -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior?
+    scrollBehavior: TopAppBarScrollBehavior?,
+    // Com a cor da tela, a barra parada tem a mesma cor dela; rolada, sobe um degrau como no Material.
+    containerColor: Color? = null
 ) {
+    val colors = barColors(style, containerColor)
     val titleContent: @Composable () -> Unit = {
         Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
     }
@@ -87,6 +93,7 @@ internal fun TopAppBarContent(
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            colors = colors,
             scrollBehavior = scrollBehavior
         )
 
@@ -95,6 +102,7 @@ internal fun TopAppBarContent(
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            colors = colors,
             scrollBehavior = scrollBehavior
         )
 
@@ -103,6 +111,7 @@ internal fun TopAppBarContent(
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            colors = colors,
             scrollBehavior = scrollBehavior
         )
 
@@ -111,8 +120,27 @@ internal fun TopAppBarContent(
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            colors = colors,
             scrollBehavior = scrollBehavior
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun barColors(style: DSTopAppBarStyle, containerColor: Color?): TopAppBarColors {
+    val screen = containerColor ?: return when (style) {
+        DSTopAppBarStyle.Small -> TopAppBarDefaults.topAppBarColors()
+        DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors()
+        DSTopAppBarStyle.Medium -> TopAppBarDefaults.mediumTopAppBarColors()
+        DSTopAppBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors()
+    }
+
+    return when (style) {
+        DSTopAppBarStyle.Small -> TopAppBarDefaults.topAppBarColors(containerColor = screen)
+        DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = screen)
+        DSTopAppBarStyle.Medium -> TopAppBarDefaults.mediumTopAppBarColors(containerColor = screen)
+        DSTopAppBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors(containerColor = screen)
     }
 }
 

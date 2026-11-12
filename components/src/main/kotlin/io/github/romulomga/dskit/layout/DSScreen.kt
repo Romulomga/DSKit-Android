@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -49,6 +51,8 @@ import androidx.compose.ui.unit.dp
  * @param actions botões à direita da barra.
  * @param snackbarHostState onde os snackbars da tela aparecem (acima do FAB e da barra inferior).
  * @param onRefresh liga o "puxar para atualizar"; [isRefreshing] mostra o indicador.
+ * @param containerColor o fundo da tela, que a barra superior parada acompanha: um fundo agrupado (lista de cards
+ * sobre cinza), por exemplo. Sem ele, o `background` do tema e a barra do Material.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +68,7 @@ public fun DSScreen(
     snackbarHostState: SnackbarHostState? = null,
     isRefreshing: Boolean = false,
     onRefresh: (() -> Unit)? = null,
+    containerColor: Color? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val showsTopBar = title != null || onBack != null || navigationIcon != null
@@ -83,13 +88,15 @@ public fun DSScreen(
                     onBack = onBack,
                     navigationIcon = navigationIcon,
                     actions = actions,
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
+                    containerColor = containerColor
                 )
             }
         },
         bottomBar = bottomBar,
         snackbarHost = { if (snackbarHostState != null) DSSnackbarHost(snackbarHostState) },
-        floatingActionButton = floatingActionButton
+        floatingActionButton = floatingActionButton,
+        containerColor = containerColor ?: MaterialTheme.colorScheme.background
     ) { innerPadding ->
         if (onRefresh == null) {
             content(innerPadding)
