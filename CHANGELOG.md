@@ -6,6 +6,14 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.11] - 2026-11-15
+
+### Adicionado
+
+- `DSEmptyState(illustration: Painter, ...)`: o estado vazio com a ilustração do próprio app, nas cores dela, no lugar
+  do ícone no círculo: 120 dp de altura, 80 dp com a fonte em 1,5× ou mais, decorativa para o TalkBack. Gêmeo do
+  `DSEmptyState(illustration:)` do DSKit iOS 1.0.50. O de ícone não muda.
+
 ## [0.1.10] - 2026-11-11
 
 ### Adicionado

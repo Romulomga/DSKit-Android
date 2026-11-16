@@ -1,9 +1,11 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -15,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -48,12 +52,67 @@ public fun DSEmptyState(
     }
 }
 
+/**
+ * Estado vazio com a ilustração do próprio app (um drawable nas cores dele, sem tinta) no lugar do ícone: 120 dp de
+ * altura, 80 dp com a fonte nos tamanhos grandes (escala 1,5 ou mais), para o texto não perder espaço. É decorativa:
+ * o TalkBack lê o título e a explicação. Gêmeo do `DSEmptyState(illustration:)` do DSKit iOS.
+ */
+@Composable
+public fun DSEmptyState(
+    illustration: Painter,
+    title: String,
+    message: String,
+    modifier: Modifier = Modifier,
+    actionText: String? = null,
+    onAction: (() -> Unit)? = null
+) {
+    val large = LocalDensity.current.fontScale >= LargeFontScale
+
+    DSStateLayout(
+        artwork = {
+            Image(
+                painter = illustration,
+                contentDescription = null,
+                modifier = Modifier.height(if (large) CompactIllustrationHeight else IllustrationHeight)
+            )
+        },
+        title = title,
+        message = message,
+        modifier = modifier
+    ) {
+        if (actionText != null && onAction != null) DSTonalButton(actionText, onClick = onAction)
+    }
+}
+
 /** O desenho comum aos estados vazio e de erro. O texto é lido junto; o botão continua tocável à parte. */
 @Composable
 internal fun DSStateLayout(
     icon: ImageVector,
     iconContainer: Color,
     iconColor: Color,
+    title: String,
+    message: String,
+    modifier: Modifier,
+    announce: Boolean = false,
+    action: @Composable () -> Unit
+) {
+    DSStateLayout(
+        artwork = {
+            Surface(shape = CircleShape, color = iconContainer, contentColor = iconColor) {
+                Icon(icon, contentDescription = null, modifier = Modifier.padding(DSSpacing.lg).size(32.dp))
+            }
+        },
+        title = title,
+        message = message,
+        modifier = modifier,
+        announce = announce,
+        action = action
+    )
+}
+
+@Composable
+internal fun DSStateLayout(
+    artwork: @Composable () -> Unit,
     title: String,
     message: String,
     modifier: Modifier,
@@ -74,9 +133,7 @@ internal fun DSStateLayout(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)
             ) {
-                Surface(shape = CircleShape, color = iconContainer, contentColor = iconColor) {
-                    Icon(icon, contentDescription = null, modifier = Modifier.padding(DSSpacing.lg).size(32.dp))
-                }
+                artwork()
 
                 Text(
                     title,
@@ -95,6 +152,9 @@ internal fun DSStateLayout(
 }
 
 private val StateMaxWidth = 360.dp
+private val IllustrationHeight = 120.dp
+private val CompactIllustrationHeight = 80.dp
+private const val LargeFontScale = 1.5f
 
 @DSPreviews
 @Composable
