@@ -138,6 +138,28 @@ class BehaviorTest {
     }
 
     @Test
+    fun anErrorStateWhoseRetryIsRunningIgnoresTaps() {
+        var retries = 0
+        var running by mutableStateOf(true)
+
+        composeRule.setContent {
+            DSTheme {
+                DSErrorState(title = "Couldn't load", message = "Try again.", retryText = "Retry", retryEnabled = !running, onRetry = {
+                    retries++
+                })
+            }
+        }
+
+        composeRule.onNodeWithText("Retry", useUnmergedTree = true).performClick()
+        composeRule.runOnIdle { assertEquals(0, retries) }
+
+        running = false
+
+        composeRule.onNodeWithText("Retry", useUnmergedTree = true).performClick()
+        composeRule.runOnIdle { assertEquals(1, retries) }
+    }
+
+    @Test
     fun enabledButtonClicks() {
         var clicks = 0
 

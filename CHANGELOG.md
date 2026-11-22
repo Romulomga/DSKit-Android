@@ -6,6 +6,14 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.12] - 2026-11-21
+
+### Adicionado
+
+- `DSErrorState(retryEnabled = …)`: o botão "Tentar de novo" fica desabilitado enquanto a nova tentativa roda (o app
+  passa o `isRunning` do `SingleFlight`), e um segundo toque não sai. Padrão `true`, nenhuma tela muda. Pedido pelo
+  porte do Homer Android (toque duplo nos "Tentar de novo"); o gêmeo iOS faz o mesmo com `.disabled` em quem chama.
+
 ## [0.1.11] - 2026-11-15
 
 ### Adicionado

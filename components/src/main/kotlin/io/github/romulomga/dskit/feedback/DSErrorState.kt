@@ -9,6 +9,9 @@ import io.github.romulomga.dskit.components.R
 /**
  * Estado de erro de uma tela que não carregou: ícone no contêiner de erro, título, explicação e o botão de
  * tentar de novo. Para um erro que não toma a tela, use um snackbar.
+ *
+ * @param retryEnabled `false` enquanto a nova tentativa roda: o app passa o `isRunning` da trava dele, e um segundo
+ *   toque não sai (o gêmeo iOS faz isso com `.disabled` em quem chama).
  */
 @Composable
 public fun DSErrorState(
@@ -17,6 +20,7 @@ public fun DSErrorState(
     modifier: Modifier = Modifier,
     icon: ImageVector = DSIcons.CloudOff,
     retryText: String = stringResource(R.string.dskit_try_again),
+    retryEnabled: Boolean = true,
     onRetry: (() -> Unit)? = null
 ) {
     DSStateLayout(
@@ -28,7 +32,7 @@ public fun DSErrorState(
         modifier = modifier,
         announce = true
     ) {
-        if (onRetry != null) DSButton(retryText, onClick = onRetry, icon = DSIcons.Refresh)
+        if (onRetry != null) DSButton(retryText, onClick = onRetry, enabled = retryEnabled, icon = DSIcons.Refresh)
     }
 }
 
