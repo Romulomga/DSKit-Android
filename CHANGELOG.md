@@ -6,6 +6,14 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.13] - 2026-11-22
+
+### Adicionado
+
+- `DSSnackbarStyle.Info`: o snackbar na cor de destaque da marca (`primary`/`onPrimary`), para uma informação que
+  pede atenção sem ser erro nem sucesso. Gêmeo do `DSToast.Style.info` do DSKit iOS. Nenhuma tela muda sozinha. Pedido
+  pelo porte do Homer Android (os avisos de Publicações e do meu post iguais aos do iOS).
+
 ## [0.1.12] - 2026-11-21
 
 ### Adicionado

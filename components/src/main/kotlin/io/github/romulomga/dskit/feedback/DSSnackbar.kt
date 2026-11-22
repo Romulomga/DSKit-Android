@@ -21,7 +21,13 @@ public enum class DSSnackbarStyle {
     Success,
 
     /** Cor de erro: algo falhou e não toma a tela ("Sem conexão"). */
-    Error
+    Error,
+
+    /**
+     * A cor de destaque da marca (o `primary`): uma informação que pede atenção sem ser erro nem sucesso. Gêmeo do
+     * `DSToast.Style.info` do DSKit iOS, que pinta o fundo com o `accent`.
+     */
+    Info
 }
 
 /** O conteúdo de um snackbar do DSKit: o `SnackbarVisuals` do Material com o tom. */
@@ -80,6 +86,14 @@ private fun DSSnackbar(data: SnackbarData) {
             contentColor = colors.onError,
             actionColor = colors.onError,
             dismissActionContentColor = colors.onError
+        )
+
+        DSSnackbarStyle.Info -> Snackbar(
+            snackbarData = data,
+            containerColor = colors.primary,
+            contentColor = colors.onPrimary,
+            actionColor = colors.onPrimary,
+            dismissActionContentColor = colors.onPrimary
         )
     }
 }

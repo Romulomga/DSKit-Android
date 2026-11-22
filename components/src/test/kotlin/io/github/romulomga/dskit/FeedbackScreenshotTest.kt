@@ -36,6 +36,8 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
             DSSnackbarForPreview(DSSnackbarVisuals("Property published", DSSnackbarStyle.Success, actionLabel = "View"))
 
             DSSnackbarForPreview(DSSnackbarVisuals("No connection", DSSnackbarStyle.Error, actionLabel = "Retry"))
+
+            DSSnackbarForPreview(DSSnackbarVisuals("Listing renewed", DSSnackbarStyle.Info))
         }
     }
 
