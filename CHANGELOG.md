@@ -6,6 +6,17 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.14] - 2026-11-23
+
+### Adicionado
+
+- `LocalDSTopAppBarBrandColors` + `DSTopAppBarBrandColors(container, content)`: as cores de marca da barra superior do
+  app inteiro. O app liga uma vez no tema e toda `DSTopAppBar` (as do `DSScreen` inclusive) usa o fundo e a cor do
+  título e dos ícones, parada e rolada, como a barra colorida do Android clássico. Sem nada ligado, nada muda.
+- `DSScreen(titleContent = …)` e `DSTopAppBar(titleContent = …)`: um desenho no lugar do título escrito (um logo no
+  meio, com `CenterAligned`); o `title` continua sendo o nome da tela lido pelo TalkBack, como título.
+  Pedidos pelo Homer Android (a barra vermelha com o logo nas raízes das abas).
+
 ## [0.1.13] - 2026-11-22
 
 ### Adicionado

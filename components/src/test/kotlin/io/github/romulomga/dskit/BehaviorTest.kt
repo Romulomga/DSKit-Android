@@ -2,6 +2,7 @@ package io.github.romulomga.dskit
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -157,6 +158,19 @@ class BehaviorTest {
 
         composeRule.onNodeWithText("Retry", useUnmergedTree = true).performClick()
         composeRule.runOnIdle { assertEquals(1, retries) }
+    }
+
+    /** Com um desenho no lugar do título (um logo), o TalkBack lê o nome da tela, como título, e não o desenho. */
+    @Test
+    fun aTitleContentReadsAsTheScreenTitle() {
+        composeRule.setContent {
+            DSTheme {
+                DSTopAppBar("Home", style = DSTopAppBarStyle.CenterAligned, titleContent = { Text("logo") })
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("Home").assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
+        composeRule.onNodeWithText("logo").assertDoesNotExist()
     }
 
     @Test

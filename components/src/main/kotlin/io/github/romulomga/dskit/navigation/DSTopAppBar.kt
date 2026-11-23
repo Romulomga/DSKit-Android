@@ -1,6 +1,7 @@
 package io.github.romulomga.dskit
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -15,13 +16,28 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.romulomga.dskit.components.R
+
+/**
+ * As cores de marca da barra superior do app inteiro: o fundo (parado e rolado) e a cor do título e dos ícones. O app
+ * liga uma vez no tema, `CompositionLocalProvider(LocalDSTopAppBarBrandColors provides DSTopAppBarBrandColors(…))`, e
+ * toda [DSTopAppBar] (as do [DSScreen] inclusive) passa a usá-las, como a barra colorida do Android clássico. Sem nada
+ * ligado (o padrão), a barra segue a cor da tela.
+ */
+public data class DSTopAppBarBrandColors(val container: Color, val content: Color)
+
+/** As [DSTopAppBarBrandColors] do app, ou `null` (o padrão): a barra com a cor da tela. */
+public val LocalDSTopAppBarBrandColors: ProvidableCompositionLocal<DSTopAppBarBrandColors?> = staticCompositionLocalOf { null }
 
 /** Os quatro tamanhos de barra superior do Material 3. */
 public enum class DSTopAppBarStyle {
@@ -57,9 +73,11 @@ public fun DSTopAppBar(
     style: DSTopAppBarStyle = DSTopAppBarStyle.Small,
     onBack: (() -> Unit)? = null,
     navigationIcon: (@Composable () -> Unit)? = null,
+    // Antes das `actions`, que ficam por último: o bloco no fim da chamada continua sendo as ações.
+    titleContent: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    TopAppBarContent(title, modifier, style, onBack, navigationIcon, actions, scrollBehavior = null)
+    TopAppBarContent(title, modifier, style, onBack, navigationIcon, actions, scrollBehavior = null, titleContent = titleContent)
 }
 
 /** A barra com o comportamento de rolagem, que é API experimental do Material e fica só dentro do DSKit. */
@@ -74,11 +92,24 @@ internal fun TopAppBarContent(
     actions: @Composable RowScope.() -> Unit,
     scrollBehavior: TopAppBarScrollBehavior?,
     // Com a cor da tela, a barra parada tem a mesma cor dela; rolada, sobe um degrau como no Material.
-    containerColor: Color? = null
+    containerColor: Color? = null,
+    // No lugar do título escrito (um logo, por exemplo); o `title` continua sendo o nome lido pelo TalkBack.
+    titleContent: (@Composable () -> Unit)? = null
 ) {
     val colors = barColors(style, containerColor)
+    val customTitle = titleContent
     val titleContent: @Composable () -> Unit = {
-        Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
+        if (customTitle != null) {
+            // Lido como o título da tela (o nome da aba), não como o desenho que ocupa o lugar dele.
+            Box(
+                Modifier.clearAndSetSemantics {
+                    heading()
+                    contentDescription = title
+                }
+            ) { customTitle() }
+        } else {
+            Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
+        }
     }
     val leading: @Composable () -> Unit = {
         when {
@@ -129,6 +160,8 @@ internal fun TopAppBarContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun barColors(style: DSTopAppBarStyle, containerColor: Color?): TopAppBarColors {
+    LocalDSTopAppBarBrandColors.current?.let { brand -> return brandColors(style, brand) }
+
     val screen = containerColor ?: return when (style) {
         DSTopAppBarStyle.Small -> TopAppBarDefaults.topAppBarColors()
         DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors()
@@ -141,6 +174,21 @@ private fun barColors(style: DSTopAppBarStyle, containerColor: Color?): TopAppBa
         DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = screen)
         DSTopAppBarStyle.Medium -> TopAppBarDefaults.mediumTopAppBarColors(containerColor = screen)
         DSTopAppBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors(containerColor = screen)
+    }
+}
+
+/** A barra de marca: o mesmo fundo parada e rolada, título e ícones na cor do conteúdo. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun brandColors(style: DSTopAppBarStyle, brand: DSTopAppBarBrandColors): TopAppBarColors {
+    val container = brand.container
+    val content = brand.content
+
+    return when (style) {
+        DSTopAppBarStyle.Small -> TopAppBarDefaults.topAppBarColors(container, container, content, content, content)
+        DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.centerAlignedTopAppBarColors(container, container, content, content, content)
+        DSTopAppBarStyle.Medium -> TopAppBarDefaults.mediumTopAppBarColors(container, container, content, content, content)
+        DSTopAppBarStyle.Large -> TopAppBarDefaults.largeTopAppBarColors(container, container, content, content, content)
     }
 }
 

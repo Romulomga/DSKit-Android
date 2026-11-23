@@ -53,6 +53,8 @@ import androidx.compose.ui.unit.dp
  * @param onRefresh liga o "puxar para atualizar"; [isRefreshing] mostra o indicador.
  * @param containerColor o fundo da tela, que a barra superior parada acompanha: um fundo agrupado (lista de cards
  * sobre cinza), por exemplo. Sem ele, o `background` do tema e a barra do Material.
+ * @param titleContent o que fica no lugar do título escrito (um logo no meio, com `CenterAligned`); o [title] continua
+ *   sendo o nome da tela lido pelo TalkBack.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,9 +71,10 @@ public fun DSScreen(
     isRefreshing: Boolean = false,
     onRefresh: (() -> Unit)? = null,
     containerColor: Color? = null,
+    titleContent: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val showsTopBar = title != null || onBack != null || navigationIcon != null
+    val showsTopBar = title != null || titleContent != null || onBack != null || navigationIcon != null
     val scrollBehavior = when (topBarStyle) {
         DSTopAppBarStyle.Medium, DSTopAppBarStyle.Large -> TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         DSTopAppBarStyle.Small, DSTopAppBarStyle.CenterAligned -> TopAppBarDefaults.pinnedScrollBehavior()
@@ -89,7 +92,8 @@ public fun DSScreen(
                     navigationIcon = navigationIcon,
                     actions = actions,
                     scrollBehavior = scrollBehavior,
-                    containerColor = containerColor
+                    containerColor = containerColor,
+                    titleContent = titleContent
                 )
             }
         },
