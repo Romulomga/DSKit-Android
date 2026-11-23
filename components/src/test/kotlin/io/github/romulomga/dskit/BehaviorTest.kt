@@ -1,24 +1,36 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -30,6 +42,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.IntSize
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -136,6 +149,74 @@ class BehaviorTest {
         composeRule.onNodeWithText("Save", useUnmergedTree = true).performClick()
 
         composeRule.runOnIdle { assertEquals(0, clicks) }
+    }
+
+    @Test
+    fun theAppsLoadingIndicatorIsTheOneDrawnAtTheComponentsSizeAndColor() {
+        val drawn = mutableListOf<Pair<Color, IntSize>>()
+        var materialSize = IntSize.Zero
+        var buttonColor = Color.Unspecified
+        var stateColor = Color.Unspecified
+        val indicator: @Composable (Modifier, Color) -> Unit = { modifier, color ->
+            Box(modifier.onSizeChanged { drawn += color to it })
+        }
+
+        // O círculo do Material gira para sempre: com o relógio andando sozinho, a espera de ociosidade não acaba.
+        composeRule.mainClock.autoAdvance = false
+        composeRule.setContent {
+            DSTheme {
+                buttonColor = DSTheme.colors.onPrimary
+                stateColor = DSTheme.colors.primary
+
+                Column {
+                    CircularProgressIndicator(Modifier.onSizeChanged { materialSize = it })
+
+                    CompositionLocalProvider(LocalDSLoadingIndicator provides indicator) {
+                        DSButton("Publish", onClick = {}, loading = true)
+
+                        DSLoadingState()
+                    }
+                }
+            }
+        }
+
+        composeRule.mainClock.advanceTimeBy(100)
+
+        val iconSize = with(composeRule.density) { ButtonDefaults.IconSize.roundToPx() }
+
+        composeRule.runOnUiThread {
+            assertEquals(setOf(buttonColor to IntSize(iconSize, iconSize), stateColor to materialSize), drawn.toSet())
+        }
+    }
+
+    @Test
+    fun theAppsLoadingIndicatorSaysNothingOfItsOwnToTalkBack() {
+        val indicator: @Composable (Modifier, Color) -> Unit = { modifier, _ ->
+            Box(modifier.semantics { contentDescription = "App spinner" })
+        }
+
+        composeRule.mainClock.autoAdvance = false
+        composeRule.setContent {
+            DSTheme {
+                CompositionLocalProvider(LocalDSLoadingIndicator provides indicator) {
+                    Column {
+                        DSButton("Publish", onClick = {}, loading = true)
+
+                        DSLoadingState(Modifier.testTag("state"))
+                    }
+                }
+            }
+        }
+
+        composeRule.mainClock.advanceTimeBy(100)
+
+        composeRule.onNodeWithContentDescription("App spinner").assertDoesNotExist()
+        composeRule.onNodeWithText("Publish")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Loading…"))
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Disabled))
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.ContentDescription))
+        composeRule.onNodeWithTag("state")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.ProgressBarRangeInfo, ProgressBarRangeInfo.Indeterminate))
     }
 
     @Test

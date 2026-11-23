@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +37,8 @@ import io.github.romulomga.dskit.components.R
  *
  * Abre numa janela própria, por cima de tudo, onde quer que seja chamado: bloqueia o toque, o TalkBack, o
  * teclado e o voltar. Um véu desenhado na mesma janela só pararia o dedo, e quem usa TalkBack ainda alcançaria o
- * "Publicar" por baixo. O TalkBack anuncia a [message] (ou "Carregando…").
+ * "Publicar" por baixo. O TalkBack anuncia a [message] (ou "Carregando…"). O indicador é o [LocalDSLoadingIndicator]
+ * do app, se houver.
  */
 @Composable
 public fun DSLoadingOverlay(visible: Boolean, modifier: Modifier = Modifier, message: String? = null) {
@@ -86,7 +86,7 @@ internal fun LoadingVeil(message: String?, modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)
             ) {
-                CircularProgressIndicator()
+                LoadingIndicator()
 
                 if (message != null) {
                     Text(message, style = DSTheme.typography.bodyLarge, textAlign = TextAlign.Center)

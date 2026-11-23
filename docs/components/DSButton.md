@@ -27,6 +27,19 @@ DSButton("Excluir conta", onClick = { deleteAccount() }, destructive = true)
 DSTextButton("Esqueci a senha", onClick = { openRecovery() })
 ```
 
+## O indicador do app
+
+Com `LocalDSLoadingIndicator` ligado no tema, o indicador é o do app, no lugar do círculo do Material: no mesmo
+tamanho e na mesma cor, e com a mesma leitura no TalkBack (o que o indicador do app disser é descartado). Ele vale para
+o `DSButton` em andamento, o `DSLoadingOverlay` e o `DSLoadingState`; o "puxar para atualizar" do `DSScreen` continua
+com o do Material.
+
+```kotlin
+CompositionLocalProvider(LocalDSLoadingIndicator provides { modifier, color -> AppLoadingView(modifier, color) }) {
+    content()
+}
+```
+
 ## Parâmetros
 
 `DSButton`, `DSTonalButton` e `DSOutlinedButton` têm a mesma assinatura. `DSTextButton` não tem `loading`.

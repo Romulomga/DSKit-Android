@@ -6,6 +6,18 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.15] - 2026-11-23
+
+### Adicionado
+
+- `LocalDSLoadingIndicator`: o indicador de carregamento do app inteiro, um `(@Composable (Modifier, Color) -> Unit)?`.
+  O app liga uma vez no tema e o `DSButton` em andamento (e o `DSTonalButton`/`DSOutlinedButton`), o `DSLoadingOverlay`
+  e o `DSLoadingState` desenham ele no lugar do círculo do Material, no mesmo tamanho (o do ícone do botão; o do
+  círculo no overlay e no estado) e na mesma cor. A leitura do TalkBack não muda: o DSKit descarta o que o indicador
+  disser e deixa só o "em andamento", e o botão continua "Carregando…" e desativado. O "puxar para atualizar" do
+  `DSScreen` não usa o indicador. Sem nada ligado, nada muda. Pedido pelo Homer Android (os arcos vermelhos do
+  `LoadingView`, como no iOS).
+
 ## [0.1.14] - 2026-11-23
 
 ### Adicionado

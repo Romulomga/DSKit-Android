@@ -1,12 +1,46 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import org.junit.Test
 
 class FeedbackScreenshotTest : ScreenshotTestBase() {
+    /** Um indicador do app parado e fácil de ver (um quadrado na cor recebida), para a captura não depender do relógio. */
+    private val squareIndicator: @Composable (Modifier, Color) -> Unit = { modifier, color ->
+        Box(modifier.border(2.dp, color))
+    }
+
+    @Test
+    fun customLoadingIndicator() = snapshot("feedback_loading_indicator_custom") {
+        CompositionLocalProvider(LocalDSLoadingIndicator provides squareIndicator) {
+            Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
+                DSButton("Publishing", onClick = {}, loading = true)
+
+                DSTonalButton("Saving", onClick = {}, loading = true)
+
+                DSLoadingState(message = "Loading properties…")
+
+                Box(Modifier.fillMaxWidth().height(200.dp)) {
+                    DSCard { Text("Form behind the veil") }
+
+                    LoadingVeil(message = "Publishing…")
+                }
+            }
+        }
+    }
+
     @Test
     fun emptyState() = snapshot("feedback_empty_state") {
         DSEmptyState(

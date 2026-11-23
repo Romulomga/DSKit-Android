@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -36,7 +35,8 @@ import io.github.romulomga.dskit.components.R
  * sobre o conteúdo, use [DSExtendedFab].
  *
  * @param icon ícone opcional antes do texto.
- * @param loading troca o conteúdo por um indicador, mantém a largura e ignora toques até terminar.
+ * @param loading troca o conteúdo por um indicador (o [LocalDSLoadingIndicator] do app, se houver), mantém a largura e
+ * ignora toques até terminar.
  * @param destructive pinta na cor de erro ("Excluir conta").
  */
 @Composable
@@ -196,11 +196,7 @@ private fun ButtonContent(text: String, icon: ImageVector?, loading: Boolean) {
         }
 
         if (loading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                color = LocalContentColor.current,
-                strokeWidth = 2.dp
-            )
+            ButtonLoadingIndicator(size = ButtonDefaults.IconSize, color = LocalContentColor.current)
         }
     }
 }
