@@ -54,7 +54,7 @@ class FoundationScreenshotTest : ScreenshotTestBase() {
                 DSIcons.Add, DSIcons.Remove, DSIcons.Search, DSIcons.MoreVert, DSIcons.Visibility, DSIcons.VisibilityOff,
                 DSIcons.Error, DSIcons.Info, DSIcons.Warning, DSIcons.CheckCircle, DSIcons.Refresh, DSIcons.Inbox,
                 DSIcons.CloudOff, DSIcons.Home, DSIcons.Person, DSIcons.Edit, DSIcons.Delete, DSIcons.Share, DSIcons.Star,
-                DSIcons.Lock
+                DSIcons.Lock, DSIcons.ChevronLeft, DSIcons.CalendarToday, DSIcons.AccountBalance, DSIcons.Settings
             ).forEach { Icon(it, contentDescription = null, tint = DSTheme.colors.onSurface) }
         }
     }

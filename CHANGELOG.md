@@ -6,6 +6,13 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+### Adicionado
+
+- `DSIcons.CalendarToday`, `DSIcons.AccountBalance`, `DSIcons.Settings` e `DSIcons.ChevronLeft` (o par do
+  `ChevronRight`, espelhado em árabe): os caminhos do Material Icons, como os outros. O DSKit iOS não tem catálogo
+  de ícones (usa os SF Symbols `calendar`, `building.columns`, `gearshape` e `chevron.backward` direto), então os
+  nomes são os do Material. Pedidos pelo esqueleto Android do reference-app, que os desenhava à mão.
+
 ### Mudado
 
 - O build troca o `buildSrc` (`Versions.kt`, `Dependencies.kt`, `Configs.kt`) pelo catálogo `gradle/libs.versions.toml`,
