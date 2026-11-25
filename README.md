@@ -7,7 +7,8 @@ lateral em tela larga. É agnóstico: nenhum app tem código aqui; cada app pass
 pelo tema.
 
 - minSdk 26, compileSdk 37, Kotlin 2.4, Compose BOM 2026.09, Material 3 estável (1.4).
-- Sem dependência além de AndroidX/Compose. O Navigation 3 só entra com o módulo opcional `navigation3`.
+- Sem dependência além de AndroidX/Compose. O Navigation 3 só entra com o módulo opcional `navigation3`; JUnit,
+  Robolectric e Roborazzi, só com o `screenshot-testing`, que é de teste ([ADR 0002](docs/adr/0002-so-androidx.md)).
 - Licença [MIT](LICENSE).
 - Versões por tag no GitHub; mudanças de cada uma em [`CHANGELOG.md`](CHANGELOG.md).
 
@@ -31,7 +32,7 @@ dependencies {
     implementation("com.github.Romulomga.DSKit-Android:seed:0.1.4") // opcional: marca a partir de uma cor
     implementation("com.github.Romulomga.DSKit-Android:navigation3:0.1.4") // opcional: painéis como cena do Navigation 3
     lintChecks("com.github.Romulomga.DSKit-Android:lint:0.1.4") // as regras DSComponent, DSSpacingLiteral…
-    testImplementation("com.github.Romulomga.DSKit-Android:screenshot-testing:0.1.4") // opcional: capturas com o ATF
+    testImplementation("com.github.Romulomga.DSKit-Android:screenshot-testing:0.1.16") // opcional, desde a 0.1.16: capturas com o ATF
 }
 ```
 
@@ -172,8 +173,8 @@ class HolidaysScreenScreenshotTest : DSScreenshotTest() {
 }
 ```
 
-- `DSScreenshotTest`: a base (Robolectric, renderização nativa, SDK 35, telefone de 360 × 800 dp); outra tela é um
-  `@Config(qualifiers = …)` na classe.
+- `DSScreenshotTest`: a base (Robolectric, renderização nativa, SDK 35, telefone de 360 × 800 dp); outra tela ou
+  outro SDK é um `@Config(…)` na classe.
 - `captureDSScreen(name, modes, roborazziOptions, settleMillis, accessibilitySuppressions, directory, theme, content)`:
   a tela no tema do app, em `screenshots/<nome>_<modo>.png`, por padrão em claro, escuro (`+night`, o tema segue o
   sistema) e fonte a 200 % (`DSScreenshotDefaults.ScreenModes`; `DSScreenshotMode.Rtl` também serve), em meia escala,

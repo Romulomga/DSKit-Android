@@ -39,8 +39,8 @@ import org.robolectric.annotation.GraphicsMode
 
 /**
  * A base de um teste de captura: Robolectric com renderização nativa (sem emulador), numa tela de telefone de
- * 360 × 800 dp, no SDK 35 (o 36 do Robolectric 4.17 não sobe no JDK 21: "Failed to interact with raw FileDescriptor
- * internals"). O teste estende esta classe e chama [captureDSScreen] (uma tela do app) ou [captureDSComponent] (um
+ * 360 × 800 dp, no SDK 35, o mesmo dos testes do DSKit (sem o SDK fixo, o Robolectric 4.17 escolheu o 36 e falhou
+ * ao subir no Mac do dono com "Failed to interact with raw FileDescriptor internals"). O teste estende esta classe e chama [captureDSScreen] (uma tela do app) ou [captureDSComponent] (um
  * componente numa moldura). Outra tela ou outro SDK é um `@Config(…)` na classe que estende.
  *
  * As imagens ficam em `screenshots/` do módulo. Gravar: `./gradlew recordRoborazziDebug`; conferir:
