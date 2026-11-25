@@ -17,15 +17,24 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import io.github.romulomga.dskit.components.R
 
 /**
@@ -58,6 +67,8 @@ public enum class DSTopAppBarStyle {
  * Barra superior do Material 3: seta de voltar, título e ações à direita. Normalmente quem a desenha é o
  * [DSScreen], que também a faz encolher ao rolar; use direto só num layout próprio.
  *
+ * @param title o nome da tela, numa linha com reticências. Com a fonte do sistema aumentada, nas barras
+ * [DSTopAppBarStyle.Small] e [DSTopAppBarStyle.CenterAligned], quebra em até duas linhas e a barra cresce junto.
  * @param onBack mostra a seta de voltar (espelhada em árabe); quem chama faz o pop. O voltar do sistema
  * continua sendo do app (`BackHandler` ou a biblioteca de navegação).
  * @param navigationIcon o que fica no lugar da seta numa tela sem [onBack]: a marca do app na tela de topo de uma
@@ -111,6 +122,35 @@ internal fun TopAppBarContent(
             Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.semantics { heading() })
         }
     }
+
+    // Com a fonte aumentada, o título da barra de uma linha quebra em até duas e a barra cresce junto: "Feriados de
+    // 2026" a 200 % perdia o ano. Na fonte normal (ou menor) nada muda: uma linha, reticências.
+    val wrapsTitle = customTitle == null && LocalDensity.current.fontScale > 1f
+    var titleLines by remember { mutableIntStateOf(1) }
+    var titleHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+    val singleRowTitle: @Composable () -> Unit = if (wrapsTitle) {
+        {
+            Text(
+                title,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = if (style == DSTopAppBarStyle.CenterAligned) TextAlign.Center else null,
+                onTextLayout = { result ->
+                    titleLines = result.lineCount
+                    titleHeight = with(density) { result.multiParagraph.height.toDp() }
+                },
+                modifier = Modifier.semantics { heading() }
+            )
+        }
+    } else {
+        titleContent
+    }
+    val singleRowHeight = if (wrapsTitle && titleLines > 1) {
+        max(TopAppBarDefaults.TopAppBarExpandedHeight, titleHeight + DSSpacing.sm * 2)
+    } else {
+        TopAppBarDefaults.TopAppBarExpandedHeight
+    }
     val leading: @Composable () -> Unit = {
         when {
             onBack != null -> BackButton(onBack)
@@ -120,19 +160,21 @@ internal fun TopAppBarContent(
 
     when (style) {
         DSTopAppBarStyle.Small -> TopAppBar(
-            title = titleContent,
+            title = singleRowTitle,
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            expandedHeight = singleRowHeight,
             colors = colors,
             scrollBehavior = scrollBehavior
         )
 
         DSTopAppBarStyle.CenterAligned -> CenterAlignedTopAppBar(
-            title = titleContent,
+            title = singleRowTitle,
             modifier = modifier,
             navigationIcon = leading,
             actions = actions,
+            expandedHeight = singleRowHeight,
             colors = colors,
             scrollBehavior = scrollBehavior
         )

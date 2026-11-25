@@ -31,7 +31,7 @@ DSTopAppBar("Homer", style = DSTopAppBarStyle.CenterAligned)
 
 | Parâmetro | Tipo | Padrão | Descrição |
 | --- | --- | --- | --- |
-| `title` | `String` | obrigatório | O título, em uma linha, cortado com reticências. |
+| `title` | `String` | obrigatório | O título, em uma linha, cortado com reticências. Com a fonte do sistema aumentada, nas barras `Small` e `CenterAligned`, quebra em até duas linhas e a barra cresce junto; `Medium` e `Large` continuam numa linha. |
 | `modifier` | `Modifier` | `Modifier` | Modificador da barra. |
 | `style` | `DSTopAppBarStyle` | `DSTopAppBarStyle.Small` | `Small`, `CenterAligned`, `Medium` ou `Large`. |
 | `onBack` | `(() -> Unit)?` | `null` | Mostra a seta de voltar (espelhada em árabe); quem chama faz o pop. O voltar do sistema continua sendo do app (`BackHandler` ou a biblioteca de navegação). |

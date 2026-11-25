@@ -21,6 +21,14 @@ quebra vem descrita aqui com o código de migração.
   de ícones (usa os SF Symbols `calendar`, `building.columns`, `gearshape` e `chevron.backward` direto), então os
   nomes são os do Material. Pedidos pelo esqueleto Android do reference-app, que os desenhava à mão.
 
+### Corrigido
+
+- `DSTopAppBar` (e a barra do `DSScreen`) nos estilos `Small` e `CenterAligned`: com a fonte do sistema aumentada, o
+  título quebra em até duas linhas e a barra cresce junto, empurrando o conteúdo. Antes cortava com reticências, e
+  "Feriados de 2026" a 200 % virava "Feriados de 2…". Na fonte normal (ou menor) nada muda: uma linha, reticências, a
+  barra de 64 dp; as capturas que já existiam saem iguais. `Medium` e `Large` continuam numa linha. Pedido pelo
+  esqueleto Android do reference-app.
+
 ### Mudado
 
 - O build troca o `buildSrc` (`Versions.kt`, `Dependencies.kt`, `Configs.kt`) pelo catálogo `gradle/libs.versions.toml`,
