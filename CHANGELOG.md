@@ -6,6 +6,8 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.16] - 2026-11-25
+
 ### Adicionado
 
 - Módulo opcional `screenshot-testing` (`com.github.Romulomga.DSKit-Android:screenshot-testing`), o ajudante de
