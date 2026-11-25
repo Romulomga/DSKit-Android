@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
     `maven-publish`
 }
 
@@ -14,11 +14,11 @@ group = project.property("GROUP").toString()
 version = project.property("VERSION_NAME").toString()
 
 android {
-    namespace = Configs.Modules.Navigation3.namespace
-    compileSdk = Configs.Common.compileSdk
+    namespace = "io.github.romulomga.dskit.navigation3"
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = Configs.Common.minSdk
+        minSdk = 26
     }
 
     publishing {
@@ -43,13 +43,14 @@ android {
     lint {
         warningsAsErrors = true
         abortOnError = true
-        // "Há uma versão mais nova" depende do dia em que o CI roda; a do Navigation 3 é a menor que os apps usam.
-        disable += "GradleDependency"
+        // "Há uma versão mais nova" depende do dia em que o CI roda (a do Navigation 3 é a menor que os apps usam): subir
+        // uma versão do catálogo é decisão de release.
+        disable += listOf("AndroidGradlePluginVersion", "GradleDependency", "NewerVersionAvailable")
     }
 }
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
     explicitApi()
 }
 
@@ -58,14 +59,14 @@ composeCompiler {
 }
 
 dependencies {
-    api(project(Dependencies.General.components))
-    api(Dependencies.AndroidX.navigation3Runtime)
-    api(Dependencies.AndroidX.navigation3Ui)
+    api(project(":components"))
+    api(libs.androidx.navigation3.runtime)
+    api(libs.androidx.navigation3.ui)
 
-    testImplementation(Dependencies.Test.junit)
-    testImplementation(Dependencies.Test.robolectric)
-    testImplementation(Dependencies.Compose.uiTestJunit4)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
 
 // O artefato `com.github.Romulomga.DSKit-Android:navigation3`: `./gradlew publishToMavenLocal` gera o AAR para testar

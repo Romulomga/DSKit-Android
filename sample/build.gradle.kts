@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 apply {
@@ -8,13 +8,13 @@ apply {
 }
 
 android {
-    namespace = Configs.Modules.Sample.namespace
-    compileSdk = Configs.Common.compileSdk
+    namespace = "io.github.romulomga.dskit.sample"
+    compileSdk = 37
 
     defaultConfig {
-        applicationId = Configs.Modules.Sample.applicationId
-        minSdk = Configs.Common.minSdk
-        targetSdk = Configs.Common.targetSdk
+        applicationId = "io.github.romulomga.dskit.sample"
+        minSdk = 26
+        targetSdk = 36
         versionCode = 1
         versionName = project.property("VERSION_NAME").toString()
     }
@@ -30,13 +30,13 @@ android {
 }
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
 }
 
 dependencies {
-    implementation(project(Dependencies.General.components))
-    implementation(project(Dependencies.General.seed))
-    implementation(Dependencies.AndroidX.activityCompose)
-    implementation(Dependencies.Compose.uiToolingPreview)
-    debugImplementation(Dependencies.Compose.uiTooling)
+    implementation(project(":components"))
+    implementation(project(":seed"))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 }

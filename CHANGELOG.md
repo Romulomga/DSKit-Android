@@ -6,6 +6,15 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+### Mudado
+
+- O build troca o `buildSrc` (`Versions.kt`, `Dependencies.kt`, `Configs.kt`) pelo catálogo `gradle/libs.versions.toml`,
+  como o CoreKit-Android e os apps. AGP 9.4.1 e Kotlin 2.4.0 continuam os mesmos. Para quem usa a lib nada muda: as
+  mesmas coordenadas, o mesmo `includeBuild`, e o grafo de dependências de release, os AARs, os POMs e os `.module`
+  publicados saem byte a byte iguais aos da 0.1.15. O lint dos módulos deixa de acusar "há versão mais nova"
+  (`GradleDependency`, `NewerVersionAvailable`, `AndroidGradlePluginVersion`), que passou a olhar o catálogo: subir
+  versão é decisão de release.
+
 ## [0.1.15] - 2026-11-23
 
 ### Adicionado

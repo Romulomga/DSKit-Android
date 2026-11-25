@@ -1,8 +1,8 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
     `maven-publish`
-    id("io.github.takahirom.roborazzi")
+    alias(libs.plugins.roborazzi)
 }
 
 apply {
@@ -15,11 +15,11 @@ group = project.property("GROUP").toString()
 version = project.property("VERSION_NAME").toString()
 
 android {
-    namespace = Configs.Modules.Components.namespace
-    compileSdk = Configs.Common.compileSdk
+    namespace = "io.github.romulomga.dskit.components"
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = Configs.Common.minSdk
+        minSdk = 26
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -46,11 +46,13 @@ android {
     lint {
         warningsAsErrors = true
         abortOnError = true
+        // "Há uma versão mais nova" depende do dia em que o CI roda: subir uma versão do catálogo é decisão de release.
+        disable += listOf("AndroidGradlePluginVersion", "GradleDependency", "NewerVersionAvailable")
     }
 }
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
     explicitApi()
 }
 
@@ -67,25 +69,25 @@ composeCompiler {
 }
 
 dependencies {
-    api(project(Dependencies.General.tokens))
-    implementation(Dependencies.AndroidX.coreKtx)
-    implementation(Dependencies.AndroidX.activityCompose)
-    implementation(Dependencies.Compose.navigationSuite)
-    api(Dependencies.Compose.uiToolingPreview)
-    debugImplementation(Dependencies.Compose.uiTooling)
+    api(project(":tokens"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.material3.adaptive.navigation.suite)
+    api(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 
     // As regras de lint do DSKit viajam com o AAR e valem para quem usa a lib.
-    lintPublish(project(Dependencies.General.lint)) { isTransitive = false }
+    lintPublish(project(":lint")) { isTransitive = false }
 
-    testImplementation(Dependencies.Test.junit)
-    testImplementation(project(Dependencies.General.seed))
-    testImplementation(Dependencies.Test.robolectric)
-    testImplementation(Dependencies.Test.roborazzi)
-    testImplementation(Dependencies.Test.roborazziCompose)
-    testImplementation(Dependencies.Test.roborazziRule)
-    testImplementation(Dependencies.Test.roborazziAccessibility)
-    testImplementation(Dependencies.Compose.uiTestJunit4)
-    debugImplementation(Dependencies.Compose.uiTestManifest)
+    testImplementation(libs.junit)
+    testImplementation(project(":seed"))
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.junit.rule)
+    testImplementation(libs.roborazzi.accessibility.check)
+    testImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
 
 // O artefato `com.github.Romulomga.DSKit-Android:components`: `./gradlew publishToMavenLocal` gera o AAR para testar fora do

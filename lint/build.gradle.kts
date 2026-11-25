@@ -1,6 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    id("com.android.lint")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.android.lint)
 }
 
 apply {
@@ -13,14 +13,14 @@ group = project.property("GROUP").toString()
 version = project.property("VERSION_NAME").toString()
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
 }
 
 dependencies {
-    compileOnly(Dependencies.Lint.api)
-    compileOnly(Dependencies.Lint.checks)
+    compileOnly(libs.lint.api)
+    compileOnly(libs.lint.checks)
 
-    testImplementation(Dependencies.Test.junit)
-    testImplementation(Dependencies.Lint.api)
-    testImplementation(Dependencies.Lint.tests)
+    testImplementation(libs.junit)
+    testImplementation(libs.lint.api)
+    testImplementation(libs.lint.tests)
 }

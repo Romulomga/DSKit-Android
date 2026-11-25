@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
     `maven-publish`
 }
 
@@ -14,20 +14,20 @@ group = project.property("GROUP").toString()
 version = project.property("VERSION_NAME").toString()
 
 android {
-    namespace = Configs.Modules.Tokens.namespace
-    compileSdk = Configs.Common.compileSdk
+    namespace = "io.github.romulomga.dskit.tokens"
+    compileSdk = 37
 
     // Como no seed e no components: é este módulo que chama APIs com nível mínimo (contraste do sistema, API 34;
     // cor dinâmica, API 31), e um aviso de lint aqui não pode passar batido.
     lint {
         warningsAsErrors = true
         abortOnError = true
-        // "Há um Gradle mais novo" depende do dia em que o CI roda: atualizar o Gradle é decisão de release, não erro.
-        disable += "AndroidGradlePluginVersion"
+        // "Há uma versão mais nova" depende do dia em que o CI roda: subir uma versão do catálogo é decisão de release.
+        disable += listOf("AndroidGradlePluginVersion", "GradleDependency", "NewerVersionAvailable")
     }
 
     defaultConfig {
-        minSdk = Configs.Common.minSdk
+        minSdk = 26
         buildConfigField("String", "DSKIT_VERSION", "\"${project.property("VERSION_NAME")}\"")
     }
 
@@ -54,7 +54,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
     explicitApi()
 }
 
@@ -71,14 +71,15 @@ composeCompiler {
 }
 
 dependencies {
-    api(platform(Dependencies.Compose.bom))
-    api(Dependencies.Compose.ui)
-    api(Dependencies.Compose.foundation)
-    api(Dependencies.Compose.material3)
-    implementation(Dependencies.Compose.uiToolingPreview)
-    debugImplementation(Dependencies.Compose.uiTooling)
+    // `endorseStrictVersions` como o `platform("…")` de texto fazia: o .module publicado fica igual ao de antes do catálogo.
+    api(platform(libs.compose.bom)) { endorseStrictVersions() }
+    api(libs.compose.ui)
+    api(libs.compose.foundation)
+    api(libs.compose.material3)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 
-    testImplementation(Dependencies.Test.junit)
+    testImplementation(libs.junit)
 }
 
 // O artefato `com.github.Romulomga.DSKit-Android:tokens`: `./gradlew publishToMavenLocal` gera o AAR para testar fora do

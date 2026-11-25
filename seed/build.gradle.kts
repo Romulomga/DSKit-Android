@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    alias(libs.plugins.android.library)
     `maven-publish`
 }
 
@@ -13,11 +13,11 @@ group = project.property("GROUP").toString()
 version = project.property("VERSION_NAME").toString()
 
 android {
-    namespace = Configs.Modules.Seed.namespace
-    compileSdk = Configs.Common.compileSdk
+    namespace = "io.github.romulomga.dskit.seed"
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = Configs.Common.minSdk
+        minSdk = 26
     }
 
     publishing {
@@ -34,19 +34,21 @@ android {
     lint {
         warningsAsErrors = true
         abortOnError = true
+        // "Há uma versão mais nova" depende do dia em que o CI roda: subir uma versão do catálogo é decisão de release.
+        disable += listOf("AndroidGradlePluginVersion", "GradleDependency", "NewerVersionAvailable")
     }
 }
 
 kotlin {
-    jvmToolchain(Configs.Common.javaVersion)
+    jvmToolchain(21)
     explicitApi()
 }
 
 dependencies {
-    api(project(Dependencies.General.tokens))
-    implementation(Dependencies.Libraries.materialColorUtilities)
+    api(project(":tokens"))
+    implementation(libs.material.color.utilities)
 
-    testImplementation(Dependencies.Test.junit)
+    testImplementation(libs.junit)
 }
 
 // O artefato `com.github.Romulomga.DSKit-Android:seed`: `./gradlew publishToMavenLocal` gera o AAR para testar fora do
