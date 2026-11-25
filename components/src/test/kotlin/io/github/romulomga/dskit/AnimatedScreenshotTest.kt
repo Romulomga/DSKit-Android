@@ -14,22 +14,22 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Componentes com animação infinita (indicador de carregamento). O `snapshot` comum espera a UI ficar ociosa,
- * o que nunca acontece aqui; estes passam pelo relógio parado do `stillSnapshot`, um modo por teste. Ficam numa
- * classe própria porque a regra do Compose muda a captura do `snapshot` das outras classes.
+ * Componentes com animação infinita (indicador de carregamento). O `captureDSComponent` espera a UI ficar ociosa,
+ * o que nunca acontece aqui; estes passam pelo relógio parado do `captureDSAnimatedComponent`, um modo por teste. Ficam numa
+ * classe própria porque a regra do Compose muda a captura do `captureDSComponent` das outras classes.
  */
 class AnimatedScreenshotTest : ScreenshotTestBase() {
     @get:Rule
     val composeRule = createComposeRule()
 
     @Test
-    fun buttonLoadingLight() = composeRule.stillSnapshot("buttons_loading", StillMode.Light) { LoadingButtons() }
+    fun buttonLoadingLight() = composeRule.captureDSAnimatedComponent("buttons_loading", DSScreenshotMode.Light) { LoadingButtons() }
 
     @Test
-    fun buttonLoadingDark() = composeRule.stillSnapshot("buttons_loading", StillMode.Dark) { LoadingButtons() }
+    fun buttonLoadingDark() = composeRule.captureDSAnimatedComponent("buttons_loading", DSScreenshotMode.Dark) { LoadingButtons() }
 
     @Test
-    fun buttonLoadingFont200() = composeRule.stillSnapshot("buttons_loading", StillMode.Font200) { LoadingButtons() }
+    fun buttonLoadingFont200() = composeRule.captureDSAnimatedComponent("buttons_loading", DSScreenshotMode.Font200) { LoadingButtons() }
 
     @Composable
     private fun LoadingButtons() {
@@ -41,28 +41,28 @@ class AnimatedScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun loadingStateLight() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Light) {
+    fun loadingStateLight() = composeRule.captureDSAnimatedComponent("feedback_loading_state", DSScreenshotMode.Light) {
         DSLoadingState(message = "Loading properties…")
     }
 
     @Test
-    fun loadingStateDark() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Dark) {
+    fun loadingStateDark() = composeRule.captureDSAnimatedComponent("feedback_loading_state", DSScreenshotMode.Dark) {
         DSLoadingState(message = "Loading properties…")
     }
 
     @Test
-    fun loadingStateFont200() = composeRule.stillSnapshot("feedback_loading_state", StillMode.Font200) {
+    fun loadingStateFont200() = composeRule.captureDSAnimatedComponent("feedback_loading_state", DSScreenshotMode.Font200) {
         DSLoadingState(message = "Loading properties…")
     }
 
     @Test
-    fun skeletonLight() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Light) { SkeletonStates() }
+    fun skeletonLight() = composeRule.captureDSAnimatedComponent("feedback_skeleton", DSScreenshotMode.Light) { SkeletonStates() }
 
     @Test
-    fun skeletonDark() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Dark) { SkeletonStates() }
+    fun skeletonDark() = composeRule.captureDSAnimatedComponent("feedback_skeleton", DSScreenshotMode.Dark) { SkeletonStates() }
 
     @Test
-    fun skeletonFont200() = composeRule.stillSnapshot("feedback_skeleton", StillMode.Font200) { SkeletonStates() }
+    fun skeletonFont200() = composeRule.captureDSAnimatedComponent("feedback_skeleton", DSScreenshotMode.Font200) { SkeletonStates() }
 
     @Composable
     private fun SkeletonStates() {
@@ -80,13 +80,17 @@ class AnimatedScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun loadingOverlayLight() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Light) { OverlayStates() }
+    fun loadingOverlayLight() = composeRule.captureDSAnimatedComponent("overlays_loading_overlay", DSScreenshotMode.Light) {
+        OverlayStates()
+    }
 
     @Test
-    fun loadingOverlayDark() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Dark) { OverlayStates() }
+    fun loadingOverlayDark() = composeRule.captureDSAnimatedComponent("overlays_loading_overlay", DSScreenshotMode.Dark) { OverlayStates() }
 
     @Test
-    fun loadingOverlayFont200() = composeRule.stillSnapshot("overlays_loading_overlay", StillMode.Font200) { OverlayStates() }
+    fun loadingOverlayFont200() = composeRule.captureDSAnimatedComponent("overlays_loading_overlay", DSScreenshotMode.Font200) {
+        OverlayStates()
+    }
 
     @Composable
     private fun OverlayStates() {

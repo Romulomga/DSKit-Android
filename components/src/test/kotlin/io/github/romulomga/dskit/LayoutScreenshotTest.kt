@@ -14,7 +14,7 @@ import org.junit.Test
 
 class LayoutScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun screenForm() = snapshot("layout_screen_form") {
+    fun screenForm() = captureDSComponent("layout_screen_form") {
         Box(Modifier.height(480.dp)) {
             DSScreen(
                 title = "Edit profile",
@@ -33,7 +33,7 @@ class LayoutScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun screenList() = snapshot("layout_screen_list") {
+    fun screenList() = captureDSComponent("layout_screen_list") {
         Box(Modifier.height(520.dp)) {
             DSScreen(
                 title = "Messages",
@@ -48,7 +48,7 @@ class LayoutScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun adaptiveColumns() = snapshot("layout_adaptive_columns") {
+    fun adaptiveColumns() = captureDSComponent("layout_adaptive_columns") {
         DSAdaptiveColumns(
             primary = { DSCard { Text("Photos and description") } },
             secondary = { DSCard { Text("Price and contact") } }
@@ -56,7 +56,7 @@ class LayoutScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun dividers() = snapshot("layout_divider") {
+    fun dividers() = captureDSComponent("layout_divider") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
             DSDivider()
 

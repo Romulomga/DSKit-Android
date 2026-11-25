@@ -8,6 +8,14 @@ quebra vem descrita aqui com o código de migração.
 
 ### Adicionado
 
+- Módulo opcional `screenshot-testing` (`com.github.Romulomga.DSKit-Android:screenshot-testing`), o ajudante de
+  captura do DSKit publicado para os apps usarem em `testImplementation`, como o `core:screenshot-testing` do Now in
+  Android: `DSScreenshotTest` (a base Robolectric), `captureDSScreen` (a tela no tema do app, em claro, escuro e fonte
+  a 200 %, o ATF em cada modo, meia escala), `captureDSComponent` e `captureDSAnimatedComponent` (o componente nos
+  cinco modos do DSKit), `assertDSAccessible`, `DSScreenshotMode` e `DSScreenshotDefaults`. Os testes do próprio
+  DSKit passam a usá-lo, com as 234 capturas iguais. O app ainda aplica o plugin do Roborazzi e põe o
+  `ui-test-manifest` em `debugImplementation`. Pedido pelo esqueleto Android do reference-app, que copiava o mínimo
+  em `support/Screenshots.kt`.
 - `DSIcons.CalendarToday`, `DSIcons.AccountBalance`, `DSIcons.Settings` e `DSIcons.ChevronLeft` (o par do
   `ChevronRight`, espelhado em árabe): os caminhos do Material Icons, como os outros. O DSKit iOS não tem catálogo
   de ícones (usa os SF Symbols `calendar`, `building.columns`, `gearshape` e `chevron.backward` direto), então os

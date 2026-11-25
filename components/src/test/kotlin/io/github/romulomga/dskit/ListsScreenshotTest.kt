@@ -9,7 +9,7 @@ import org.junit.Test
 
 class ListsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun listItems() = snapshot("lists_items") {
+    fun listItems() = captureDSComponent("lists_items") {
         Column {
             DSListSectionHeader("Account")
 
@@ -24,7 +24,7 @@ class ListsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun selectionItems() = snapshot("lists_selection") {
+    fun selectionItems() = captureDSComponent("lists_selection") {
         Column {
             DSListSectionHeader("Property type")
 
@@ -43,7 +43,7 @@ class ListsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun sheetActions() = snapshot("lists_sheet_actions") {
+    fun sheetActions() = captureDSComponent("lists_sheet_actions") {
         Column {
             DSSheetAction(text = "Edit", icon = DSIcons.Edit, onClick = {})
 

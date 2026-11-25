@@ -14,7 +14,7 @@ import org.junit.Test
 
 class FoundationScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun typography() = snapshot("foundation_typography") {
+    fun typography() = captureDSComponent("foundation_typography") {
         val type = DSTheme.typography
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.xs)) {
@@ -30,7 +30,7 @@ class FoundationScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun colors() = snapshot("foundation_colors") {
+    fun colors() = captureDSComponent("foundation_colors") {
         val colors = DSTheme.colors
         val status = DSTheme.status
 
@@ -47,7 +47,7 @@ class FoundationScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun icons() = snapshot("foundation_icons") {
+    fun icons() = captureDSComponent("foundation_icons") {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm), verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             listOf(
                 DSIcons.ArrowBack, DSIcons.ChevronRight, DSIcons.ArrowDropDown, DSIcons.Check, DSIcons.Close, DSIcons.Cancel,

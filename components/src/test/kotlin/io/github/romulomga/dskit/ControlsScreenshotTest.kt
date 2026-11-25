@@ -7,7 +7,7 @@ import org.junit.Test
 
 class ControlsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun segmentedButton() = snapshot("controls_segmented_button") {
+    fun segmentedButton() = captureDSComponent("controls_segmented_button") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
             DSSegmentedButton(selection = "sale", onSelectionChange = {
             }, options = listOf(DSOption("sale", "Sale"), DSOption("rent", "Rent")))
@@ -21,7 +21,7 @@ class ControlsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun stepper() = snapshot("controls_stepper") {
+    fun stepper() = captureDSComponent("controls_stepper") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSStepper(value = 3, onValueChange = {}, range = 1..12, label = "Installments", valueText = "3x")
 
@@ -42,7 +42,7 @@ class ControlsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun chips() = snapshot("controls_chips") {
+    fun chips() = captureDSComponent("controls_chips") {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSFilterChip("Parking", selected = true, onSelectedChange = {})
 
@@ -55,7 +55,7 @@ class ControlsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun checkbox() = snapshot("controls_checkbox") {
+    fun checkbox() = captureDSComponent("controls_checkbox") {
         Column {
             DSCheckbox("I accept the terms", checked = true, onCheckedChange = {})
 
@@ -64,7 +64,7 @@ class ControlsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun tabs() = snapshot("controls_tabs") {
+    fun tabs() = captureDSComponent("controls_tabs") {
         DSTabs(tabs = listOf("Mine", "Partners", "Saved"), selectedIndex = 1, onSelect = {})
     }
 }

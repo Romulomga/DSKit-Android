@@ -22,7 +22,7 @@ class NavigationScreenshotTest : ScreenshotTestBase() {
     )
 
     @Test
-    fun topAppBars() = snapshot("navigation_top_app_bar") {
+    fun topAppBars() = captureDSComponent("navigation_top_app_bar") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSTopAppBar("Profile", onBack = {})
 
@@ -37,12 +37,12 @@ class NavigationScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun topAppBarWithNavigationIcon() = snapshot("navigation_top_app_bar_navigation_icon") {
+    fun topAppBarWithNavigationIcon() = captureDSComponent("navigation_top_app_bar_navigation_icon") {
         DSTopAppBar("Today", navigationIcon = { DSIconButton(DSIcons.Home, "Home", onClick = {}) })
     }
 
     @Test
-    fun topAppBarWithBrandColors() = snapshot("navigation_top_app_bar_brand") {
+    fun topAppBarWithBrandColors() = captureDSComponent("navigation_top_app_bar_brand") {
         CompositionLocalProvider(LocalDSTopAppBarBrandColors provides DSTopAppBarBrandColors(Color(0xFFD0212E), Color.White)) {
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
                 DSTopAppBar("Profile", onBack = {}) {
@@ -61,12 +61,12 @@ class NavigationScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun navigationBar() = snapshot("navigation_bar") {
+    fun navigationBar() = captureDSComponent("navigation_bar") {
         DSNavigationBar(items = items, selection = Tab.Messages, onSelectionChange = {})
     }
 
     @Test
-    fun navigationRail() = snapshot("navigation_rail") {
+    fun navigationRail() = captureDSComponent("navigation_rail") {
         DSNavigationRail(items = items, selection = Tab.Home, onSelectionChange = {}, modifier = Modifier.height(400.dp))
     }
 }

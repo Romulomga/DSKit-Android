@@ -1,12 +1,10 @@
 package io.github.romulomga.dskit
 
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import org.robolectric.annotation.GraphicsMode
 
-/** Base dos testes de screenshot: Robolectric com renderização nativa, sem emulador. */
-@RunWith(RobolectricTestRunner::class)
-@GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35], qualifiers = "w400dp-h2000dp-xhdpi")
-abstract class ScreenshotTestBase
+/**
+ * Base dos testes de screenshot do DSKit: a do `screenshot-testing` (Robolectric com renderização nativa, sem
+ * emulador, SDK 35), numa tela alta para caber a moldura de cada componente.
+ */
+@Config(qualifiers = "w400dp-h2000dp-xhdpi")
+abstract class ScreenshotTestBase : DSScreenshotTest()

@@ -8,7 +8,7 @@ import org.junit.Test
 
 class CardsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun cards() = snapshot("cards_variants") {
+    fun cards() = captureDSComponent("cards_variants") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
             DSCard {
                 Text("Filled card", style = DSTheme.typography.titleMedium)
@@ -23,7 +23,7 @@ class CardsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun adaptiveGrid() = snapshot("cards_adaptive_grid") {
+    fun adaptiveGrid() = captureDSComponent("cards_adaptive_grid") {
         DSAdaptiveGrid(minItemWidth = 140.dp) {
             repeat(5) { DSCard { Text("Item ${it + 1}", style = DSTheme.typography.titleMedium) } }
         }

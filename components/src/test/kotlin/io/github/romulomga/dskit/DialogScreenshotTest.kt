@@ -29,7 +29,7 @@ import org.robolectric.Shadows.shadowOf
  * Diálogo e painel abertos de verdade: abrem em janela própria, então a captura é da tela inteira
  * (`captureScreenRoboImage`), em claro e escuro. Sem variante
  * da direita para a esquerda: no Robolectric a janela própria não recebe o RTL do aparelho. Classe própria porque a regra do Compose muda a captura
- * do `snapshot` das outras classes.
+ * do `captureDSComponent` das outras classes.
  */
 @OptIn(ExperimentalRoborazziApi::class)
 class DialogScreenshotTest : ScreenshotTestBase() {

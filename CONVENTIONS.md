@@ -47,11 +47,13 @@ escala de tipo do iOS, níveis de superfície ou toast no topo: o equivalente An
 - Cada arquivo termina com previews `@DSPreviews` dentro de `DSPreviewContainer` (claro, escuro, fonte 200 %),
   cobrindo os estados (normal, desabilitado, carregando, erro…).
 - Cada grupo tem um teste de screenshot em `components/src/test/kotlin/io/github/romulomga/dskit/<Grupo>ScreenshotTest.kt`
-  que estende `ScreenshotTestBase` e chama `snapshot("<grupo>_<componente>") { … }`, que captura cinco modos:
-  claro, escuro, fonte 200 %, da direita para a esquerda (`_rtl`) e alto contraste (`_highcontrast`). Confira o
-  `_rtl`: ícone de direção espelha, texto alinha à direita, nada de `padding(left=…)`. Animação infinita (indicador,
-  esqueleto) vai no `AnimatedScreenshotTest` pelo `stillSnapshot`; diálogo e painel, que abrem em janela própria, no
+  que estende `ScreenshotTestBase` e chama `captureDSComponent("<grupo>_<componente>") { … }` (do módulo
+  `screenshot-testing`, o mesmo que os apps usam), que captura cinco modos: claro, escuro, fonte 200 %, da direita
+  para a esquerda (`_rtl`) e alto contraste (`_highcontrast`). Confira o `_rtl`: ícone de direção espelha, texto
+  alinha à direita, nada de `padding(left=…)`. Animação infinita (indicador, esqueleto) vai no
+  `AnimatedScreenshotTest` pelo `captureDSAnimatedComponent`; diálogo e painel, que abrem em janela própria, no
   `DialogScreenshotTest`.
-- O `snapshot` também roda o Accessibility Test Framework do Google no claro e no escuro (alvo de toque, contraste,
-  rótulo legível pelo TalkBack) e falha em erro. Exceção real vai em `accessibilitySuppressions`, com o motivo ao lado.
+- O `captureDSComponent` também roda o Accessibility Test Framework do Google no claro e no escuro (alvo de toque,
+  contraste, rótulo legível pelo TalkBack) e falha em erro. Exceção real vai em `accessibilitySuppressions`, com o
+  motivo ao lado.
 - KDoc em português nas declarações públicas, dizendo para que serve e quando usar (e quando usar outro componente).

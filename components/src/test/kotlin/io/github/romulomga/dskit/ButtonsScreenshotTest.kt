@@ -7,7 +7,7 @@ import org.junit.Test
 
 class ButtonsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun buttons() = snapshot("buttons_variants") {
+    fun buttons() = captureDSComponent("buttons_variants") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSButton("Publish", onClick = {}, icon = DSIcons.Add)
 
@@ -20,7 +20,7 @@ class ButtonsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun destructiveAndDisabled() = snapshot("buttons_destructive") {
+    fun destructiveAndDisabled() = captureDSComponent("buttons_destructive") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSButton("Delete account", onClick = {}, destructive = true)
 
@@ -33,7 +33,7 @@ class ButtonsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun iconButtons() = snapshot("buttons_icon") {
+    fun iconButtons() = captureDSComponent("buttons_icon") {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSIconButton(DSIcons.Share, "Share", onClick = {})
 
@@ -46,7 +46,7 @@ class ButtonsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun fab() = snapshot("buttons_fab") {
+    fun fab() = captureDSComponent("buttons_fab") {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
             DSFab(DSIcons.Edit, "Compose", onClick = {})
 
@@ -57,7 +57,7 @@ class ButtonsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun textLink() = snapshot("buttons_text_link") {
+    fun textLink() = captureDSComponent("buttons_text_link") {
         DSTextLink(
             text = "By continuing you accept the Terms of use and the Privacy policy.",
             links = listOf(DSLink.Url("Terms of use", "https://example.com/terms"), DSLink.Action("Privacy policy") {})

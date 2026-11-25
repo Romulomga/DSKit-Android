@@ -23,7 +23,7 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun customLoadingIndicator() = snapshot("feedback_loading_indicator_custom") {
+    fun customLoadingIndicator() = captureDSComponent("feedback_loading_indicator_custom") {
         CompositionLocalProvider(LocalDSLoadingIndicator provides squareIndicator) {
             Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
                 DSButton("Publishing", onClick = {}, loading = true)
@@ -42,7 +42,7 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun emptyState() = snapshot("feedback_empty_state") {
+    fun emptyState() = captureDSComponent("feedback_empty_state") {
         DSEmptyState(
             icon = DSIcons.Inbox,
             title = "No posts yet",
@@ -53,17 +53,17 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun errorState() = snapshot("feedback_error_state") {
+    fun errorState() = captureDSComponent("feedback_error_state") {
         DSErrorState(title = "Couldn't load", message = "Check your connection and try again.", onRetry = {})
     }
 
     @Test
-    fun linearProgress() = snapshot("feedback_linear_progress") {
+    fun linearProgress() = captureDSComponent("feedback_linear_progress") {
         DSLinearProgress(progress = 0.4f)
     }
 
     @Test
-    fun snackbars() = snapshot("feedback_snackbar") {
+    fun snackbars() = captureDSComponent("feedback_snackbar") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSSnackbarForPreview(DSSnackbarVisuals("Draft saved"))
 
@@ -76,7 +76,7 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun banners() = snapshot("feedback_banner") {
+    fun banners() = captureDSComponent("feedback_banner") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSBanner(message = "Your plan renews in 3 days.", title = "Plan", actionText = "Manage", onAction = {}, onDismiss = {})
 
@@ -89,7 +89,7 @@ class FeedbackScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun badges() = snapshot("feedback_badge") {
+    fun badges() = captureDSComponent("feedback_badge") {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.xl)) {
             DSBadgedBox(count = 0) { Icon(DSIcons.Inbox, contentDescription = "Inbox") }
 

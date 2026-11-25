@@ -37,6 +37,7 @@ include(
     ":components",
     ":seed",
     ":navigation3",
+    ":screenshot-testing",
     ":lint",
     ":sample",
 )

@@ -79,14 +79,9 @@ dependencies {
     // As regras de lint do DSKit viajam com o AAR e valem para quem usa a lib.
     lintPublish(project(":lint")) { isTransitive = false }
 
-    testImplementation(libs.junit)
+    // As capturas e o ATF vêm do módulo publicado, o mesmo que os apps usam (traz JUnit, Robolectric e Roborazzi).
+    testImplementation(project(":screenshot-testing"))
     testImplementation(project(":seed"))
-    testImplementation(libs.robolectric)
-    testImplementation(libs.roborazzi)
-    testImplementation(libs.roborazzi.compose)
-    testImplementation(libs.roborazzi.junit.rule)
-    testImplementation(libs.roborazzi.accessibility.check)
-    testImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
 }
 

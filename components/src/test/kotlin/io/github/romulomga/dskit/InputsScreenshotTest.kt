@@ -10,7 +10,7 @@ import org.junit.Test
 
 class InputsScreenshotTest : ScreenshotTestBase() {
     @Test
-    fun textField() = snapshot("inputs_text_field") {
+    fun textField() = captureDSComponent("inputs_text_field") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSTextField(value = "", onValueChange = {}, label = "Name", supportingText = "As it shows on your profile")
 
@@ -33,7 +33,7 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun numberField() = snapshot("inputs_number_field") {
+    fun numberField() = captureDSComponent("inputs_number_field") {
         Row(horizontalArrangement = Arrangement.spacedBy(DSSpacing.md)) {
             DSNumberField(value = 2, onValueChange = {}, label = "Min", modifier = androidx.compose.ui.Modifier.weight(1f))
 
@@ -42,7 +42,7 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun decimalField() = snapshot("inputs_decimal_field") {
+    fun decimalField() = captureDSComponent("inputs_decimal_field") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSDecimalField(value = 82.5, onValueChange = {}, label = "Weight", supportingText = "In kilograms", maxFractionDigits = 1)
 
@@ -51,7 +51,7 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun dropdownField() = snapshot("inputs_dropdown_field") {
+    fun dropdownField() = captureDSComponent("inputs_dropdown_field") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.sm)) {
             DSDropdownField(selection = "RJ", onSelectionChange = {
             }, options = listOf("RJ", "SP").map { DSOption(it, it) }, label = "State")
@@ -67,7 +67,7 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun sliders() = snapshot("inputs_slider") {
+    fun sliders() = captureDSComponent("inputs_slider") {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpacing.lg)) {
             DSSlider(value = 3f, onValueChange = {}, label = "Bedrooms", valueRange = 1f..5f, steps = 3, valueText = "3")
 
@@ -83,7 +83,7 @@ class InputsScreenshotTest : ScreenshotTestBase() {
     }
 
     @Test
-    fun autocompleteField() = snapshot("inputs_autocomplete_field") {
+    fun autocompleteField() = captureDSComponent("inputs_autocomplete_field") {
         DSAutocompleteField(
             query = "Lagoa",
             onQueryChange = {},
