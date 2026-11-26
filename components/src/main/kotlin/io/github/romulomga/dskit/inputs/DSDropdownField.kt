@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 
 /**
  * Uma opção de escolha ([DSDropdownField], [DSAutocompleteField], [DSSegmentedButton], [DSMultiSegmentedButton]):
@@ -65,7 +66,9 @@ public fun <T> DSDropdownField(
             enabled = enabled,
             readOnly = true,
             singleLine = true,
-            label = { Text(label) },
+            // Uma linha: flutuando sobre o contorno, um rótulo de duas linhas (fonte grande) passa por cima da borda. O
+            // TalkBack lê o texto inteiro.
+            label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             supportingText = (errorText ?: supportingText)?.let { { Text(it) } },
             isError = errorText != null

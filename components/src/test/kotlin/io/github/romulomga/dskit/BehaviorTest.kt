@@ -2,6 +2,7 @@ package io.github.romulomga.dskit
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -16,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
@@ -34,15 +37,19 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -50,6 +57,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 /** O que os componentes fazem quando tocados ou configurados, sem imagem. */
 @RunWith(RobolectricTestRunner::class)
@@ -365,6 +373,44 @@ class BehaviorTest {
         assertEquals(1f..2f, keepDistance(1f..1.2f, previous = 1f..4f, minimum = 1f))
         // Erro de ponto flutuante dos passos não trava uma posição válida.
         assertEquals(1f..1.9999999f, keepDistance(1f..1.9999999f, previous = 1f..3f, minimum = 1f))
+    }
+
+    /** A fonte a 200 % quebrava o rótulo flutuante em duas linhas, por cima da borda do contorno. */
+    // O texto só tem largura de verdade com o desenho nativo; sem ele, o Robolectric mede o rótulo inteiro numa linha.
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aLongFieldLabelStaysOnOneLineAtLargeFont() {
+        val textLabel = "Enter your email or mobile phone number"
+        val dropdownLabel = "State where the property is located"
+
+        composeRule.setContent {
+            val density = LocalDensity.current
+
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale = 2f)) {
+                DSTheme {
+                    // A largura de um celular estreito: o rótulo flutuante não cabe numa linha a 200 %.
+                    Column(Modifier.width(320.dp)) {
+                        DSTextField(value = "broker@homer", onValueChange = {}, label = textLabel)
+
+                        DSDropdownField(selection = "RJ", onSelectionChange = {
+                        }, options = listOf(DSOption("RJ", "RJ")), label = dropdownLabel)
+                    }
+                }
+            }
+        }
+
+        for (label in listOf(textLabel, dropdownLabel)) {
+            val layouts = mutableListOf<TextLayoutResult>()
+
+            // Só o `Text` do rótulo: o campo editável também responde ao texto, com o próprio layout.
+            val labelNode = SemanticsMatcher.expectValue(SemanticsProperties.Text, listOf(AnnotatedString(label))) and
+                !SemanticsMatcher.keyIsDefined(SemanticsProperties.EditableText)
+
+            composeRule.onNode(labelNode, useUnmergedTree = true)
+                .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+
+            assertEquals(label, 1, layouts.single().lineCount)
+        }
     }
 }
 

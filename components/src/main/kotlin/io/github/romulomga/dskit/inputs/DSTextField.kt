@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import io.github.romulomga.dskit.components.R
 
 /**
@@ -86,7 +87,9 @@ public fun DSTextField(
             .then(if (autofillType != null) Modifier.semantics { this.contentType = autofillType } else Modifier),
         enabled = enabled,
         readOnly = readOnly,
-        label = { Text(label) },
+        // Uma linha: flutuando sobre o contorno, um rótulo de duas linhas (fonte grande) passa por cima da borda. O
+        // TalkBack lê o texto inteiro.
+        label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         placeholder = placeholder?.let { { Text(it) } },
         leadingIcon = leadingContent ?: leadingIcon?.let { { Icon(it, contentDescription = null) } },
         trailingIcon = when {

@@ -22,6 +22,8 @@ class InputsScreenshotTest : ScreenshotTestBase() {
 
             DSTextField(value = "Locked", onValueChange = {}, label = "Disabled", enabled = false)
 
+            DSTextField(value = "broker@homer", onValueChange = {}, label = "Enter your email or mobile phone number")
+
             DSTextField(
                 value = "11 98765-4321",
                 onValueChange = {},
@@ -62,6 +64,13 @@ class InputsScreenshotTest : ScreenshotTestBase() {
                 options = listOf(DSOption(1, "One")),
                 label = "Property type",
                 errorText = "Choose a type"
+            )
+
+            DSDropdownField(
+                selection = "RJ",
+                onSelectionChange = {},
+                options = listOf("RJ", "SP").map { DSOption(it, it) },
+                label = "State where the property is located"
             )
         }
     }
