@@ -1,5 +1,7 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -75,6 +78,8 @@ public fun DSTextField(
     trailingContent: (@Composable () -> Unit)? = null
 ) {
     var revealed by rememberSaveable { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
     val isError = errorText != null
     val autofillType = contentType ?: if (password) ContentType.Password else null
 
@@ -87,9 +92,10 @@ public fun DSTextField(
             .then(if (autofillType != null) Modifier.semantics { this.contentType = autofillType } else Modifier),
         enabled = enabled,
         readOnly = readOnly,
-        // Uma linha: flutuando sobre o contorno, um rótulo de duas linhas (fonte grande) passa por cima da borda. O
-        // TalkBack lê o texto inteiro.
-        label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        // Flutuando sobre o contorno (com texto ou foco), o rótulo fica numa linha: duas, com a fonte grande, passavam por
+        // cima da borda. Em repouso, dentro do campo, quebra como antes. O TalkBack lê o texto inteiro.
+        label = { Text(label, maxLines = if (focused || value.isNotEmpty()) 1 else Int.MAX_VALUE, overflow = TextOverflow.Ellipsis) },
+        interactionSource = interactionSource,
         placeholder = placeholder?.let { { Text(it) } },
         leadingIcon = leadingContent ?: leadingIcon?.let { { Icon(it, contentDescription = null) } },
         trailingIcon = when {

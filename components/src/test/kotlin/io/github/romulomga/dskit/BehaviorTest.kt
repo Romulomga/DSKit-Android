@@ -375,8 +375,33 @@ class BehaviorTest {
         assertEquals(1f..1.9999999f, keepDistance(1f..1.9999999f, previous = 1f..3f, minimum = 1f))
     }
 
-    /** A fonte a 200 % quebrava o rótulo flutuante em duas linhas, por cima da borda do contorno. */
-    // O texto só tem largura de verdade com o desenho nativo; sem ele, o Robolectric mede o rótulo inteiro numa linha.
+    /** Em repouso, dentro do campo vazio, o rótulo longo continua quebrando: o limite de uma linha é só ao flutuar. */
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aRestingFieldLabelStillWraps() {
+        val label = "Registration number of the responsible broker"
+
+        composeRule.setContent {
+            DSTheme {
+                Column(Modifier.width(200.dp)) {
+                    DSTextField(value = "", onValueChange = {}, label = label)
+                }
+            }
+        }
+
+        val layouts = mutableListOf<TextLayoutResult>()
+        val labelNode = SemanticsMatcher.expectValue(SemanticsProperties.Text, listOf(AnnotatedString(label))) and
+            !SemanticsMatcher.keyIsDefined(SemanticsProperties.EditableText)
+
+        composeRule.onNode(labelNode, useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+
+        assertTrue(layouts.single().lineCount >= 2)
+        assertTrue(!layouts.single().hasVisualOverflow)
+    }
+
+    // A fonte a 200 % quebrava o rótulo flutuante em duas linhas, por cima da borda do contorno. O texto só tem largura
+    // de verdade com o desenho nativo; sem ele, o Robolectric mede o rótulo inteiro numa linha.
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun aLongFieldLabelStaysOnOneLineAtLargeFont() {

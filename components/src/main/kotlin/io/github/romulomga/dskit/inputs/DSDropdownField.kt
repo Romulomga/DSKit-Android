@@ -1,5 +1,7 @@
 package io.github.romulomga.dskit
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +52,8 @@ public fun <T> DSDropdownField(
     val haptics = rememberDSHaptics()
     var expanded by remember { mutableStateOf(false) }
     val selectedLabel = options.firstOrNull { it.value == selection }?.label.orEmpty()
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -66,9 +70,11 @@ public fun <T> DSDropdownField(
             enabled = enabled,
             readOnly = true,
             singleLine = true,
-            // Uma linha: flutuando sobre o contorno, um rótulo de duas linhas (fonte grande) passa por cima da borda. O
-            // TalkBack lê o texto inteiro.
-            label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            // Flutuando (com escolha ou foco), o rótulo fica numa linha, como no `DSTextField`; em repouso, quebra.
+            label = {
+                Text(label, maxLines = if (focused || selectedLabel.isNotEmpty()) 1 else Int.MAX_VALUE, overflow = TextOverflow.Ellipsis)
+            },
+            interactionSource = interactionSource,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             supportingText = (errorText ?: supportingText)?.let { { Text(it) } },
             isError = errorText != null
