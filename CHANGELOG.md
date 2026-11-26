@@ -6,6 +6,15 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.18] - 2026-11-25
+
+### Corrigido
+
+- `DSTextField` e `DSDropdownField`: a 0.1.17 limitava o rótulo a uma linha também em repouso, dentro do campo vazio,
+  e um rótulo longo num campo estreito passou a cortar com reticências mesmo na fonte normal ("CRECI do res…"). Agora
+  o limite vale só com o rótulo flutuando (com texto, com escolha ou com foco); em repouso ele quebra como antes da
+  0.1.17. Os campos passam a criar o próprio `interactionSource` para saber do foco.
+
 ## [0.1.17] - 2026-11-25
 
 ### Corrigido
