@@ -6,6 +6,16 @@ quebra vem descrita aqui com o código de migração.
 
 ## [Não lançado]
 
+## [0.1.17] - 2026-11-25
+
+### Corrigido
+
+- `DSTextField` e `DSDropdownField`: o rótulo fica numa linha, com reticências. Com a fonte do sistema aumentada, um
+  rótulo longo quebrava em duas linhas e, flutuando sobre o contorno (campo preenchido ou com foco), passava por cima
+  da borda. O TalkBack continua lendo o rótulo inteiro. Achado nas capturas do login do Homer a 200 % ("Digite seu
+  e-mail ou n.º de celular."). O DSKit iOS não tem o problema: o título fica acima do campo e quebra sem sobrepor
+  nada.
+
 ## [0.1.16] - 2026-11-25
 
 ### Adicionado
